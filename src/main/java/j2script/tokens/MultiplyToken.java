@@ -2,7 +2,7 @@ package j2script.tokens;
 
 public class MultiplyToken implements Token {
     public int hashCode() {
-        return 1;
+        return 12;
     }
 
     public boolean equals(Object obj) {
@@ -10,6 +10,6 @@ public class MultiplyToken implements Token {
     }
 
     public String toString() {
-        return "Boolean";
+        return "*";
     }
 }

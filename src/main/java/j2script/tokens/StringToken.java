@@ -1,15 +1,15 @@
 package j2script.tokens;
 
-public class SubtractToken implements Token {
+public class StringToken implements Token {
     public int hashCode() {
-        return 21;
+        return 20;
     }
 
     public boolean equals(Object obj) {
-        return obj instanceof SubtractToken;
+        return obj instanceof AddToken;
     }
 
     public String toString() {
-        return "-";
+        return "String";
     }
 }

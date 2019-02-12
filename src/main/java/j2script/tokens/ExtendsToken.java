@@ -2,7 +2,7 @@ package j2script.tokens;
 
 public class ExtendsToken implements Token {
     public int hashCode() {
-        return 1;
+        return 7;
     }
 
     public boolean equals(Object obj) {
@@ -10,6 +10,6 @@ public class ExtendsToken implements Token {
     }
 
     public String toString() {
-        return "Boolean";
+        return "extends";
     }
 }

@@ -10,6 +10,6 @@ public class AddToken implements Token {
     }
 
     public String toString() {
-        return "Boolean";
+        return "+";
     }
 }
