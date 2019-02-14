@@ -46,12 +46,14 @@ public class Tokenizer {
         this.input = input;
         inputPos = 0;
     }
+
     private void skipWhitespace() {
         while (inputPos < input.length &&
                 Character.isWhitespace(input[inputPos])) {
             inputPos++;
         }
     }
+
     private Token tryTokenizeOther() {
         for (final Map.Entry<String, Token> entry : TOKEN_MAPPING.entrySet()) {
             final String key = entry.getKey();
@@ -75,6 +77,25 @@ public class Tokenizer {
         }
 
         return probePos == probe.length();
+    }
+
+    private NumberToken tryTokenizeNumber() {
+        final int initialInputPos = inputPos;
+        String digits = "";
+ 
+        while (inputPos < input.length &&
+               Character.isDigit(input[inputPos])) {
+            digits += input[inputPos];
+            inputPos++;
+        }
+ 
+        if (digits.length() > 0) {
+            return new NumberToken(Integer.parseInt(digits));
+        } else {
+            // reset position
+            inputPos = initialInputPos;
+            return null;
+        }
     }
 
     private VariableToken tryTokenizeVariable() {
