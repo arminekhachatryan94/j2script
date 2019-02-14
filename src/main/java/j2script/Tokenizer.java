@@ -37,7 +37,6 @@ public class Tokenizer {
                 put("string", new StringToken());
                 put("-", new SubtractToken());
                 put("this", new ThisToken());
-                put("variable", new VariableToken());
                 put("Void", new VoidToken());
                 put("while", new WhileToken());
             }};
