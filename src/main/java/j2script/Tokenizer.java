@@ -44,5 +44,100 @@ public class Tokenizer {
         this.input = input;
         inputPos = 0;
     }
+    private void skipWhitespace() {
+        while (inputPos < input.length &&
+                Character.isWhitespace(input[inputPos])) {
+            inputPos++;
+        }
+    }
+    private Token tryTokenizeOther() {
+        for (final Map.Entry<String, Token> entry : TOKEN_MAPPING.entrySet()) {
+            final String key = entry.getKey();
+            if (prefixCharsEqual(key)) {
+                inputPos += key.length();
+                return entry.getValue();
+            }
+        }
+        return null;
+    }
+
+    private boolean prefixCharsEqual(final String probe) {
+        int targetPos = inputPos;
+        int probePos = 0;
+
+        while (targetPos < input.length &&
+                probePos < probe.length() &&
+                probe.charAt(probePos) == input[targetPos]) {
+            probePos++;
+            targetPos++;
+        }
+
+        return probePos == probe.length();
+    }
+
+    private VariableToken tryTokenizeVariable() {
+        final int initialInputPos = inputPos;
+        String name = "";
+
+        if (Character.isLetter(input[inputPos])) {
+            name += input[inputPos];
+            inputPos++;
+            while (inputPos < input.length &&
+                    Character.isLetterOrDigit(input[inputPos])) {
+                name += input[inputPos];
+                inputPos++;
+            }
+        } else {
+            // reset position
+            inputPos = initialInputPos;
+            return null;
+        }
+
+        if (isTokenString(name)) {
+            // reset position
+            inputPos = initialInputPos;
+            return null;
+        } else {
+            return new VariableToken(name);
+        }
+    }
+    // returns null if there are no more tokens
+    public Token tokenizeSingle() throws TokenizerException {
+        VariableToken var = null;
+        NumberToken num = null;
+        Token otherToken = null;
+
+        skipWhitespace();
+
+        if (inputPos >= input.length) {
+            return null;
+        } else if ((var = tryTokenizeVariable()) != null) {
+            return var;
+        } else if ((num = tryTokenizeNumber()) != null) {
+            return num;
+        } else if ((otherToken = tryTokenizeOther()) != null) {
+            return otherToken;
+        } else {
+            throw new TokenizerException("Invalid character " +
+                    input[inputPos] +
+                    " at position " +
+                    inputPos);
+        }
+    }
+
+    public static boolean isTokenString(final String input) {
+        return TOKEN_MAPPING.containsKey(input);
+    }
+
+    public List<Token> tokenize() throws TokenizerException {
+        List<Token> list = new ArrayList<Token>();
+        Token current = null;
+
+        while ((current = tokenizeSingle()) != null) {
+            list.add(current);
+        }
+
+        return list;
+    }
 
 }
