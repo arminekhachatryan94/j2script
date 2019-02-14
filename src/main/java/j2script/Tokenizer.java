@@ -4,6 +4,8 @@ import j2script.tokens.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 
 public class Tokenizer {
     private final char[] input;
