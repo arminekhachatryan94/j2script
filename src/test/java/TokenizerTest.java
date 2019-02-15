@@ -22,4 +22,11 @@ public class TokenizerTest {
                     expected == null);
         }
     }
+
+    @Test
+    public void testTokenizeInteger() {
+        assertTokenizes("123", new Token[]{
+            new NumberToken(123)
+        });
+    }
 }
