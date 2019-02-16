@@ -70,8 +70,8 @@ public class TokenizerTest {
 
     @Test
     public void testTokenizeSingleChars() {
-        assertTokenizes("+-*/(){}",
-            new Token[]{ new AddToken(),
+        assertTokenizes("+-*/(){}", new Token[]{
+            new AddToken(),
             new SubtractToken(),
             new MultiplyToken(),
             new DivToken(),
@@ -79,6 +79,16 @@ public class TokenizerTest {
             new RightParenToken(),
             new LeftCurlyToken(),
             new RightCurlyToken()
+        });
+    }
+
+    @Test
+    public void testIntVariableEqualNumberToken() {
+        assertTokenizes("int xyz=25", new Token[]{
+            new IntToken(),
+            new VariableToken("xyz"),
+            new EqualToken(),
+            new NumberToken(25)
         });
     }
 
@@ -96,6 +106,16 @@ public class TokenizerTest {
     @Test
     public void testTokenizeElse() {
         assertTokenizes("else", new Token[]{ new ElseToken() });
+    }
+
+    @Test
+    public void testTokenizeVariableStartsWithElse() {
+        assertTokenizes("elsex", new Token[]{ new VariableToken("elsex") });
+    }
+
+    @Test
+    public void testTokenizeVariableEndsWithElse() {
+        assertTokenizes("xelse", new Token[]{ new VariableToken("xelse") });
     }
 
     @Test
