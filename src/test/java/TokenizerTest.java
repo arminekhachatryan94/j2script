@@ -134,4 +134,25 @@ public class TokenizerTest {
             new RightCurlyToken()
         });
     }
+
+    @Test
+    public void testTokenizePublic() {
+        assertTokenizes("public", new Token[]{
+            new PublicToken()
+        });
+    }
+
+    @Test
+    public void testTokenizePrivate() {
+        assertTokenizes("private", new Token[]{
+            new PrivateToken()
+        });
+    }
+
+    @Test
+    public void testTokenizeExtends() {
+        assertTokenizes("extends", new Token[]{
+            new ExtendsToken()
+        });
+    }
 }
