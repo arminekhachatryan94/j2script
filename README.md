@@ -1,6 +1,15 @@
-# compilers-project
+# j2script
 
-The grammar:
+## Team Members:
+```
+Armine Khachatryan
+Areeba Waheed
+Robert Bedrosian
+John Brehm
+Carlos Sandoval
+```
+
+## The grammar:
 ```
 var is a variable name
 str is a string
