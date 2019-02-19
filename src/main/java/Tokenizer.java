@@ -9,34 +9,35 @@ public class Tokenizer {
     private int inputPos;
 
     private static Map<String, Token> TOKEN_MAPPING =
-            new HashMap<String, Token>() {{
-                put("+", new AddToken());
-                put("Boolean", new BooleanToken());
-                put("Break", new BreakToken());
-                put("class", new ClassToken());
-                put("/", new DivToken());
-                put("else", new ElseToken());
-                put("=", new EqualToken());
-                put("extends", new ExtendsToken());
-                put("if", new IfToken());
-                put("int", new IntToken());
-                put("{", new LeftCurlyToken());
-                put("(", new LeftParenToken());
-                put("*", new MultiplyToken());
-                put("new", new NewToken());
-                put("println", new PrintToken());
-                put("private", new PrivateToken());
-                put("public", new PublicToken());
-                put("return", new ReturnToken());
-                put("}", new RightCurlyToken());
-                put(")", new RightParenToken());
-                put(";", new SemiToken());
-                put("string", new StringToken());
-                put("-", new SubtractToken());
-                put("this", new ThisToken());
-                put("Void", new VoidToken());
-                put("while", new WhileToken());
-            }};
+        new HashMap<String, Token>() {{
+            put("+", new AddToken());
+            put("Boolean", new BooleanToken());
+            put("Break", new BreakToken());
+            put("class", new ClassToken());
+            put("/", new DivToken());
+            put("else", new ElseToken());
+            put("=", new EqualToken());
+            put("extends", new ExtendsToken());
+            put("if", new IfToken());
+            put("int", new IntToken());
+            put("{", new LeftCurlyToken());
+            put("(", new LeftParenToken());
+            put("*", new MultiplyToken());
+            put("new", new NewToken());
+            put("println", new PrintToken());
+            put("private", new PrivateToken());
+            put("public", new PublicToken());
+            put("return", new ReturnToken());
+            put("}", new RightCurlyToken());
+            put(")", new RightParenToken());
+            put(";", new SemiToken());
+            put("string", new StringToken());
+            put("-", new SubtractToken());
+            put("this", new ThisToken());
+            put("Void", new VoidToken());
+            put("while", new WhileToken());
+        }
+    };
 
     public Tokenizer(final char[] input) {
         this.input = input;
