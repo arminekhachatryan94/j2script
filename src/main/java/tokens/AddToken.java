@@ -1,7 +1,7 @@
-package j2script;
-public class StringToken implements Token {
+package j2script.tokens;
+public class AddToken implements Token {
     public int hashCode() {
-        return 20;
+        return 1;
     }
 
     public boolean equals(Object obj) {
@@ -9,6 +9,6 @@ public class StringToken implements Token {
     }
 
     public String toString() {
-        return "String";
+        return "+";
     }
 }

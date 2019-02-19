@@ -1,4 +1,4 @@
-package j2script;
+package j2script.tokens;
 // Interface for Token classes
 // Not actually needed but will allow right click > generate to generate methods in Intellij
 public interface Token {

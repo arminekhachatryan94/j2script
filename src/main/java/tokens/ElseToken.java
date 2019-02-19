@@ -1,14 +1,14 @@
-package j2script;
-public class DivToken implements Token {
+package j2script.tokens;
+public class ElseToken implements Token {
     public int hashCode() {
         return 5;
     }
 
     public boolean equals(Object obj) {
-        return obj instanceof DivToken;
+        return obj instanceof ElseToken;
     }
 
     public String toString() {
-        return "/";
+        return "else";
     }
 }

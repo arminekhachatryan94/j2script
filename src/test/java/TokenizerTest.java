@@ -4,6 +4,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertArrayEquals;
 
 import j2script.*;
+import j2script.tokens.*;
 import org.junit.Test;
 
 public class TokenizerTest {

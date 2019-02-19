@@ -1,4 +1,4 @@
-package j2script;
+package j2script.tokens;
 public class PublicToken implements Token {
     public int hashCode() {
         return 16;

@@ -1,4 +1,4 @@
-package j2script;
+package j2script.tokens;
 public class RightParenToken implements Token {
     public int hashCode() {
         return 19;

@@ -1,4 +1,4 @@
-package j2script;
+package j2script.tokens;
 public class VariableToken implements Token {
     public String name;
 

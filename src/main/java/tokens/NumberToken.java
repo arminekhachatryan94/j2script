@@ -1,4 +1,4 @@
-package j2script;
+package j2script.tokens;
 
 public class NumberToken implements Token {
     public int number;
