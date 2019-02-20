@@ -9,6 +9,6 @@ public class BooleanToken implements Token {
     }
 
     public String toString() {
-        return "Boolean";
+        return "boolean";
     }
 }

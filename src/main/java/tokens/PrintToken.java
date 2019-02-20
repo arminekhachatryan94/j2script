@@ -5,7 +5,7 @@ public class PrintToken implements Token {
     }
 
     public boolean equals(Object obj) {
-        return obj instanceof NewToken;
+        return obj instanceof PrintToken;
     }
 
     public String toString() {

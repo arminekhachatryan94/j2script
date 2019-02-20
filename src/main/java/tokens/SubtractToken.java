@@ -1,7 +1,7 @@
 package j2script.tokens;
 public class SubtractToken implements Token {
     public int hashCode() {
-        return 21;
+        return 22;
     }
 
     public boolean equals(Object obj) {

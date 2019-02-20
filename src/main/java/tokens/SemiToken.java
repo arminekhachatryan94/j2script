@@ -5,7 +5,7 @@ public class SemiToken implements Token {
     }
 
     public boolean equals(Object obj) {
-        return obj instanceof AddToken;
+        return obj instanceof SemiToken;
     }
 
     public String toString() {

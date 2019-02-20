@@ -1,7 +1,7 @@
 package j2script.tokens;
 public class ThisToken implements Token {
     public int hashCode() {
-        return 22;
+        return 23;
     }
 
     public boolean equals(Object obj) {

@@ -13,8 +13,8 @@ public class Tokenizer {
     private static Map<String, Token> TOKEN_MAPPING =
         new HashMap<String, Token>() {{
             put("+", new AddToken());
-            put("Boolean", new BooleanToken());
-            put("Break", new BreakToken());
+            put("boolean", new BooleanToken());
+            put("break", new BreakToken());
             put("class", new ClassToken());
             put("/", new DivToken());
             put("else", new ElseToken());

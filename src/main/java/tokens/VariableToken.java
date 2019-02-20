@@ -7,7 +7,7 @@ public class VariableToken implements Token {
     }
 
     public int hashCode() {
-        return 23;
+        return 24;
     }
 
     public boolean equals(Object obj) {

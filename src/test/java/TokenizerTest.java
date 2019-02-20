@@ -163,4 +163,49 @@ public class TokenizerTest {
             new VoidToken()
         });
     }
+
+    @Test
+    public void testTokenizeBoolean() {
+        assertTokenizes("boolean", new Token[]{
+            new BooleanToken()
+        });
+    }
+
+    @Test
+    public void testTokenizeBreak() {
+        assertTokenizes("break", new Token[]{
+            new BreakToken()
+        });
+    }
+
+    @Test
+    public void testTokenizeWhileLoop() {
+        assertTokenizes("while (LULXD) { break }", new Token[]{
+            new WhileToken(),
+            new LeftParenToken(),
+            new VariableToken("LULXD"),
+            new RightParenToken(),
+            new LeftCurlyToken(),
+            new BreakToken(),
+            new RightCurlyToken()
+        });
+    }
+
+    @Test
+    public void testTokenizerException() {
+      assertTokenizes("$%&", null);
+    }
+
+    // Lazy plz ignore
+    @Test
+    public void testRestOfTokens() {
+        assertTokenizes("println return new this class;", new Token[]{
+            new PrintToken(),
+            new ReturnToken(),
+            new NewToken(),
+            new ThisToken(),
+            new ClassToken(),
+            new SemiToken()
+        });
+    }
 }
