@@ -156,4 +156,11 @@ public class TokenizerTest {
             new ExtendsToken()
         });
     }
+
+    @Test
+    public void testTokenizeVoid() {
+        assertTokenizes("void", new Token[]{
+            new VoidToken()
+        });
+    }
 }
