@@ -40,13 +40,13 @@ public class Tokenizer {
             put("while", new WhileToken());
         }
     };
-
     public Tokenizer(final char[] input) {
         this.input = input;
         inputPos = 0;
     }
 
     private void skipWhitespace() {
+        //Advances input position past whitespace
         while (inputPos < input.length &&
                 Character.isWhitespace(input[inputPos])) {
             inputPos++;
@@ -56,8 +56,9 @@ public class Tokenizer {
     private Token tryTokenizeOther() {
         for (final Map.Entry<String, Token> entry : TOKEN_MAPPING.entrySet()) {
             final String key = entry.getKey();
+            //check if the input is equal to any key.
             if (prefixCharsEqual(key)) {
-                inputPos += key.length();
+                inputPos += key.length();               
                 return entry.getValue();
             }
         }
@@ -65,17 +66,22 @@ public class Tokenizer {
     }
 
     private boolean prefixCharsEqual(final String probe) {
+        //Get the current input index.
         int targetPos = inputPos;
+        //Start index of key at 0
         int probePos = 0;
-
+        //Check if the current input is equal to this key (probe)
         while (targetPos < input.length &&
                 probePos < probe.length() &&
                 probe.charAt(probePos) == input[targetPos]) {
             probePos++;
             targetPos++;
         }
-
+        //return whether or not there is a prefix match.
         return probePos == probe.length();
+        /*(!) Note: Would fail if we had a keyword that was 
+        a prefix of another keyword, i.e. int int64
+        */
     }
 
     private NumberToken tryTokenizeNumber() {
@@ -100,10 +106,12 @@ public class Tokenizer {
     private VariableToken tryTokenizeVariable() {
         final int initialInputPos = inputPos;
         String name = "";
-
+        
+        //The first character must be a letter.
         if (Character.isLetter(input[inputPos])) {
             name += input[inputPos];
             inputPos++;
+            //The rest of the characters are letters or digits. No underscores allowed.
             while (inputPos < input.length &&
                     Character.isLetterOrDigit(input[inputPos])) {
                 name += input[inputPos];
@@ -114,7 +122,8 @@ public class Tokenizer {
             inputPos = initialInputPos;
             return null;
         }
-
+        
+        //Check if the string is actually a reserved keyword.
         if (isTokenString(name)) {
             // reset position
             inputPos = initialInputPos;
@@ -148,6 +157,7 @@ public class Tokenizer {
     }
 
     public static boolean isTokenString(final String input) {
+        
         return TOKEN_MAPPING.containsKey(input);
     }
 
@@ -161,5 +171,4 @@ public class Tokenizer {
 
         return list;
     }
-
 }
