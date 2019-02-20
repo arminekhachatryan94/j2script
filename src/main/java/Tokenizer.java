@@ -132,6 +132,67 @@ public class Tokenizer {
             return new VariableToken(name);
         }
     }
+    
+    //(!) Carlos will finish.
+    //Checks to see if next token is string
+    /*
+    private StringToken tryTokenizeString()
+    {
+        final int startingInputPos = this.inputPos;
+        boolean escapeChar = false;
+        String stringToken = "";
+        
+        //Look for the first double quote
+        if(input[this.inputPos] == "\"")
+        {
+            this.inputPos++;
+            //Treat everything until another double quote as part of the string.
+            while(this.inputPos < this.input.length && 
+                    this.input[this.inputPos] != "\"")
+            {
+                //Check if it's an escape character. (!)How to handle these.
+                //Check if this char is a backslash to introduce an escape char
+                if(this.input[this.inputPos] == "\\" &&
+                    this.inputPos+1 < this.input.length)
+                {
+                    //check if the following char makes a valid escape char.
+                    switch(this.input[this.inputPos])
+                    {
+                        case 'n': //newline
+                            stringToken += "\n";
+                        case 'r': //return carriage
+                            stringToken += "\r";
+                        default:
+                            break;
+                    }        
+                }
+                else //not an escape char
+                {
+                    //Accumulate the characters
+                    stringToken += this.input[this.inputPos];
+                    this.inputPos++;
+                }
+            }
+            //Check if another double quote was found by 
+            //_checking the last character before loop exit.
+            if(this.input[this.inputPos-1] != "\"")
+            {
+                this.inputPos = startingInputPos;
+                return null;
+            }
+            
+            return new StringToken(stringToken);
+            
+        }
+        else
+        {
+            //this.inputPos shouldn't have changed.
+            return null;
+        }
+           
+    }//end tryTokenizeString()
+    */
+    
     // returns null if there are no more tokens
     public Token tokenizeSingle() throws TokenizerException {
         VariableToken var = null;
