@@ -1,4 +1,4 @@
-package j2script.expressions;
+package j2script.operators;
 
 public interface Op {
     // not needed; used to indicate that these should be overridden
