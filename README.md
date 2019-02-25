@@ -16,13 +16,15 @@ str is a string
 
 type ::= int | boolean | void | classname
 op ::= + | - | * | /
-exp ::= type var |
+*/EDITTED FOR NON AMBIGUITY
+exp ::= primary op exp |
+ primary.methodname(exp*) |
+primary ::= type var |
  str |
  this |
  println(exp) |
- exp op exp |
- exp.methodname(exp*) |
- new classname(exp*) |
+ new classname(exp*)
+ */
 vardec ::= type var
 stmnt ::= vardec; |
        var = exp; |
