@@ -1,14 +1,14 @@
 package j2script.tokens;
-public class ElseToken implements Token {
+public class MinusToken implements Token {
     public int hashCode() {
-        return 27;
+        return 28;
     }
 
     public boolean equals(Object obj) {
-        return obj instanceof ElseToken;
+        return obj instanceof MinusToken;
     }
 
     public String toString() {
-        return "else";
+        return "-";
     }
 }

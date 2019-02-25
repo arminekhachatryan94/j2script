@@ -1,5 +1,7 @@
 package j2script.expressions;
 
+import j2script.operators.*;
+
 public class BinaryExp implements Exp {
     public final Exp left;
     public final Op op;

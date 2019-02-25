@@ -16,4 +16,7 @@ public class NumberToken implements Token {
                 ((NumberToken)other).number == number);
     }
 
+        public int hashCode() {
+        return 29;
+    }
 }

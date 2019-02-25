@@ -1,8 +1,8 @@
 package j2script;
+
 import j2script.tokens.*;
-import tokens.*;
-import expressions.*;
-import operators.*;
+import j2script.expressions.*;
+import j2script.operators.*;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -12,12 +12,12 @@ public class Parser
     // begin static variables
     private static final Map<Token, Op> ADDITIVE_OP_MAP =
         new HashMap<Token, Op>() {{
-            put(new PlusToken(), new PlusOp());
+            put(new AddToken(), new PlusOp());
             put(new MinusToken(), new MinusOp());
         }};
     private static final Map<Token, Op> MULTIPLICATIVE_OP_MAP =
         new HashMap<Token, Op>() {{
-            put(new MultToken(), new MultOp());
+            put(new MultiplyToken(), new MultOp());
             put(new DivToken(), new DivOp());
         }};
     // end static variables
@@ -76,7 +76,7 @@ public class Parser
                 {
                     // we have an op.  We MUST have a right; continue parsing.
                     final ParseResult<Exp> right = parseSomething(finalResult.tokenPos + 1);
-                    finalResult = new ParseResult<Exp>(new BinopExp(finalResult.result,
+                    finalResult = new ParseResult<Exp>(new BinaryExp(finalResult.result,
                                                                     op,
                                                                     right.result),
                                                        right.tokenPos);
