@@ -183,12 +183,24 @@ public class Parser
         Exp resultExp;
         int resultPos;
 
-        if (current instanceof LeftParenToken) 
-        {
-            final ParseResult<Exp> nested = parseExp(startPos + 1);
-            assertTokenAtPos(new RightParenToken(), nested.tokenPos);
-            resultExp = nested.result;
-            resultPos = nested.tokenPos + 1;
+        if (current instanceof IntToken) {
+            final ParseResult<Exp> vardec = parseVarDec(startPos);
+            resultExp = vardec.result;
+            resultPos = vardec.tokenPos + 1;
+        }
+        else if (current instanceof StringToken){
+            final ParseResult<Exp> vardec = parseVarDec(startPos);
+            resultExp = vardec.result;
+            resultPos = vardec.tokenPos + 1;        
+        }
+        else if (current instanceof BooleanToken){
+            final ParseResult<Exp> vardec = parseVarDec(startPos);
+            resultExp = vardec.result;
+            resultPos = vardec.tokenPos + 1;        
+        }
+        else if (current instanceof VariableToken){
+            assertTokenAtPos(new EqualToken(), startPos + 1);
+            final ParseResult<Exp> expression = parseExp(startPos + 2);
         }
         else if (current instanceof IfToken) 
         {
