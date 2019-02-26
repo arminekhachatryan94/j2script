@@ -14,7 +14,8 @@ Carlos Sandoval
 var is a variable name
 str is a string
 
-type ::= int | boolean | void | classname
+type ::= int | boolean | str
+returntype ::= type | void
 op ::= + | - | * | /
 */EDITTED FOR NON AMBIGUITY
 exp ::= additive |
