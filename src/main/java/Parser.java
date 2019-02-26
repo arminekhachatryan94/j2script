@@ -240,10 +240,9 @@ public class Parser
         return new ParseResult<Exp>(resultExp, resultPos);
     } // parseStatement
     
-    /*
     private ParseResult<Exp> parseClassDef(final int startPos) throws ParserException 
     {
-        final Token current = getToken(startPos);
+        int currentPos;
         
         //Should have an explicit access modifier
         checkAccess(startPos);
@@ -253,11 +252,21 @@ public class Parser
         assertTokenAtPos(new VariableToken(null), startPos + 2);
         //Can have an optional class extension
         //Checks if there's an optional class extension
-        final Token inheritanceCheck
+        currentPos = startPos + 3;
+        final Token inheritanceCheck = getToken(currentPos);
+        if(inheritanceCheck instanceof ExtendsToken)
+        {   //must have a classname as well
+            assertTokenAtPos(new VariableToken(null), startPos +4)
+            //Reaches here if there is a class name            
+            currentPos += 2;
+        }
+        assertTokenAtPos(new LeftCurlyToken(), currentPos);        
+        final Token instanceDecCheck = getToken(currentPos+1);
+        while(instanceDecCheck instanceof 
+        
         
         
     }//parseClassDef
-    */
     
     private ParseResult<Exp> parseMethodDef(final int startPos) throws ParserException {
       final ArrayList<VarDecExp> varDecList = new ArrayList();
