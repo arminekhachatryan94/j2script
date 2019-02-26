@@ -13,36 +13,48 @@ Carlos Sandoval
 ```
 var is a variable name
 str is a string
+i is an int
 
-type ::= int | boolean | void | classname
+type ::= int | boolean | string
+
+returntype ::= type | void
+
 op ::= + | - | * | /
-*/EDITTED FOR NON AMBIGUITY
-exp ::= additive op additive |
- primary.methodname(exp*) |
- primary
+
+exp ::= additive
+ 
 additive ::= multiplicative ( ('+' | '-') multiplicative)*
+
 multiplicative ::= primary ( ('*' | '/') primary)*
-primary ::= type var |
- str |
- this |
- println(exp) |
- new classname(exp*)
- */
+
+primary ::= i | var 
+ 
 vardec ::= type var
+
 stmnt ::= vardec; |
-       var = exp; |
-       while(exp) stmnt |
-       break; |
-       { stmnt* } |
-       if (exp) stmnt else stmnt |
-       return exp; |
-       return;
+          var = exp; |
+          while(exp) stmnt |
+          break; |
+          str |
+          type var |
+          this |
+          new classname(exp*) |
+          println(exp) |
+          { stmnt* } |
+          if (exp) stmnt else stmnt |
+          return exp; |
+          return; |
+          var.methodname(exp*)
+
 access ::= public | private
-methoddef ::= access type methodname(vardec*) stmnt
+
+methoddef ::= access returntype methodname(vardec*) stmnt
+
 instancedec ::= access vardec;
+
 classdef ::= access class classname [extends classname] {
-        instancedec*
-        constructor(vardec*) stmt
-        methoddef*
-        }
+             instancedec*
+             constructor(vardec*) stmt
+             methoddef*
+             }
 ```
