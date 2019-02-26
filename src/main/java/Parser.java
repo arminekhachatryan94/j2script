@@ -6,6 +6,7 @@ import j2script.operators.*;
 import j2script.types.*;
 import j2script.ParserException;
 import j2script.access.*;
+import java.util.ArrayList;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -200,19 +201,19 @@ public class Parser
             resultPos = vardec.tokenPos + 1;
         }
         else if (current instanceof VariableToken){
-            VariableExp variable = new VariableExp(tokens.getToken(startPos).name);
+            VariableExp variable = new VariableExp(((VariableToken) getToken(startPos)).name);
             assertTokenAtPos(new EqualToken(), startPos + 1);
             final ParseResult<Exp> expression = parseExp(startPos + 2);
-            resultExp = new VarEqualityExp(variable, expression);
+            resultExp = new VarEqualityExp(variable, expression.result);
             resultPos = expression.tokenPos + 1;
 
         }
         else if (current instanceof WhileToken){
-            assertTokenAtPos(new LeftParenToken(), startpos + 1);
-            final ParseResult<Exp> condition = parseExp(startpos + 2);
-            assertTokenAtPos(new RightParenToken(), startpos + 3);
-            assertTokenAtPos(new LeftCurlyToken() , startpos + 4);
-            final ParseResult<Exp> stmt = parseExp(startpos + 5);
+            assertTokenAtPos(new LeftParenToken(), startPos + 1);
+            final ParseResult<Exp> condition = parseExp(startPos + 2);
+            assertTokenAtPos(new RightParenToken(), startPos + 3);
+            assertTokenAtPos(new LeftCurlyToken() , startPos + 4);
+            final ParseResult<Exp> stmt = parseExp(startPos + 5);
             assertTokenAtPos(new RightCurlyToken() , stmt.tokenPos + 1);
             resultExp = new WhileExp(condition.result, stmt.result);
             resultPos = stmt.tokenPos + 2;
@@ -279,25 +280,30 @@ public class Parser
       assertTokenAtPos(new VariableToken(null), startPos + 2);
       assertTokenAtPos(new LeftParenToken(), startPos + 3);
       currentPos = startPos + 4;
-      while(!(gettoken(currentPos) instanceof RightParenToken)) {
+      while(!(getToken(currentPos) instanceof RightParenToken)) {
         ParseResult<Exp> temp = parseVarDec(currentPos);
-        //missing comma token?
-        varDecList.add(temp.result);
+        varDecList.add((VarDecExp) temp.result);
+
         currentPos = temp.tokenPos + 1;
       }
       final ParseResult<Exp> statement = parseStatement(currentPos + 1);
-      resultExp = new MethodDefExp();
+      resultExp = new MethodDefExp(ACCESS_MAP.get(getToken(startPos)), 
+                                   RETURN_TYPE_MAP.get(getToken(startPos + 1)), 
+                                   ((VariableToken)getToken(startPos + 2)).name,
+                                   varDecList,
+                                   statement.result
+      );
       resultPos = statement.tokenPos;
 
       return new ParseResult<Exp>(resultExp, resultPos);
     } // parseMethodDef
 
     private boolean checkReturnType(int pos) throws ParserException {
-      Access access = RETURN_TYPE_MAP.get(getToken(pos));
-      if(access != null) {
+      Type type = RETURN_TYPE_MAP.get(getToken(pos));
+      if(type != null) {
         return true;
       }
-      throw new ParserException("Expected return at " + startPos);
+      throw new ParserException("Expected return at " + pos);
     }
 
     private boolean checkAccess(int pos) throws ParserException {
@@ -305,7 +311,7 @@ public class Parser
       if(access != null) {
         return true;
       }
-      throw new ParserException("Expected method definition at " + startPos);
+      throw new ParserException("Expected method definition at " + pos);
     }
 
     private boolean checkType(int pos) throws ParserException {
@@ -313,7 +319,7 @@ public class Parser
       if(type != null) {
         return true;
       }
-      throw new ParserException("Expected method definition at " + startPos);
+      throw new ParserException("Expected method definition at " + pos);
     }
 
     private ParseResult<Exp> parseVarDec(final int startPos) throws ParserException {

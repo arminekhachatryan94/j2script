@@ -17,7 +17,6 @@ import org.junit.Rule;
 import org.junit.rules.ExpectedException;
 
 public class ParserTest {
-
   public void assertParses(final Token[] tokens, final Exp expected) {
         final Parser parser = new Parser(tokens);
         try {
@@ -38,12 +37,6 @@ public class ParserTest {
     @Test
     public void testVariableParsing() {
         assertParses(new Token[]{ new VariableToken("foo") }, new VariableExp("foo"));
-    }
-
-    @Test
-    public void testUnaryMinusParsing() {
-        final Token[] tokens = { new MinusToken(),new NumberToken(42) };
-        assertParses(tokens, new UnaryMinusExp(new NumberExp(42)));
     }
 
 	@Test
