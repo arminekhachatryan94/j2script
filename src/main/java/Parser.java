@@ -138,7 +138,7 @@ public class Parser
     }
     
     private ParseResult<Exp> parseExp(final int startPos) throws ParserException {
-        return parseAdditive(startPos);  //Needs to be changed
+        return parseAdditive(startPos);
     }
     
     private ParseResult<Exp> parseAdditive(final int startPos) throws ParserException {
