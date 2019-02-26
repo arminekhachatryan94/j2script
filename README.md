@@ -57,4 +57,5 @@ classdef ::= access class classname [extends classname] {
              constructor(vardec*) stmt
              methoddef*
              }
+program ::= classdef* stmnt
 ```
