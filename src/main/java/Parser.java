@@ -79,7 +79,7 @@ public class Parser
         }
 
         public abstract ParseResult<Exp> parseSomething(final int startPos) throws ParserException;
-
+        //
         public ParseResult<Exp> parse(final int startPos) throws ParserException 
         {
             int pos = startPos;
@@ -99,8 +99,8 @@ public class Parser
                                                                     op,
                                                                     right.result),
                                                        right.tokenPos);
-                } 
-                else 
+                }
+                else
                     // we don't have an op.  return whatever we have
                     return finalResult;
             }//end while there are tokens
@@ -240,9 +240,13 @@ public class Parser
 
         return new ParseResult<Exp>(resultExp, resultPos);
     } // parseStatement
-    
+/*    
     private ParseResult<Exp> parseClassDef(final int startPos) throws ParserException 
     {
+        final ArrayList<InstanceDecExp> instanceDecList = new ArrayList();
+        final ArrayList<VarDecExp> varDecList = new ArrayList();
+        final ArrayList<MethodDefExp> methodDefList = new ArrayList();
+
         int currentPos;
         
         //Should have an explicit access modifier
@@ -254,7 +258,7 @@ public class Parser
         //Can have an optional class extension
         //Checks if there's an optional class extension
         currentPos = startPos + 3;
-        final Token inheritanceCheck = getToken(currentPos);
+        final Token inheritanceCheck = getToken(currentPos);        
         if(inheritanceCheck instanceof ExtendsToken)
         {   //must have a classname as well
             assertTokenAtPos(new VariableToken(null), startPos +4)
@@ -262,13 +266,44 @@ public class Parser
             currentPos += 2;
         }
         assertTokenAtPos(new LeftCurlyToken(), currentPos);        
-        final Token instanceDecCheck = getToken(currentPos+1);
-        while(instanceDecCheck instanceof 
-        
-        
-        
+        //final InstanceDecExp instanceDecCheck = parseInstanceDecExp(currentPos+1);
+        //assuming constructor is keyword & name for this class' constructor
+        while(!(getToken(currentPos) instanceof constructorToken))
+        {        
+            //if there's no constructor, then there must be an instancDec
+            ParseResult<InstanceDecExp> instanceDecTemp = parseInstanceDecExp(currentPos);
+            instanceDecList.add(instanceDecTemp);
+            currentPos = instanceDecTemp.tokenPos + 1;
+        }
+        //constructor token found
+        //currentPos++;
+        assertTokenAtPos(new LeftParenToken(), currentPos+1);
+        currentPos += 2;
+        //Look for varDecl's
+        while(!(gettoken(currentPos) instanceof RightParenToken)) 
+        {
+            ParseResult<Exp> temp = parseVarDec(currentPos);
+            //missing comma token??
+            varDecList.add(temp.result);
+            currentPos = temp.tokenPos + 1;
+        }
+        final ParseResult<Exp> statement = parseStatement(currentPos + 1);
+        currentPos += 2;
+        //look for final right curly brace &| method defn's
+        while(!(getToken(currentPos) instanceof RightCurlyToken))
+        {        
+            //if there's no constructor, then there must be an instancDec
+            ParseResult<MethodDefExp> methodDefTemp = parseMethodDefExp(currentPos);
+            methodDefList.add(methodDefTemp);
+            currentPos = methodDefTemp.tokenPos + 1;
+        }
+        //implicitly found RightCurlyToken
+        resultExp = new ClassDefExp();
+        resultPos = currentPos+1;
+
+        return new ParseResult<Exp>(resultExp, resultPos);        
     }//parseClassDef
-    
+*/
     private ParseResult<Exp> parseMethodDef(final int startPos) throws ParserException {
       final ArrayList<VarDecExp> varDecList = new ArrayList();
       int currentPos;
@@ -338,6 +373,7 @@ public class Parser
       return new ParseResult<Exp>(resultExp, resultPos);
     }  // parseVarDec
 
+    //(!)Needs to include new InstanceDecExp()
     private ParseResult<Exp> parseInstanceDec(final int startPos) throws ParserException {
       int pos = startPos;
       Exp resultExp;
