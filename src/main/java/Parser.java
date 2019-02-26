@@ -239,13 +239,32 @@ public class Parser
 
         return new ParseResult<Exp>(resultExp, resultPos);
     } // parseStatement
-
+    
+    /*
+    private ParseResult<Exp> parseClassDef(final int startPos) throws ParserException 
+    {
+        final Token current = getToken(startPos);
+        
+        //Should have an explicit access modifier
+        checkAccess(startPos);
+        //Check if it has 'class' keyword.
+        assertTokenAtPos(new ClassToken(), startPos+1);
+        //That it has a variable name
+        assertTokenAtPos(new VariableToken(null), startPos + 2);
+        //Can have an optional class extension
+        //Checks if there's an optional class extension
+        final Token inheritanceCheck
+        
+        
+    }//parseClassDef
+    */
+    
     private ParseResult<Exp> parseMethodDef(final int startPos) throws ParserException {
       final ArrayList<VarDecExp> varDecList = new ArrayList();
       int currentPos;
       Exp resultExp;
       int resultPos;
-
+      
       checkAccess(startPos);
       checkReturnType(startPos + 1);
       assertTokenAtPos(new VariableToken(null), startPos + 2);
@@ -253,6 +272,7 @@ public class Parser
       currentPos = startPos + 4;
       while(!(gettoken(currentPos) instanceof RightParenToken)) {
         ParseResult<Exp> temp = parseVarDec(currentPos);
+        //missing comma token?
         varDecList.add(temp.result);
         currentPos = temp.tokenPos + 1;
       }
