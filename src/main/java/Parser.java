@@ -197,7 +197,7 @@ public class Parser
         else if (current instanceof BooleanToken){
             final ParseResult<Exp> vardec = parseVarDec(startPos);
             resultExp = vardec.result;
-            resultPos = vardec.tokenPos + 1;        
+            resultPos = vardec.tokenPos + 1;
         }
         else if (current instanceof VariableToken){
             VariableExp variable = new VariableExp(tokens.getToken(startPos).name);
@@ -205,6 +205,7 @@ public class Parser
             final ParseResult<Exp> expression = parseExp(startPos + 2);
             resultExp = new VarEqualityExp(variable, expression);
             resultPos = expression.tokenPos + 1;
+
         }
         else if (current instanceof WhileToken){
             assertTokenAtPos(new LeftParenToken(), startpos + 1);
@@ -215,8 +216,6 @@ public class Parser
             assertTokenAtPos(new RightCurlyToken() , stmt.tokenPos + 1);
             resultExp = new WhileExp(condition.result, stmt.result);
             resultPos = stmt.tokenPos + 2;
-
-
         }
         else if (current instanceof IfToken) 
         {
@@ -241,12 +240,43 @@ public class Parser
         return new ParseResult<Exp>(resultExp, resultPos);
     } // parseStatement
 
+    private ParseResult<Exp> parseMethodDef(final int startPos) throws ParserException {
+      final ArrayList<VarDecExp> varDecList = new ArrayList();
+      int currentPos;
+      Exp resultExp;
+      int resultPos;
+
+      checkAccess(startPos);
+      checkReturnType(startPos + 1);
+      assertTokenAtPos(new VariableToken(null), startPos + 2);
+      assertTokenAtPos(new LeftParenToken(), startPos + 3);
+      currentPos = startPos + 4;
+      while(!(gettoken(currentPos) instanceof RightParenToken)) {
+        ParseResult<Exp> temp = parseVarDec(currentPos);
+        varDecList.add(temp.result);
+        currentPos = temp.tokenPos + 1;
+      }
+      final ParseResult<Exp> statement = parseStatement(currentPos + 1);
+      resultExp = new MethodDefExp();
+      resultPos = statement.tokenPos;
+
+      return new ParseResult<Exp>(resultExp, resultPos);
+    } // parseMethodDef
+
+    private boolean checkReturnType(int pos) throws ParserException {
+      Access access = RETURN_TYPE_MAP.get(getToken(pos));
+      if(access != null) {
+        return true;
+      }
+      throw new ParserException("Expected return at " + startPos);
+    }
+
     private boolean checkAccess(int pos) throws ParserException {
       Access access = ACCESS_MAP.get(getToken(pos));
       if(access != null) {
         return true;
       }
-      return false;
+      throw new ParserException("Expected method definition at " + startPos);
     }
 
     private boolean checkType(int pos) throws ParserException {
@@ -254,7 +284,7 @@ public class Parser
       if(type != null) {
         return true;
       }
-      return false;
+      throw new ParserException("Expected method definition at " + startPos);
     }
 
     private ParseResult<Exp> parseVarDec(final int startPos) throws ParserException {
