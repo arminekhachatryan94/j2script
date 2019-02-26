@@ -4,6 +4,7 @@ import j2script.tokens.*;
 import j2script.expressions.*;
 import j2script.operators.*;
 import j2script.types.*;
+import j2script.access.*;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -31,8 +32,8 @@ public class Parser
       new HashMap<Token, Type>(TYPE_MAP) {{ 
         put(new VoidToken(), new VoidType());
       }};
-    private static final Map<Token, Op> ACCESS_MAP =
-      new HashMap<Token, Op>() {{
+    private static final Map<Token, Access> ACCESS_MAP =
+      new HashMap<Token, Access>() {{
           put(new PublicToken(), new PublicAccess());
           put(new PrivateToken(), new PrivateAccess());
       }};
@@ -212,33 +213,52 @@ public class Parser
         return new ParseResult<Exp>(resultExp, resultPos);
     } // parseStatement
 
-    private ParseResult<Exp> parseType(final int pos) throws ParserException {
-      return new ParseResult<Exp>(TYPE_MAP.get(getToken(pos)));
-    } // parseType
+    private boolean checkAccess(int pos) throws ParserException {
+      Access access = ACCESS_MAP.get(getToken(pos));
+      if(access != null) {
+        return true;
+      }
+      return false;
+    }
 
-    private ParseResult<Exp> parseReturnType(final int pos) throws ParserException {
-      RETURN_TYPE_MAP.get(getToken(pos));
-    } // parseReturnType
-
-    private ParseResult<Exp> parseAccess(final int pos) throws ParserException {
-     ACCESS_MAP.get(getToken(pos));
-    } // parseAccess
+    private boolean checkType(int pos) throws ParserException {
+      Type type = TYPE_MAP.get(getToken(pos));
+      if(type != null) {
+        return true;
+      }
+      return false;
+    }
 
     private ParseResult<Exp> parseVarDec(final int startPos) throws ParserException {
-      final Token current = getToken(startPos);
+      int pos = startPos;
       Exp resultExp;
       int resultPos;
 
-      if(current instanceof TypeToken) {
-        final ParseResult<Exp> nested = parseType();
-        assertTokenAtPos(new VariableToken(), startPos + 1);
-        
-        resultExp = nested.result;
-        resultPos = nested.tokenPos + 2;
+      if(checkType(startPos)) {
+        assertTokenAtPos(new VariableToken(null), startPos + 1);
+        resultExp = new VarDecExp(TYPE_MAP.get(getToken(startPos)), ((VariableToken) getToken(startPos + 1)).name);
+        resultPos = startPos + 2;
       }
       else {
         throw new ParserException("Expected variable declaration at " + startPos);
       }
       return new ParseResult<Exp>(resultExp, resultPos);
-    }
+    }  // parseVarDec
+
+    private ParseResult<Exp> parseInstanceDec(final int startPos) throws ParserException {
+      int pos = startPos;
+      Exp resultExp;
+      int resultPos;
+
+      if(checkAccess(startPos)) {
+        final ParseResult<Exp> instanceDec = parseVarDec(startPos + 2);
+        assertTokenAtPos(new SemiToken(), instanceDec.tokenPos + 1);
+        resultExp = instanceDec.result;
+        resultPos = instanceDec.tokenPos + 1;
+      }
+      else {
+        throw new ParserException("Expected variable declaration at " + startPos);
+      }
+      return new ParseResult<Exp>(resultExp, resultPos);
+    }  // parseInstanceDec
 } // Parser

@@ -34,7 +34,7 @@ public class Tokenizer {
             put(")", new RightParenToken());
             put(";", new SemiToken());
             put("string", new StringToken());
-            put("-", new SubtractToken());
+            put("-", new MinusToken());
             put("this", new ThisToken());
             put("void", new VoidToken());
             put("while", new WhileToken());

@@ -1,5 +1,7 @@
 package j2script.expressions;
 
+import j2script.types.Type;
+
 public class VarDecExp implements Exp {
     public final Type type;
     public final String name;

@@ -1,4 +1,4 @@
-package j2script.expressions;
+package j2script.access;
 
 public interface Access {
     // not needed; used to indicate that these should be overridden
