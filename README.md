@@ -17,7 +17,7 @@ str is a string
 type ::= int | boolean | void | classname
 op ::= + | - | * | /
 */EDITTED FOR NON AMBIGUITY
-exp ::= additive op additive |
+exp ::= additive |
  primary.methodname(exp*) |
  primary
 additive ::= multiplicative ( ('+' | '-') multiplicative)*
