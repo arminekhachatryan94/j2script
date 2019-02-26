@@ -22,7 +22,7 @@ returntype ::= type | void
 op ::= + | - | * | /
 
 */EDITTED FOR NON AMBIGUITY
-exp ::= additive | primary.methodname(exp*) | primary
+exp ::= additive | primary
  
 additive ::= multiplicative ( ('+' | '-') multiplicative)*
 
@@ -45,7 +45,8 @@ stmnt ::= vardec; |
           { stmnt* } |
           if (exp) stmnt else stmnt |
           return exp; |
-          return;
+          return; |
+          var.methodname(exp*)
 
 access ::= public | private
 
