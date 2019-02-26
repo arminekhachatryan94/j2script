@@ -22,7 +22,7 @@ returntype ::= type | void
 op ::= + | - | * | /
 
 */EDITTED FOR NON AMBIGUITY
-exp ::= additive | primary
+exp ::= additive
  
 additive ::= multiplicative ( ('+' | '-') multiplicative)*
 
