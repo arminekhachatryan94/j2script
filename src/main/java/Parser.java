@@ -230,7 +230,7 @@ public class Parser
 
     private ParseResult<Exp> parseMethodDef(final int startPos) throws ParserException {
       final ArrayList<VarDecExp> varDecList = new ArrayList();
-      int currentPos
+      int currentPos;
       Exp resultExp;
       int resultPos;
 
@@ -239,7 +239,7 @@ public class Parser
       assertTokenAtPos(new VariableToken(null), startPos + 2);
       assertTokenAtPos(new LeftParenToken(), startPos + 3);
       currentPos = startPos + 4;
-      while(!(gettoken(currentPos) instanceof RightParenToken) {
+      while(!(gettoken(currentPos) instanceof RightParenToken)) {
         ParseResult<Exp> temp = parseVarDec(currentPos);
         varDecList.add(temp.result);
         currentPos = temp.tokenPos + 1;
