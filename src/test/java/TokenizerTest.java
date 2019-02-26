@@ -73,7 +73,7 @@ public class TokenizerTest {
     public void testTokenizeSingleChars() {
         assertTokenizes("+-*/(){}", new Token[]{
             new AddToken(),
-            new SubtractToken(),
+            new MinusToken(),
             new MultiplyToken(),
             new DivToken(),
             new LeftParenToken(),
@@ -100,7 +100,7 @@ public class TokenizerTest {
             new IfToken(),
             new AddToken(),
             new VariableToken("foo"),
-            new SubtractToken()
+            new MinusToken()
         });
     }
 
