@@ -21,7 +21,6 @@ returntype ::= type | void
 
 op ::= + | - | * | /
 
-*/EDITTED FOR NON AMBIGUITY
 exp ::= additive
  
 additive ::= multiplicative ( ('+' | '-') multiplicative)*
@@ -29,7 +28,6 @@ additive ::= multiplicative ( ('+' | '-') multiplicative)*
 multiplicative ::= primary ( ('*' | '/') primary)*
 
 primary ::= i | var 
- */
  
 vardec ::= type var
 
