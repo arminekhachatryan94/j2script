@@ -3,6 +3,7 @@ package j2script;
 import j2script.tokens.*;
 import j2script.expressions.*;
 import j2script.operators.*;
+import j2script.types.*;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -11,15 +12,30 @@ public class Parser
 {
     // begin static variables
     private static final Map<Token, Op> ADDITIVE_OP_MAP =
-        new HashMap<Token, Op>() {{
-            put(new AddToken(), new PlusOp());
-            put(new MinusToken(), new MinusOp());
-        }};
+      new HashMap<Token, Op>() {{
+          put(new AddToken(), new PlusOp());
+          put(new MinusToken(), new MinusOp());
+      }};
     private static final Map<Token, Op> MULTIPLICATIVE_OP_MAP =
-        new HashMap<Token, Op>() {{
-            put(new MultiplyToken(), new MultOp());
-            put(new DivToken(), new DivOp());
-        }};
+      new HashMap<Token, Op>() {{
+          put(new MultiplyToken(), new MultOp());
+          put(new DivToken(), new DivOp());
+      }};
+    private static final Map<Token, Type> TYPE_MAP = 
+      new HashMap<Token, Type>() {{
+        put(new IntToken(), new IntType());
+        put(new BooleanToken(), new BooleanType());
+        put(new StringToken(), new StringType());
+      }};
+    private static final Map<Token, Type> RETURN_TYPE_MAP = 
+      new HashMap<Token, Type>(TYPE_MAP) {{ 
+        put(new VoidToken(), new VoidType());
+      }};
+    private static final Map<Token, Op> ACCESS_MAP =
+      new HashMap<Token, Op>() {{
+          put(new PublicToken(), new PublicAccess());
+          put(new PrivateToken(), new PrivateAccess());
+      }};
     // end static variables
     
     // begin instance variables
@@ -111,8 +127,7 @@ public class Parser
         }
     }//ParseMultiplicative
     /*******************************************************/
-    public Exp parseExp() throws ParserException 
-    {
+    public Exp parseExp() throws ParserException {
         final ParseResult<Exp> result = parseExp(0); //Begin parsing at startPos = 0
         if (result.tokenPos == tokens.length) {
             return result.result;
@@ -120,39 +135,25 @@ public class Parser
             throw new ParserException("Extra tokens starting at " + result.tokenPos);
         }
     }
-    //
-    private ParseResult<Exp> parseExp(final int startPos) throws ParserException 
-    {
-        return parseAdditive(startPos);
+    
+    private ParseResult<Exp> parseExp(final int startPos) throws ParserException {
+        return parseAdditive(startPos);  //Needs to be changed
     }
-    //
+    
     private ParseResult<Exp> parseAdditive(final int startPos) throws ParserException {
         return new ParseAdditive().parse(startPos);
     }
-    //
-    private ParseResult<Exp> parseMultiplicative(final int startPos) throws ParserException 
-    {
+    
+    private ParseResult<Exp> parseMultiplicative(final int startPos) throws ParserException {
         return new ParseMultiplicative().parse(startPos);
     }
-    //
-    private ParseResult<Exp> parseNumber(final int startPos) throws ParserException 
-    {
-        final Token current = getToken(startPos);
-        if (current instanceof NumberToken) {
-            return new ParseResult<Exp>(new NumberExp(((NumberToken)current).number),
-                                        startPos + 1);
-        } else {
-            return null;
-        }
-    }
-    //
-    private void assertTokenAtPos(final Token token, final int pos) throws ParserException 
-    {
+    
+    private void assertTokenAtPos(final Token token, final int pos) throws ParserException {
         if (!getToken(pos).equals(token)) {
             throw new ParserException("Expected " + token.toString() + " at pos " + pos);
         }
     }
-    //
+    
     private ParseResult<Exp> parsePrimary(final int startPos) throws ParserException {
         final Token current = getToken(startPos);
         Exp resultExp;
@@ -168,20 +169,26 @@ public class Parser
             resultExp = new VariableExp(((VariableToken)current).name);
             resultPos = startPos + 1;
         } 
-        else if (current instanceof MinusToken) 
+        else 
         {
-            //look for a number 
-            final ParseResult<Exp> nested = parsePrimary(startPos + 1);
-            resultExp = new UnaryMinusExp(nested.result);
-            resultPos = nested.tokenPos;
-        } 
-        else if (current instanceof LeftParenToken) 
+            throw new ParserException("Expected primary at " + startPos);
+        }
+
+        return new ParseResult<Exp>(resultExp, resultPos);
+    } // parsePrimary
+
+    private ParseResult<Exp> parseStatement(final int startPos) throws ParserException {
+        final Token current = getToken(startPos);
+        Exp resultExp;
+        int resultPos;
+
+        if (current instanceof LeftParenToken) 
         {
             final ParseResult<Exp> nested = parseExp(startPos + 1);
             assertTokenAtPos(new RightParenToken(), nested.tokenPos);
             resultExp = nested.result;
             resultPos = nested.tokenPos + 1;
-        } 
+        }
         else if (current instanceof IfToken) 
         {
             assertTokenAtPos(new LeftParenToken(), startPos + 1);
@@ -199,9 +206,39 @@ public class Parser
         } 
         else 
         {
-            throw new ParserException("Expected primary at " + startPos);
+            throw new ParserException("Expected statement at " + startPos);
         }
 
         return new ParseResult<Exp>(resultExp, resultPos);
-    } // parsePrimary
+    } // parseStatement
+
+    private ParseResult<Exp> parseType(final int pos) throws ParserException {
+      return new ParseResult<Exp>(TYPE_MAP.get(getToken(pos)));
+    } // parseType
+
+    private ParseResult<Exp> parseReturnType(final int pos) throws ParserException {
+      RETURN_TYPE_MAP.get(getToken(pos));
+    } // parseReturnType
+
+    private ParseResult<Exp> parseAccess(final int pos) throws ParserException {
+     ACCESS_MAP.get(getToken(pos));
+    } // parseAccess
+
+    private ParseResult<Exp> parseVarDec(final int startPos) throws ParserException {
+      final Token current = getToken(startPos);
+      Exp resultExp;
+      int resultPos;
+
+      if(current instanceof TypeToken) {
+        final ParseResult<Exp> nested = parseType();
+        assertTokenAtPos(new VariableToken(), startPos + 1);
+        
+        resultExp = nested.result;
+        resultPos = nested.tokenPos + 2;
+      }
+      else {
+        throw new ParserException("Expected variable declaration at " + startPos);
+      }
+      return new ParseResult<Exp>(resultExp, resultPos);
+    }
 } // Parser
