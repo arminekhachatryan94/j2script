@@ -4,6 +4,7 @@ import j2script.tokens.*;
 import j2script.expressions.*;
 import j2script.operators.*;
 import j2script.types.*;
+import j2script.ParserException;
 import j2script.access.*;
 
 import java.util.Map;
@@ -199,11 +200,22 @@ public class Parser
             resultPos = vardec.tokenPos + 1;
         }
         else if (current instanceof VariableToken){
-            Exp variable = new VariableExp(((VariableToken) getToken(startPos)).name);
+            VariableExp variable = new VariableExp(tokens.getToken(startPos).name);
             assertTokenAtPos(new EqualToken(), startPos + 1);
             final ParseResult<Exp> expression = parseExp(startPos + 2);
             resultExp = new VarEqualityExp(variable, expression);
             resultPos = expression.tokenPos + 1;
+
+        }
+        else if (current instanceof WhileToken){
+            assertTokenAtPos(new LeftParenToken(), startpos + 1);
+            final ParseResult<Exp> condition = parseExp(startpos + 2);
+            assertTokenAtPos(new RightParenToken(), startpos + 3);
+            assertTokenAtPos(new LeftCurlyToken() , startpos + 4);
+            final ParseResult<Exp> stmt = parseExp(startpos + 5);
+            assertTokenAtPos(new RightCurlyToken() , stmt.tokenPos + 1);
+            resultExp = new WhileExp(condition.result, stmt.result);
+            resultPos = stmt.tokenPos + 2;
         }
         else if (current instanceof IfToken) 
         {
