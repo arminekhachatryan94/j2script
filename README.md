@@ -40,7 +40,7 @@ stmnt ::= vardec; |
 access ::= public | private
 methoddef ::= access type methodname(vardec*) stmnt
 instancedec ::= access vardec;
-classdef ::= access class classname extends classname {
+classdef ::= access class classname [extends classname] {
         instancedec*
         constructor(vardec*) stmt
         methoddef*
