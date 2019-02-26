@@ -257,7 +257,7 @@ public class Parser
         resultPos = instanceDec.tokenPos + 1;
       }
       else {
-        throw new ParserException("Expected variable declaration at " + startPos);
+        throw new ParserException("Expected instance declaration at " + startPos);
       }
       return new ParseResult<Exp>(resultExp, resultPos);
     }  // parseInstanceDec
