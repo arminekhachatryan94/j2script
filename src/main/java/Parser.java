@@ -199,8 +199,10 @@ public class Parser
             resultPos = vardec.tokenPos + 1;        
         }
         else if (current instanceof VariableToken){
+            Exp variable = new VariableExp(tokens.getToken(startPos).name);
             assertTokenAtPos(new EqualToken(), startPos + 1);
             final ParseResult<Exp> expression = parseExp(startPos + 2);
+            resultExp = new VarEqualityExp(variable, expression);
         }
         else if (current instanceof IfToken) 
         {
