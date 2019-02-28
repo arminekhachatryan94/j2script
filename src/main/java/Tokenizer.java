@@ -38,6 +38,7 @@ public class Tokenizer {
             put("this", new ThisToken());
             put("void", new VoidToken());
             put("while", new WhileToken());
+            put(",", new CommaToken());
         }
     };
     public Tokenizer(final char[] input) {
@@ -48,8 +49,9 @@ public class Tokenizer {
     private void skipWhitespace() {
         //Advances input position past whitespace
         while (inputPos < input.length &&
-                Character.isWhitespace(input[inputPos])) {
+              (Character.isWhitespace(input[inputPos]))) {
             inputPos++;
+            
         }
     }
 

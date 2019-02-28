@@ -208,4 +208,48 @@ public class TokenizerTest {
             new SemiToken()
         });
     }
+
+    @Test
+    public void testFuncDef() {
+        assertTokenizes("int add(int num1, int num2) {return num1 + num2;}", new Token[]{
+            new IntToken(),
+            new VariableToken("add"),
+            new LeftParenToken(),
+            new IntToken(),
+            new VariableToken("num1"),
+            new CommaToken(),
+            new IntToken(),
+            new VariableToken("num2"),
+            new RightParenToken(),
+            new LeftCurlyToken(),
+            new ReturnToken(),
+            new VariableToken("num1"),
+            new AddToken(),
+            new VariableToken("num2"),
+            new SemiToken(),
+            new RightCurlyToken()
+        });
+    }
+
+    @Test
+    public void testBadFuncDef() {
+        assertTokenizes("int add(in num1, int num2) {retun num1 + num2;}", new Token[]{
+            new IntToken(),
+            new VariableToken("add"),
+            new LeftParenToken(),
+            new VariableToken("in"),
+            new VariableToken("num1"),
+            new CommaToken(),
+            new IntToken(),
+            new VariableToken("num2"),
+            new RightParenToken(),
+            new LeftCurlyToken(),
+            new VariableToken("retun"),
+            new VariableToken("num1"),
+            new AddToken(),
+            new VariableToken("num2"),
+            new SemiToken(),
+            new RightCurlyToken()
+        });
+    }
 }
