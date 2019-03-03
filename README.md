@@ -59,7 +59,7 @@ instancedec ::= access vardec;
 // can’t access instance variables with dot.  Need getters and setters.
 classdef ::= class classname [extends classname] {
              instancedec*
-             constructor(vardec*) {stmt}
+             constructor(vardec*) stmt
              methoddef*
              }
 
