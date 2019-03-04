@@ -6,7 +6,7 @@ Armine Khachatryan
 Areeba Waheed
 Robert Bedrosian
 John Brehm
-Carlos Sandoval
+~~Carlos Sandoval~~
 ```
 
 ## The grammar:
