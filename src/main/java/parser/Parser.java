@@ -1,11 +1,15 @@
 // package j2script;
 
 // import j2script.tokens.*;
+// import j2script.access.*;
+// import j2script.declarations.*;
 // import j2script.expressions.*;
+// import j2script.names.*;
 // import j2script.operators.*;
+// import j2script.statements.*;
 // import j2script.types.*;
 // import j2script.ParserException;
-// import j2script.access.*;
+
 // import java.util.ArrayList;
 
 // import java.util.Map;
