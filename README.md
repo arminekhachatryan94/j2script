@@ -6,7 +6,6 @@ Armine Khachatryan
 Areeba Waheed
 Robert Bedrosian
 John Brehm
-Carlos Sandoval
 ```
 
 ## The grammar:
@@ -39,16 +38,16 @@ primary ::= i | var
  
 vardec ::= type var
 
-stmnt ::= exp;
-	         vardec = exp; |
-          var = exp; |
-          while(exp) stmnt |
+stmnt ::= exp; |
+	      return exp; |
+          return;
           break; |  
           println(exp); |
           { stmnt* } |
+          vardec = exp; |
+          var = exp; |
           if (exp) stmnt else stmnt |
-          return exp; |
-          return;
+          while(exp) stmnt
  
 access ::= public | private
 
