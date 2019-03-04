@@ -1,15 +1,15 @@
 package j2script.types;
 
-public class IntType implements Type {
+public class VoidType implements ReturnType {
     public int hashCode() {
-        return 2;
+        return 5;
     }
 
     public boolean equals(Object obj) {
-        return obj instanceof IntType;
+        return obj instanceof VoidType;
     }
 
     public String toString() {
-        return "IntType";
+        return "VoidType";
     }
 }
