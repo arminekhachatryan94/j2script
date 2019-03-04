@@ -1,4 +1,4 @@
-package j2script.expressions;
+package j2script.statements;
 
 public class IfStatement implements Statement {
     public final Exp guard;

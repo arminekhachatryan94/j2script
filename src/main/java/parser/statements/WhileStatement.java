@@ -1,4 +1,4 @@
-package j2script.expressions;
+package j2script.statements;
 
 public class WhileStatement implements Statement {
     public final Exp condition;
