@@ -40,6 +40,7 @@ public class Tokenizer {
             put("while", new WhileToken());
             put(",", new CommaToken());
             put("constructor", new ConstructorToken());
+
         }
     };
     public Tokenizer(final char[] input) {
