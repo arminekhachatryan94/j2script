@@ -1,5 +1,8 @@
 package j2script.statements;
 
+import j2script.declarations.VarDec;
+import j2script.expressions.Exp;
+
 public class VarDecAssignment implements Statement {
     public final VarDec varDec;
     public final Exp exp;

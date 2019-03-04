@@ -1,5 +1,7 @@
 package j2script.statements;
 
+import j2script.expressions.Exp;
+
 public class WhileStatement implements Statement {
     public final Exp condition;
     public final Statement stmt;
@@ -18,8 +20,8 @@ public class WhileStatement implements Statement {
     public boolean equals(final Object other) {
         if (other instanceof WhileStatement) {
             final WhileStatement otherWhile = (WhileStatement) other;
-            return otherif.condition.equals(condition) &&
-                   otherif.stmt.equals(stmt);
+            return otherWhile.condition.equals(condition) &&
+                   otherWhile.stmt.equals(stmt);
         } else {
             return false;
         }

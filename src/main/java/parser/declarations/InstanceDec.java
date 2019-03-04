@@ -1,4 +1,4 @@
-package j2script.expressions;
+package j2script.declarations;
 
 import j2script.access.Access;
 
@@ -6,7 +6,7 @@ public class InstanceDec {
     public final Access access;
     public final VarDec vardec;
 
-    public InstanceDecExp(final Access access, final VarDec vardec) {
+    public InstanceDec(final Access access, final VarDec vardec) {
         this.access = access;
         this.vardec = vardec;
     }

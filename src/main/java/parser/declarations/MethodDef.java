@@ -1,17 +1,23 @@
-package j2script.expressions;
+package j2script.declarations;
 
-import j2script.types.Type;
 import j2script.access.Access;
+import j2script.types.Type;
+import j2script.types.ReturnType;
+import j2script.names.MethodName;
+import j2script.names.Variable;
+import j2script.statements.Statement;
+
+import java.util.Arrays;
 
 public class MethodDef {
     public final Access access;
     public final ReturnType returnType;
-    public final String name;
-    public final VarDecExp[] varDecs;
+    public final MethodName name;
+    public final VarDec[] varDecs;
     public final Statement statement;
 
-    public MethodDef(final Access access, final ReturnType returnType, final String name, 
-                     final VarDecExp[] varDecs, final Statement statement) {
+    public MethodDef(final Access access, final ReturnType returnType, final MethodName name, 
+                     final VarDec[] varDecs, final Statement statement) {
       this.access = access;
       this.returnType = returnType;
       this.name = name;
@@ -20,8 +26,8 @@ public class MethodDef {
     }
 
     public int hashCode() {
-        return access.hashCode() + returnType.hashCode() + name.hashcode() + 
-               Array.deepHashCode(varDecs) + statement.hashCode();
+        return access.hashCode() + returnType.hashCode() + name.hashCode() + 
+               Arrays.deepHashCode(varDecs) + statement.hashCode();
     }
 
     public boolean equals(final Object other) {
@@ -38,6 +44,6 @@ public class MethodDef {
     }
 
     public String toString() {
-        return name.toString() + "(" + Join.join(",", varDecs.type) + ")";
+        return name.toString() + "(" + String.join(",", varDecs.toString()) + ")";
     }
 }

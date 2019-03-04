@@ -1,34 +1,35 @@
-package j2script;
+package j2script.declarations;
+
+import j2script.statements.Statement;
 
 import java.util.Arrays;
 
 public class Program {
-    public final ClassDef[] structDecs;
-    public final Statement[] statements;
+    public final ClassDef[] classDefs;
+    public final Statement statement;
 
-    public Program(final StructureDeclaration[] structDecs,
-                   final Statement[] statements) {
-        this.structDecs = structDecs;
-        this.statements = statements;
+    public Program(final ClassDef[] classDefs,
+                   final Statement statement) {
+        this.classDefs = classDefs;
+        this.statement = statement;
     }
 
     public int hashCode() {
-        return (Arrays.deepHashCode(structDecs) +
-                Arrays.deepHashCode(statements));
+        return (Arrays.deepHashCode(classDefs) +
+                statement.hashCode());
     }
 
     public boolean equals(final Object other) {
         if (other instanceof Program) {
             final Program otherProgram = (Program)other;
-            return (Arrays.deepEquals(otherProgram.structDecs, structDecs) &&
-                    Arrays.deepEquals(otherProgram.statements, statements));
+            return (Arrays.deepEquals(otherProgram.classDefs, classDefs) &&
+                    otherProgram.statement.equals(statement));
         } else {
             return false;
         }
     }
 
     public String toString() {
-        return (Join.join("\n", structDecs) + "\n\n" +
-                Join.join("\n", statements) + "\n");
+        return (String.join("\n", classDefs.toString()) + "\n\n" + statement.toString());
     }
 }

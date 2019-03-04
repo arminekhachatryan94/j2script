@@ -1,29 +1,32 @@
-package j2script;
+package j2script.declarations;
 
+import j2script.statements.Statement;
+import j2script.names.ClassName;
 import java.util.Arrays;
 
 public class ClassDef {
-    public final String name;
+    public final ClassName name;
     public final ClassName extendedClass;
     public final InstanceDec[] instanceVars;
     public final Statement statement;
     public final MethodDef[] methodDefs;
 
     // non extended class
-    public ClassDef(final String name,
-                    final VariableDeclaration[] instanceVars,
+    public ClassDef(final ClassName name,
+                    final InstanceDec[] instanceVars,
                     final Statement statement,
                     final MethodDef[] methodDefs) {
         this.name = name;
+        this.extendedClass = null;
         this.instanceVars = instanceVars;
         this.statement = statement;
         this.methodDefs = methodDefs;
     }
 
     // extended class
-    public ClassDef(final String name,
+    public ClassDef(final ClassName name,
                     final ClassName extendedClass,
-                    final VariableDeclaration[] instanceVars,
+                    final InstanceDec[] instanceVars,
                     final Statement statement,
                     final MethodDef[] methodDefs) {
         this.name = name;

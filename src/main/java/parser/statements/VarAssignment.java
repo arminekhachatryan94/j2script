@@ -1,10 +1,13 @@
 package j2script.statements;
 
+import j2script.names.Variable;
+import j2script.expressions.Exp;
+
 public class VarAssignment implements Statement {
     public final Variable variable;
     public final Exp exp;
 
-    public VarDecAssignment(final Variable variable, final Exp exp) {
+    public VarAssignment(final Variable variable, final Exp exp) {
         this.variable = variable;
         this.exp = exp;
     }

@@ -16,6 +16,9 @@ public class ClassType implements Type {
             ClassType otherClassType = (ClassType) obj;
             return otherClassType.name.equals(name);
         }
+        else {
+            return false;
+        }
     }
 
     public String toString() {

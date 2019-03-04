@@ -1,4 +1,7 @@
-package j2script;
+package j2script.declarations;
+
+import j2script.declarations.VarDec;
+import j2script.statements.Statement;
 
 import java.util.Arrays;
 
@@ -28,7 +31,7 @@ public class Constructor {
     }
 
     public String toString() {
-        return ("constructor(" + Join.join(", ", parameters) + ") { " +
+        return ("constructor(" + String.join(", ", parameters.toString()) + ") { " +
                 statement.toString() + " }");
     } 
 }

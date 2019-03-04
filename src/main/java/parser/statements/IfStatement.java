@@ -1,11 +1,14 @@
 package j2script.statements;
 
+import j2script.expressions.Exp;
+import j2script.statements.Statement;
+
 public class IfStatement implements Statement {
     public final Exp guard;
     public final Statement ifTrue;
     public final Statement ifFalse;
 
-    public IfExp(final Exp guard,
+    public IfStatement(final Exp guard,
                  final Statement ifTrue,
                  final Statement ifFalse) {
         this.guard = guard;
