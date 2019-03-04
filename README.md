@@ -39,7 +39,7 @@ primary ::= i | var
 vardec ::= type var
 
 stmnt ::= exp; |
-	      return exp; |
+	  return exp; |
           return;
           break; |  
           println(exp); |
