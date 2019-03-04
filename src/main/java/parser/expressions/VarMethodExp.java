@@ -6,7 +6,7 @@ public class VarMethodExp implements Exp {
     public final Methodname methodname;
     public final Exp [] parameters;
 
-    public ClassExp(final Variable var,
+    public VarMethodExp(final Variable var,
                     final Methodname methodname,
                     final Exp[] parameters){
         this.var=var;
@@ -18,7 +18,7 @@ public class VarMethodExp implements Exp {
     }
 
     public boolean equals(final Object other) {
-        if (other instanceof ClassExp) {
+        if (other instanceof VarMethodExp) {
             final VarMethodExp otherExp = (VarMethodExp)other;
             return (otherExp.var.equals(var) &&
                     Arrays.deepEquals(parameters,
