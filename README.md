@@ -14,6 +14,9 @@ Carlos Sandoval
 var is a variable name
 str is a string
 i is an int
+//Edit
+classname is class name
+methodname is a method name
 
 type ::= int | 
          boolean | 
