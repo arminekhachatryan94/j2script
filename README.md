@@ -64,3 +64,12 @@ classdef ::= class classname [extends classname] {
 
 program ::= classdef* stmnt
 ```
+
+## Features  
+- Computation Abstraction Non-Trivial Feature: Class-based inheritance
+                        
+- Non-Trivial Feature #2: Access Modifiers
+                        
+- Non-Trivial Feature #3: Generic Programming
+                
+- Work Planned for Custom Milestone: Generics
