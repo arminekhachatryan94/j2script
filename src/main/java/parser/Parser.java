@@ -149,6 +149,12 @@ public class Parser {
             throw new ParserException("Expected " + token.toString() + " at pos " + pos);
         }
     }
+    private void ensureTokenIs(final int position, final Token expected) throws ParseException {
+        final Token tokenHere = tokens[position];
+        if (!expected.equals(tokenHere)) {
+            throw new ParseException(expected.toString() + " expected at position: " + position);
+        }
+    }
 
     /***************************************************
      Do not modify above lines unless adding static maps 
@@ -175,6 +181,20 @@ public class Parser {
     }
 
     private ParseResult<Program> parseProgram(final int startPos) throws ParserException {
+        final Token tokenhere = tokens[startPos];
+        if (tokenhere instanceof ClassName){
+            ensureTokenIs(startPos + 1, VariableToken);
+            final ClassName className = new ClassName("class");
+            final ParseResult classDef = parseClassDef(startPos);
+        }
+        //TODO: Create Statement interface and group all instances of
+        //statement in them. 
+        else if ( false ){
+
+        }
+        else {
+            throw new ParseException("not a Class or statment at pos: " + startPos);
+        }
         return null;
     }
 }
