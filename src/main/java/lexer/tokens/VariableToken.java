@@ -6,6 +6,10 @@ public class VariableToken implements Token {
         this.name = name;
     }
 
+    public VariableToken(){
+        
+    }
+
     public int hashCode() {
         return 24;
     }

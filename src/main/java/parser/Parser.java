@@ -149,10 +149,10 @@ public class Parser {
             throw new ParserException("Expected " + token.toString() + " at pos " + pos);
         }
     }
-    private void ensureTokenIs(final int position, final Token expected) throws ParseException {
+    private void ensureTokenIs(final int position, final Token expected) throws ParserException {
         final Token tokenHere = tokens[position];
         if (!expected.equals(tokenHere)) {
-            throw new ParseException(expected.toString() + " expected at position: " + position);
+            throw new ParserException(expected.toString() + " expected at position: " + position);
         }
     }
 
@@ -182,19 +182,21 @@ public class Parser {
 
     private ParseResult<Program> parseProgram(final int startPos) throws ParserException {
         final Token tokenhere = tokens[startPos];
+        Program resultprogram = new Program();
+        int resultpos=startPos;
         if (tokenhere instanceof ClassName){
-            ensureTokenIs(startPos + 1, VariableToken);
+            ensureTokenIs(startPos + 1, new VariableToken());
             final ClassName className = new ClassName("class");
-            final ParseResult classDef = parseClassDef(startPos);
+            final ParseResult<ClassDef> classDef = parseClassDef(startPos);
+            resultprogram.classDefs.add(classDef.result);
+            resultpos = classDef.tokenPos;
         }
-        //TODO: Create Statement interface and group all instances of
-        //statement in them. 
-        else if ( false ){
-
+        else if ( tokenhere instanceof Statement ){
+            final ParseResult Statemnt = parseStatement(startPos);
         }
         else {
-            throw new ParseException("not a Class or statment at pos: " + startPos);
+            throw new ParserException("not a Class or statment at pos: " + startPos);
         }
-        return null;
+        return new ParseResult<Program>(resultprogram, resultpos);
     }
 }

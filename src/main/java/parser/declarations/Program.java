@@ -1,29 +1,32 @@
 package j2script.declarations;
 
+
 import j2script.statements.Statement;
 
-import java.util.Arrays;
+import java.util.*;
 
 public class Program {
-    public final ClassDef[] classDefs;
+    public List<ClassDef> classDefs = new ArrayList<ClassDef>();
+    // public final ClassDef[] classDefs;
     public final Statement statement;
 
-    public Program(final ClassDef[] classDefs,
+    public Program(final List<ClassDef> classDefs,
                    final Statement statement) {
         this.classDefs = classDefs;
         this.statement = statement;
     }
+    public Program(){
+
+    }
 
     public int hashCode() {
-        return (Arrays.deepHashCode(classDefs) +
-                statement.hashCode());
+        return (statement.hashCode());
     }
 
     public boolean equals(final Object other) {
         if (other instanceof Program) {
             final Program otherProgram = (Program)other;
-            return (Arrays.deepEquals(otherProgram.classDefs, classDefs) &&
-                    otherProgram.statement.equals(statement));
+            return otherProgram.statement.equals(statement);
         } else {
             return false;
         }
