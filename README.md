@@ -75,9 +75,9 @@ program ::= classdef* stmnt
 - Work Planned for Custom Milestone: Generics
 
 ## Type Checker
-Variables have the correct type when assigned  
-Variables are defined when assigned  
-Expressions evaluate to the correct type  
-Variables and Classes have the correct access for the current scope  
-Return is called in a method  
-Break is called within a while loop or if statement  
+-Variables have the correct type when assigned  
+-Variables are defined when assigned  
+-Expressions evaluate to the correct type  
+-Variables and Classes have the correct access for the current scope  
+-Return is called in a method  
+-Break is called within a while loop or if statement  
