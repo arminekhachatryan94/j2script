@@ -203,21 +203,16 @@ public class Parser {
         final Token tokenhere = tokens[startPos];
         Program resultProgram;
         List<ClassDef> classdefs;
-        // This can probably be cleaned up ideally
         int resultpos=startPos;
         //If it is a variable token and that token is Class, this is a class def
         if (ensureToken(resultpos, new VariableToken("Class")) ){
             classdefs = new ArrayList<ClassDef>();
-            // ensureTokenIs(startPos + 1, new VariableToken());
             // While there are more classes in the program, keep checking
             while(ensureToken(resultpos, new VariableToken("Class"))){
                 final ParseResult<ClassDef> classDef = parseClassDef(resultpos);
                 resultpos= classDef.tokenPos;
                 classdefs.add(classDef.result);
             }
-            // resultProgram = new Program(classdefs);
-            // resultprogram.classDefs.add(classDef.result);
-            // resultpos = classDef.tokenPos;
         }
         //check how many statements there are and create the program
         //Check if statement
