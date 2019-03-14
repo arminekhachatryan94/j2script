@@ -15,8 +15,11 @@ public class Program {
         this.classDefs = classDefs;
         this.statement = statement;
     }
-    public Program(){
-
+    public Program(final List<ClassDef> classDefs){
+        this.classDefs = classDefs;
+    }
+    public Program(final Statement statement){
+        this.statement = statement;
     }
 
     public int hashCode() {

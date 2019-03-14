@@ -9,6 +9,7 @@ import j2script.operators.*;
 import j2script.statements.*;
 import j2script.types.*;
 import j2script.ParserException;
+import java.util.*;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -155,6 +156,15 @@ public class Parser {
             throw new ParserException(expected.toString() + " expected at position: " + position);
         }
     }
+    private boolean ensureToken(final int position, final Token expected) throws ParserException {
+        final Token tokenHere = tokens[position];
+        if (!expected.equals(tokenHere)) {
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
 
     /***************************************************
      Do not modify above lines unless adding static maps 
@@ -182,21 +192,37 @@ public class Parser {
 
     private ParseResult<Program> parseProgram(final int startPos) throws ParserException {
         final Token tokenhere = tokens[startPos];
-        Program resultprogram = new Program();
+        Program resultProgram;
+        // This can probably be cleaned up ideally
         int resultpos=startPos;
-        if (tokenhere instanceof ClassName){
-            ensureTokenIs(startPos + 1, new VariableToken());
-            final ClassName className = new ClassName("class");
+        //If it is a variable token and that token is Class, this is a class def
+        if (tokenhere instanceof VariableToken && ensureToken(startPos, new VariableToken("Class")) ){
+            List<ClassDef> classdefs = new ArrayList<ClassDef>();
+            // ensureTokenIs(startPos + 1, new VariableToken());
             final ParseResult<ClassDef> classDef = parseClassDef(startPos);
-            resultprogram.classDefs.add(classDef.result);
-            resultpos = classDef.tokenPos;
+            resultpos= classDef.tokenPos;
+            classdefs.add(classDef.result);
+            //While there are more classes in the program, keep checking
+            while(tokens[resultpos] instanceof VariableToken && ensureToken(tokens[resultpos], new VariableToken("Class"))){
+                final ParseResult<ClassDef> classDeff = parseClassDef(startPos);
+                resultpos= classDeff.tokenPos;
+                classdefs.add(classDeff.result);
+            }
+            resultProgram = new Program(classdefs);
+            // resultprogram.classDefs.add(classDef.result);
+            // resultpos = classDef.tokenPos;
         }
-        else if ( tokenhere instanceof Statement ){
+        //Check if statement
+        else if ( tokenhere instanceof BooleanToken || tokenhere instanceof BreakToken
+                || tokenhere instanceof IfToken || tokenhere instanceof IntToken
+                || tokenhere instanceof PrintToken || tokenhere instanceof VariableToken 
+                || tokenhere instanceof WhileToken  ){
             final ParseResult Statemnt = parseStatement(startPos);
+            resultProgram = new Program(Statemnt.result);
         }
         else {
             throw new ParserException("not a Class or statment at pos: " + startPos);
         }
-        return new ParseResult<Program>(resultprogram, resultpos);
+        return new ParseResult<Program>(resultProgram, resultpos);
     }
 }
