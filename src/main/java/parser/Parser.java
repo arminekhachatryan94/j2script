@@ -10,7 +10,6 @@ import j2script.statements.*;
 import j2script.types.*;
 import j2script.ParserException;
 import java.util.*;
-
 import java.util.Map;
 import java.util.HashMap;
 
@@ -184,18 +183,30 @@ public class Parser {
     }
 
     private ParseResult<Statement> parseStatement(final int startPos) throws ParserException {
+        final Token tokenhere = tokens[startPos];
         return null;
     }
 
     private ParseResult<MethodDef> parseMethodDef(final int startPos) throws ParserException {
+        final Token tokenhere = tokens[startPos];
+
         return null;
     }
 
     private ParseResult<InstanceDec> parseInstanceDec(final int startPos) throws ParserException {
+        final Token tokenhere = tokens[startPos];
+
         return null;
     }
 
     private ParseResult<ClassDef> parseClassDef(final int startPos) throws ParserException {
+        final Token tokenhere = tokens[startPos];
+        ClassDef resultClassDef;
+        final ClassName name = new ClassName(tokens[startPos+1].toString());
+        if (ensureToken(startPos+2, new ExtendsToken())){
+            
+        }
+
         return null;
     }
 
@@ -205,10 +216,10 @@ public class Parser {
         List<ClassDef> classdefs;
         int resultpos=startPos;
         //If it is a variable token and that token is Class, this is a class def
-        if (ensureToken(resultpos, new VariableToken("Class")) ){
+        if (ensureToken(resultpos, new ClassToken()) ){
             classdefs = new ArrayList<ClassDef>();
             // While there are more classes in the program, keep checking
-            while(ensureToken(resultpos, new VariableToken("Class"))){
+            while(ensureToken(resultpos, new ClassToken())){
                 final ParseResult<ClassDef> classDef = parseClassDef(resultpos);
                 resultpos= classDef.tokenPos;
                 classdefs.add(classDef.result);

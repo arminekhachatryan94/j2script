@@ -9,6 +9,6 @@ public class ClassToken implements Token {
     }
 
     public String toString() {
-        return "class";
+        return "Class";
     }
 }
