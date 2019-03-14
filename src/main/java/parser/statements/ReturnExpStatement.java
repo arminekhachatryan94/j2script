@@ -1,4 +1,6 @@
 package j2script.statements;
+import j2script.expressions.Exp;
+
 
 public class ReturnExpStatement implements Statement {
     public final Exp exp;

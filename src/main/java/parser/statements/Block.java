@@ -7,15 +7,15 @@ public class Block implements Statement {
     public Block(List<Statement> statements){
         this.statements = statements;
     }
-    public int hashCode() {
-        //TODO
-    }
+    // public int hashCode() {
+    //     //TODO
+    // }
 
-    public boolean equals(final Object other) {
-        //TODO
-    }
+    // public boolean equals(final Object other) {
+    //     //TODO
+    // }
 
-    public String toString() {
-        //TODO
-    }
+    // public String toString() {
+    //     //TODO
+    // }
 }

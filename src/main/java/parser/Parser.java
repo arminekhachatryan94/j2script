@@ -165,6 +165,15 @@ public class Parser {
             return true;
         }
     }
+    private boolean isSingleStmt(final List<Statement> stmt){
+        //Single
+        if (stmt.size() == 1){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
 
     /***************************************************
      Do not modify above lines unless adding static maps 
@@ -193,36 +202,38 @@ public class Parser {
     private ParseResult<Program> parseProgram(final int startPos) throws ParserException {
         final Token tokenhere = tokens[startPos];
         Program resultProgram;
+        List<ClassDef> classdefs;
         // This can probably be cleaned up ideally
         int resultpos=startPos;
         //If it is a variable token and that token is Class, this is a class def
-        if (tokenhere instanceof VariableToken && ensureToken(startPos, new VariableToken("Class")) ){
-            List<ClassDef> classdefs = new ArrayList<ClassDef>();
+        if (ensureToken(resultpos, new VariableToken("Class")) ){
+            classdefs = new ArrayList<ClassDef>();
             // ensureTokenIs(startPos + 1, new VariableToken());
-            final ParseResult<ClassDef> classDef = parseClassDef(startPos);
-            resultpos= classDef.tokenPos;
-            classdefs.add(classDef.result);
-            //While there are more classes in the program, keep checking
-            while(tokens[resultpos] instanceof VariableToken && ensureToken(tokens[resultpos], new VariableToken("Class"))){
-                final ParseResult<ClassDef> classDeff = parseClassDef(startPos);
-                resultpos= classDeff.tokenPos;
-                classdefs.add(classDeff.result);
+            // While there are more classes in the program, keep checking
+            while(ensureToken(resultpos, new VariableToken("Class"))){
+                final ParseResult<ClassDef> classDef = parseClassDef(resultpos);
+                resultpos= classDef.tokenPos;
+                classdefs.add(classDef.result);
             }
-            resultProgram = new Program(classdefs);
+            // resultProgram = new Program(classdefs);
             // resultprogram.classDefs.add(classDef.result);
             // resultpos = classDef.tokenPos;
         }
+        //check how many statements there are and create the program
         //Check if statement
-        else if ( tokenhere instanceof BooleanToken || tokenhere instanceof BreakToken
-                || tokenhere instanceof IfToken || tokenhere instanceof IntToken
-                || tokenhere instanceof PrintToken || tokenhere instanceof VariableToken 
-                || tokenhere instanceof WhileToken  ){
-            final ParseResult Statemnt = parseStatement(startPos);
-            resultProgram = new Program(Statemnt.result);
-        }
+        // else if ( tokenhere instanceof BooleanToken || tokenhere instanceof BreakToken
+        //         || tokenhere instanceof IfToken || tokenhere instanceof IntToken
+        //         || tokenhere instanceof PrintToken || tokenhere instanceof VariableToken 
+        //         || tokenhere instanceof WhileToken  ){
+        //     final ParseResult Statemnt = parseStatement(startPos);
+        //     resultProgram = new Program(Statemnt.result);
+        // }
         else {
-            throw new ParserException("not a Class or statment at pos: " + startPos);
+            throw new ParserException("not a Class at pos: " + startPos);
         }
+        final ParseResult Statemnt = parseStatement(resultpos);
+        resultProgram = new Program(classdefs, (Statement)Statemnt.result);
+        resultpos = Statemnt.tokenPos;
         return new ParseResult<Program>(resultProgram, resultpos);
     }
 }
