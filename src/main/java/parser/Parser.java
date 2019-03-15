@@ -11,6 +11,7 @@ import j2script.types.*;
 import j2script.ParserException;
 import java.util.*;
 import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.HashMap;
 
 public class Parser {
@@ -25,6 +26,14 @@ public class Parser {
           put(new MultiplyToken(), new MultOp());
           put(new DivToken(), new DivOp());
       }};
+    private static final Map<Token, Type> TYPE_MAP =
+      new HashMap<Token, Type>() {{
+          put(new IntToken(), new IntType());
+          put(new BooleanToken(), new BooleanType());
+          put(new StringToken(), new StringType());
+          put(new VoidToken(), new VoidType());
+      }};
+
     // end static variables
 
     //begin instance variables
@@ -201,10 +210,48 @@ public class Parser {
 
     private ParseResult<ClassDef> parseClassDef(final int startPos) throws ParserException {
         final Token tokenhere = tokens[startPos];
+        //The stack is to keep track of curly braces, each entry counts as a left curly brace
+        Stack<Integer> CurlyBraceStack = new Stack<Integer>();
+        int resultpos = startPos;
         ClassDef resultClassDef;
-        final ClassName name = new ClassName(tokens[startPos+1].toString());
-        if (ensureToken(startPos+2, new ExtendsToken())){
-            
+        ClassName extendedClass;
+        Constructor constructor;
+        List<InstanceDec> instanceVars;
+        Statement statement;
+        List<MethodDef> methodDefs;
+
+        resultpos++;
+        final ClassName name = new ClassName(tokens[resultpos].toString());
+        resultpos++;
+        if (ensureToken(resultpos, new ExtendsToken())){
+            resultpos++;
+            extendedClass = new ClassName(tokens[resultpos].toString());
+            resultpos++;
+
+        }
+        else{
+            extendedClass=null;
+        }
+        ensureTokenIs(resultpos, new LeftCurlyToken());
+        CurlyBraceStack.push(1);
+        resultpos++;
+        while (!CurlyBraceStack.empty()){
+            //this is a an instance dec
+            if ((ensureToken(resultpos, new PublicToken()) || 
+                ensureToken(resultpos, new PrivateToken())) && 
+                ensureToken(resultpos + 1, new VariableToken())){
+                    final Type type = TYPE_MAP.get(getToken(resultpos));
+                    final VarDec varDec = new VarDec(type,
+                    new Variable(tokens[resultpos+1].toString()));
+                    if (ensureToken(resultpos, new PublicToken())){
+                        final InstanceDec instanceDec = new InstanceDec(new PublicAccess(),
+                        varDec);
+                    }
+                    else{
+                        final InstanceDec instanceDec = new InstanceDec(new PrivateAccess(),
+                        varDec);
+                    }
+                }
         }
 
         return null;
