@@ -58,7 +58,7 @@ instancedec ::= access vardec;
 // can’t access instance variables with dot.  Need getters and setters.
 classdef ::= class classname [extends classname] {
              instancedec*
-             constructor(vardec*) stmt
+             constructor(vardec*) stmt  // comma seperated vardecs
              methoddef*
              }
 
@@ -81,8 +81,16 @@ program ::= classdef* stmnt
 
 - Expressions evaluate to the correct type
 
-- Variables and Classes have the correct access for the current scope
+- Variables have the correct access for the current scope
+
+- Classes have the correct access for the current scope
 
 - Return is called in a method
 
-- Break is called within a while loop or if statement
+- Break is called only within a while loop or if statement
+
+- Classes must have unique name
+
+- Variables must have unique name
+
+- Function calls take expected parameters of expected types
