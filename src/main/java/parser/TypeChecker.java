@@ -1,5 +1,13 @@
 package j2script;
 
+import java.util.LinkedHashMap;
+
+import j2script.TypeErrorException;
+import j2script.declarations.MethodDef;
+import j2script.declarations.Program;
+import j2script.types.Type;
+import j2script.types.VoidType;
+
 public class TypeChecker {
     // maps name of class to its instance variables and methods in a pair
     private final Map<ClassName, Pair<LinkedHashMap<Variable, Type>, 
@@ -26,6 +34,232 @@ public class TypeChecker {
         private final Map<Variable, Type> inScope;
         // records if we are in a while loop or not
         private final boolean inWhile;
+
+        public InScope(final Type returnType,
+                        final Map<Variable, Type> inScope,
+                        final boolean inWhile) {
+            this.returnType = returnType;
+            this.inScope = inScope;
+            this.inWhile = inWhile;
+        }
+
+        private InScope addVariable(final Variable variable,
+                                    final Type variableType) {
+            final Map<Variable, Type> copy =
+                new HashMap<Variable, Type>(inScope);
+            copy.put(variable, variableType);
+            return new InScope(returnType, copy, inWhile);
+        }
+
+        private InScope setInWhile() {
+            return new InScope(returnType, inScope, true);
+        }
+ 
+        private Type typeofAccess(final Type maybeStructureType,
+                final FieldName field) throws TypeErrorException {
+            if (maybeStructureType instanceof StructureType) {
+                final StructureName name = ((StructureType)maybeStructureType).name;
+                final LinkedHashMap<FieldName, Type> expected = structDecs.get(name);
+                if (expected != null) {
+                    final Type fieldType = expected.get(field);
+                    if (fieldType != null) {
+                        return fieldType;
+                    } else {
+                        throw new TypeErrorException("Structure " + name.toString() +
+                            " does not have field " + field.toString());
+                    }
+                } else {
+                    throw new TypeErrorException("No structure with name: " + name.toString());
+                }
+            } else {
+                throw new TypeErrorException("Expected structure type; received: " +
+                                            maybeStructureType.toString());
+            }
+        }
+
+        private Type typeofDereference(final Type maybePointerType) throws TypeErrorException {
+            if (maybePointerType instanceof PointerType) {
+                // dereferencing a pointer yields whatever its underlying type is
+                return ((PointerType)maybePointerType).pointsTo;
+            } else {
+                throw new TypeErrorException("Expected pointer type; received: " +
+                                            maybePointerType.toString());
+            }
+        }
+ 
+        private Type typeofLhs(final Lhs lhs) throws TypeErrorException {
+            if (lhs instanceof VariableLhs) {
+                return lookupVariable(((VariableLhs)lhs).variable);
+            } else if (lhs instanceof FieldAccessLhs) {
+                final FieldAccessLhs asAccess = (FieldAccessLhs)lhs;
+                return typeofAccess(typeofLhs(asAccess.lhs),
+                                    asAccess.field);
+            } else if (lhs instanceof DereferenceLhs) {
+                final Type nestedType =
+                    typeofLhs(((DereferenceLhs)lhs).lhs);
+                return typeofDereference(nestedType);
+            } else {
+                assert(false);
+                throw new TypeErrorException("Unknown lhs: " +lhs.toString());
+            }
+        }
+             
+        private Type[] typeofExps(final Exp[] exps) throws TypeErrorException {
+            final Type[] types = new Type[exps.length];
+            for (int index = 0; index < exps.length; index++) {
+                types[index] = typeofExp(exps[index]);
+            }
+            return types;
+        }
+
+        // Look up the type of the variable.
+        // If it's not present in the map, then it's not in scope.
+        private Type lookupVariable(final Variable var) throws TypeErrorException {
+            final Type varType = inScope.get(var);
+            if (varType == null) {
+                throw new TypeErrorException("Variable not in scope: " + var);
+            }
+            return varType;
+        }
+ 
+        public Type typeofExp(final Exp exp) throws TypeErrorException {
+            if (exp instanceof IntExp) {
+                return new IntType();
+            } else if (exp instanceof CharExp) {
+                return new CharType();
+            } else if (exp instanceof BoolExp) {
+                return new BoolType();
+            } else if (exp instanceof VariableExp) {
+                return lookupVariable(((VariableExp)exp).variable);
+            } else if (exp instanceof MallocExp) {
+                // Malloc takes an integer and returns void*
+                final MallocExp asMalloc = (MallocExp)exp;
+                ensureTypesSame(new IntType(),
+                                typeofExp(asMalloc.amount));
+                return new PointerType(new VoidType());
+            } else if (exp instanceof SizeofExp) {
+                // takes a type and returns an int
+                // there is no sort of checking that can be done on the type
+                return new IntType();
+            } else if (exp instanceof BinopExp) {
+                // the return type and expected parameter types all depend
+                // on the operator.  In all cases, we need to get the types
+                // of the operands, and then check if this matches with the
+                // operator
+                final BinopExp asBinop = (BinopExp)exp;
+                final Type leftType = typeofExp(asBinop.left);
+                final Type rightType = typeofExp(asBinop.right);
+                return binopType(leftType, asBinop.op, rightType);
+            } else if (exp instanceof MakeStructureExp) {
+                final MakeStructureExp asStruct = (MakeStructureExp)exp;
+                checkMakeStructure(asStruct.name,
+                                    typeofExps(asStruct.parameters));
+                return new StructureType(asStruct.name);
+            } else if (exp instanceof FunctionCallExp) {
+                final FunctionCallExp asCall = (FunctionCallExp)exp;
+                return checkFunctionCall(asCall.name,
+                                        typeofExps(asCall.parameters));
+            } else if (exp instanceof CastExp) {
+                // Explicit cast.  Trust the user.  Ideally, we'd check
+                // this at runtime.  We still need to look at the expression
+                // to make sure that this is itself well-typed.
+                final CastExp asCast = (CastExp)exp;
+                typeofExp(asCast.exp);
+                return asCast.type;
+            } else if (exp instanceof AddressOfExp) {
+                final Type nested = typeofLhs(((AddressOfExp)exp).lhs);
+                // point to this now
+                return new PointerType(nested);
+            } else if (exp instanceof DereferenceExp) {
+                final Type nested = typeofExp(((DereferenceExp)exp).exp);
+                return typeofDereference(nested);
+            } else if (exp instanceof FieldAccessExp) {
+                final FieldAccessExp asAccess = (FieldAccessExp)exp;
+                return typeofAccess(typeofExp(asAccess.exp),
+                                    asAccess.field);
+            } else {
+                assert(false);
+                throw new TypeErrorException("Unrecognized expression: " + exp.toString());
+            }
+        } // typeofExp
+
+        // returns any new scope to use, along with whether or not return was observed on
+        // all paths
+        public Pair<InScope, Boolean> typecheckStmt(final Stmt stmt) throws TypeErrorException {
+            if (stmt instanceof IfStmt) {
+                final IfStmt asIf = (IfStmt)stmt;
+                ensureTypesSame(new BoolType(), typeofExp(asIf.guard));
+
+                // since the true and false branches form their own blocks, we
+                // don't care about any variables they put in scope
+                final Pair<InScope, Boolean> leftResult = typecheckStmt(asIf.ifTrue);
+                final Pair<InScope, Boolean> rightResult = typecheckStmt(asIf.ifFalse);
+                final boolean returnOnBoth =
+                    leftResult.second.booleanValue() && rightResult.second.booleanValue();
+                return new Pair<InScope, Boolean>(this, returnOnBoth);
+            } else if (stmt instanceof WhileStmt) {
+                final WhileStmt asWhile = (WhileStmt)stmt;
+                ensureTypesSame(new BoolType(), typeofExp(asWhile.guard));
+
+                // Don't care about variables in the while.
+                // Because the body of the while loop will never execute if the condition is
+                // initially false, even if all paths in the while loop have return, this doesn't
+                // mean that we are guaranteed to hit return.
+                setInWhile().typecheckStmt(asWhile.body);
+                return new Pair<InScope, Boolean>(this, Boolean.valueOf(false));
+            } else if (stmt instanceof BreakStmt ||
+                        stmt instanceof ContinueStmt) {
+                if (!inWhile) {
+                    throw new TypeErrorException("Break or continue outside of loop");
+                }
+                return new Pair<InScope, Boolean>(this, Boolean.valueOf(false));
+            } else if (stmt instanceof VariableDeclarationInitializationStmt) {
+                final VariableDeclarationInitializationStmt dec =
+                    (VariableDeclarationInitializationStmt)stmt;
+                final Type expectedType = dec.varDec.type;
+                ensureNonVoidType(expectedType);
+                ensureValidType(expectedType);
+                ensureTypesSame(expectedType,
+                                typeofExp(dec.exp));
+                final InScope resultInScope =
+                    addVariable(dec.varDec.variable, expectedType);
+                return new Pair<InScope, Boolean>(resultInScope, Boolean.valueOf(false));
+            } else if (stmt instanceof AssignmentStmt) {
+                final AssignmentStmt asAssign = (AssignmentStmt)stmt;
+                ensureTypesSame(typeofLhs(asAssign.lhs),
+                                typeofExp(asAssign.exp));
+                return new Pair<InScope, Boolean>(this, Boolean.valueOf(false));
+            } else if (stmt instanceof ReturnVoidStmt) {
+                ensureTypesSame(new VoidType(), returnType);
+                return new Pair<InScope, Boolean>(this, Boolean.valueOf(true));
+            } else if (stmt instanceof ReturnExpStmt) {
+                final Type receivedType = typeofExp(((ReturnExpStmt)stmt).exp);
+                ensureTypesSame(returnType, receivedType);
+                return new Pair<InScope, Boolean>(this, Boolean.valueOf(true));
+            } else if (stmt instanceof FreeStmt) {
+                ensureTypesSame(new PointerType(new VoidType()),
+                                typeofExp(((FreeStmt)stmt).value));
+                return new Pair<InScope, Boolean>(this, Boolean.valueOf(false));
+            } else if (stmt instanceof SequenceStmt) {
+                final SequenceStmt asSeq = (SequenceStmt)stmt;
+                final Pair<InScope, Boolean> fromLeft = typecheckStmt(asSeq.first);
+                
+                if (fromLeft.second.booleanValue()) {
+                    throw new TypeErrorException("Dead code from early return");
+                }
+
+                return fromLeft.first.typecheckStmt(asSeq.second);
+            } else if (stmt instanceof ExpStmt) {
+                // Just need to check that it's well-typed.  Permitted to
+                // return anything.
+                typeofExp(((ExpStmt)stmt).exp);
+                return new Pair<InScope, Boolean>(this, Boolean.valueOf(false));
+            } else {
+                assert(false);
+                throw new TypeErrorException("Unrecognized statement: " + stmt.toString());
+            }
+        } // typecheckStmt
+    } // InScope
 
     // Called in testing to type check the given program
     public static void typecheckProgram(final Program program) throws TypeErrorException {
@@ -58,7 +292,7 @@ public class TypeChecker {
         return result;
     }
 
-    private void typecheckMethodDef(final MethodDefinition mdef) throws TypeErrorException {
+    private void typecheckMethodDef(final MethodDef mdef) throws TypeErrorException {
         final InScope initialScope = new InScope(mdef.returnType,
                                                  initialVariableMapping(mdef.parameters),
                                                  false);
