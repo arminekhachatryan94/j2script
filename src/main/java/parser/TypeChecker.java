@@ -76,33 +76,6 @@ public class TypeChecker {
                                             maybeStructureType.toString());
             }
         }
-
-        private Type typeofDereference(final Type maybePointerType) throws TypeErrorException {
-            if (maybePointerType instanceof PointerType) {
-                // dereferencing a pointer yields whatever its underlying type is
-                return ((PointerType)maybePointerType).pointsTo;
-            } else {
-                throw new TypeErrorException("Expected pointer type; received: " +
-                                            maybePointerType.toString());
-            }
-        }
- 
-        private Type typeofLhs(final Lhs lhs) throws TypeErrorException {
-            if (lhs instanceof VariableLhs) {
-                return lookupVariable(((VariableLhs)lhs).variable);
-            } else if (lhs instanceof FieldAccessLhs) {
-                final FieldAccessLhs asAccess = (FieldAccessLhs)lhs;
-                return typeofAccess(typeofLhs(asAccess.lhs),
-                                    asAccess.field);
-            } else if (lhs instanceof DereferenceLhs) {
-                final Type nestedType =
-                    typeofLhs(((DereferenceLhs)lhs).lhs);
-                return typeofDereference(nestedType);
-            } else {
-                assert(false);
-                throw new TypeErrorException("Unknown lhs: " +lhs.toString());
-            }
-        }
              
         private Type[] typeofExps(final Exp[] exps) throws TypeErrorException {
             final Type[] types = new Type[exps.length];
@@ -170,9 +143,6 @@ public class TypeChecker {
                 final Type nested = typeofLhs(((AddressOfExp)exp).lhs);
                 // point to this now
                 return new PointerType(nested);
-            } else if (exp instanceof DereferenceExp) {
-                final Type nested = typeofExp(((DereferenceExp)exp).exp);
-                return typeofDereference(nested);
             } else if (exp instanceof FieldAccessExp) {
                 final FieldAccessExp asAccess = (FieldAccessExp)exp;
                 return typeofAccess(typeofExp(asAccess.exp),
