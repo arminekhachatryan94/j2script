@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import j2script.TypeErrorException;
 import j2script.declarations.MethodDef;
 import j2script.declarations.Program;
+import j2script.expressions.NumberExp;
 import j2script.types.Type;
 import j2script.types.VoidType;
 
@@ -96,16 +97,12 @@ public class TypeChecker {
         }
  
         public Type typeofExp(final Exp exp) throws TypeErrorException {
-            if (exp instanceof IntExp) {
+            if (exp instanceof NumberExp) {
                 return new IntType();
             } else if (exp instanceof BoolExp) {
                 return new BoolType();
             } else if (exp instanceof VariableExp) {
                 return lookupVariable(((VariableExp)exp).variable);
-            } else if (exp instanceof SizeofExp) {
-                // takes a type and returns an int
-                // there is no sort of checking that can be done on the type
-                return new IntType();
             } else if (exp instanceof BinopExp) {
                 // the return type and expected parameter types all depend
                 // on the operator.  In all cases, we need to get the types
