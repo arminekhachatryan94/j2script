@@ -139,10 +139,6 @@ public class TypeChecker {
                 final CastExp asCast = (CastExp)exp;
                 typeofExp(asCast.exp);
                 return asCast.type;
-            } else if (exp instanceof AddressOfExp) {
-                final Type nested = typeofLhs(((AddressOfExp)exp).lhs);
-                // point to this now
-                return new PointerType(nested);
             } else if (exp instanceof FieldAccessExp) {
                 final FieldAccessExp asAccess = (FieldAccessExp)exp;
                 return typeofAccess(typeofExp(asAccess.exp),
