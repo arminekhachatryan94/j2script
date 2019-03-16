@@ -40,15 +40,15 @@ primary ::= i | var
 vardec ::= type var
 
 stmnt ::= exp; |
-	      return exp; |
-          return;
-          break; |  
-          println(exp); |
-          { stmnt* } |
-          vardec = exp; |
-          var = exp; |
-          if (exp) stmnt else stmnt |
-          while(exp) stmnt
+        return exp; |
+        return;
+        break; |  
+        println(exp); |
+        { stmnt* } |
+        vardec = exp; |
+        var = exp; |
+        if (exp) stmnt else stmnt |
+        while(exp) stmnt
  
 access ::= public | private
 
