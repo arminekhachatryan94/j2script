@@ -12,21 +12,164 @@ import j2script.types.VoidType;
 import parser.types.ClassType;
 
 public class TypeChecker {
-    // maps name of class to its instance variables and methods in a pair
-    private final Map<ClassName, Pair<LinkedHashMap<Variable, Type>, 
-                                      LinkedHashMap<MethodName, 
-                                      Pair<Type[], ReturnType>>>> classMapping;
-    // /me cries in java
+    // maps name of class to its instance variables
+    private final Map<ClassName, LinkedHashMap<Variable, Type>> instanceVars;
+    // maps name of class to its method definitions
+    private final Map<ClassName, LinkedHashMap<MethodName, Pair<Type[], ReturnType>>> methodDefs;
 
     private Typechecker(final Program program) throws TypeErrorException {
-        // have to load these before checking class or function validity
-        // classDecs = makeClassMapping(program.classDecs);
-        // ensureStructureFieldsValid();
+        // have to load these before checking structure or function validity
+        instanceVars = makeInstanceVarMapping(program.classDefs);
+        ensureInstanceVarsValid();
 
-        functionDefs = makeFunctionMapping(program.functionDefs);
+        methodDefs = makeMethodDefMapping(program.classDefs);
+        typecheckMethods();  // Not done
+    }
 
-        for (final FunctionDefinition def : program.functionDefs) {
-            typecheckFunctionDef(def);
+    // not permitted to have repeated field names in the same class
+    // fields cannot have void types
+    private static LinkedHashMap<Variable, Type>
+        makeFieldMapping(final List<VarDec> fields) throws TypeErrorException {
+        
+        final LinkedHashMap<Variable, Type> result =
+            new LinkedHashMap<Variable, Type>();
+
+        for (final VarDec dec : fields) {
+            ensureNonVoidType(dec.type);
+            result.put(new Variable(dec.variable.name), dec.type);
+        }
+
+        if (result.size() != fields.length) {
+            throw new TypeErrorException("Duplicate field name");
+        }
+
+        return result;
+    }
+
+    // not permitted to have multiple class declarations with the same name
+    private static Map<ClassName, LinkedHashMap<Variable, Type>>
+        makeInstanceVarMapping(final List<ClassDef> clasDefs) throws TypeErrorException {
+        final Map<ClassName, LinkedHashMap<Variable, Type>> result =
+            new HashMap<ClassName, LinkedHashMap<Variable, Type>>();
+
+        for (final ClassDef def : clasDefs) {
+            final LinkedHashMap<Variable, Type> instanceVarMapping =
+                makeFieldMapping(def.fields);
+            result.put(def.name, fieldMapping);
+        }
+
+        if (result.size() != clasDefs.length) {
+            throw new TypeErrorException("Duplicate structure name");
+        }
+
+        return result;
+    }
+
+    // makes sure that class fields don't refer to non-existent classes
+    private void ensureInstanceVarsValid() throws TypeErrorException {
+        for (final LinkedHashMap<Variable, Type> fields : instanceVars.values()) {
+            for (final Type type : fields.values()) {
+                ensureValidType(type);
+            }
+        }
+    }
+
+    // throws exception if any are void
+    private Type[] parameterTypes(final VarDec[] vars) throws TypeErrorException {
+        final Type[] result = new Type[vars.length];
+
+        for (int index = 0; index < vars.length; index++) {
+            final Type current = vars[index].type;
+            ensureValidType(current);
+            ensureNonVoidType(current);
+            result[index] = current;
+        }
+
+        return result;
+    }
+
+    // not permitted to have multiple methods with the same name in a class
+    private LinkedHashMap<MethodName, Pair<Type[], ReturnType>>
+        makeMethodMapping(final List<MethodDef> methodDefs) throws TypeErrorException {
+
+        final LinkedHashMap<MethodName, Pair<Type[], ReturnType>> result =
+            new LinkedHashMap<MethodName, Pair<Type[], ReturnType>>();
+
+        for (final MethodDef def : method) {
+            final Type[] parameters = parameterTypes(def.varDecs);
+            final Pair<Type[], Type> value =
+                new Pair<Type[], Type>(parameters, def.returnType);
+            result.put(def.name, value);
+        }
+
+        if (result.size() != functions.length) {
+            throw new TypeErrorException("Duplicate method name");
+        }
+
+        return result;
+    }
+
+    private Map<ClassName, LinkedHashMap<MethodName, Pair<Type[], ReturnType>>> 
+        makeMethodDefMapping(final List<ClassDef> clasDefs) throws TypeErrorException {
+
+        final Map<ClassName, LinkedHashMap<MethodName, Pair<Type[], ReturnType>>> result =
+            new HashMap<ClassName, LinkedHashMap<MethodName, Pair<Type[], ReturnType>>>();
+
+        for (final ClassDef def : clasDefs) {
+            final LinkedHashMap<MethodName, Pair<Type[], ReturnType>> methodMapping =
+                makeMethodMapping(def.methodDefs);
+            result.put(def.name, methodMapping);
+        }
+
+        return result;
+    }
+
+    private void typecheckMethods() throws TypeErrorException {
+        final InScope initialScope = new InScope(mdef.returnType,
+                                                 initialVariableMapping(mdef.parameters),
+                                                 false);
+        final Pair<InScope, Boolean> stmtResult = initialScope.typecheckStmt(mdef.statement);
+
+        if (!stmtResult.second.booleanValue() &&
+            !(mdef.returnType instanceof VoidType)) {
+            throw new TypeErrorException("Missing return in " + mdef.name.toString());
+        }
+    }
+
+    // error if duplicate variable names are used
+    private static Map<Variable, Type> initialVariableMapping(final VariableDeclaration[] parameters) throws TypeErrorException {
+        final Map<Variable, Type> result = new HashMap<Variable, Type>();
+
+        for (final VariableDeclaration dec : parameters) {
+            result.put(dec.variable, dec.type);
+        }
+
+        if (result.size() != parameters.length) {
+            throw new TypeErrorException("Duplicate variable name in function parameters");
+        }
+
+        return result;
+    }
+
+    private void ensureValidType(final Type type) throws TypeErrorException {
+        if (type instanceof ClassType) {
+            final ClassName name = ((ClassType)type).name;
+            if (!instanceVars.containsKey(name)) {
+                throw new TypeErrorException("Non-existent class referenced: " +
+                                             name.toString());
+            }
+        }
+    }
+
+    private static void ensureTypesSame(final Type expected, final Type received) throws TypeErrorException {
+        if (!expected.equals(received)) {
+            throw new TypeErrorException(expected, received);
+        }
+    }
+
+    private static void ensureNonVoidType(final Type type) throws TypeErrorException {
+        if (type instanceof VoidType) {
+            throw new TypeErrorException("Void type illegal here");
         }
     }
 
@@ -220,67 +363,23 @@ public class TypeChecker {
         } // typecheckStmt
     } // InScope
 
+    // intended for testing
+    private Type expTypeNoScopeForTesting(final Exp exp) throws TypeErrorException {
+        return new InScope(new VoidType(),
+                           new HashMap<Variable, Type>(),
+                           false).typeofExp(exp);
+    }
+
+    // intended for testing
+    public static Type expTypeForTesting(final Exp exp) throws TypeErrorException {
+        final Typechecker checker =
+            new Typechecker(new Program(new List<ClassDef>(),
+                                        new Statement));
+        return checker.expTypeNoScopeForTesting(exp);
+    }
+
     // Called in testing to type check the given program
     public static void typecheckProgram(final Program program) throws TypeErrorException {
         new Typechecker(program);
-    }
-
-    private static void ensureNonVoidType(final Type type) throws TypeErrorException {
-        if (type instanceof VoidType) {
-            throw new TypeErrorException("Void type illegal here");
-        }
-    }
-
-    // not permitted to have repeated instance vars names in the same class
-    // instance vars cannot have void types
-    private static LinkedHashMap<Variable, Type>
-        makeInstanceMapping(final VariableDeclaration[] fields) throws TypeErrorException {
-        
-        final LinkedHashMap<Variable, Type> result =
-            new LinkedHashMap<Variable, Type>();
-
-        for (final VariableDeclaration dec : fields) {
-            ensureNonVoidType(dec.type);
-            //result.put(new Variable(dec.variable.name), dec.type);
-        }
-
-        if (result.size() != fields.length) {
-            throw new TypeErrorException("Duplicate field name");
-        }
-
-        return result;
-    }
-
-    private void typecheckMethodDef(final MethodDef mdef) throws TypeErrorException {
-        final InScope initialScope = new InScope(mdef.returnType,
-                                                 initialVariableMapping(mdef.parameters),
-                                                 false);
-        final Pair<InScope, Boolean> stmtResult = initialScope.typecheckStmt(mdef.statement);
-
-        if (!stmtResult.second.booleanValue() &&
-            !(mdef.returnType instanceof VoidType)) {
-            throw new TypeErrorException("Missing return in " + mdef.name.toString());
-        }
-    }
-
-    // error if duplicate variable names are used
-    private static Map<Variable, Type> initialVariableMapping(final VariableDeclaration[] parameters) throws TypeErrorException {
-        final Map<Variable, Type> result = new HashMap<Variable, Type>();
-
-        for (final VariableDeclaration dec : parameters) {
-            result.put(dec.variable, dec.type);
-        }
-
-        if (result.size() != parameters.length) {
-            throw new TypeErrorException("Duplicate variable name in function parameters");
-        }
-
-        return result;
-    }
-
-    private static void ensureTypesSame(final Type expected, final Type received) throws TypeErrorException {
-        if (!expected.equals(received)) {
-            throw new TypeErrorException(expected, received);
-        }
     }
 }
