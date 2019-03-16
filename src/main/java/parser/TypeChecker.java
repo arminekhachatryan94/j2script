@@ -5,9 +5,11 @@ import java.util.LinkedHashMap;
 import j2script.TypeErrorException;
 import j2script.declarations.MethodDef;
 import j2script.declarations.Program;
+import j2script.expressions.ClassExp;
 import j2script.expressions.NumberExp;
 import j2script.types.Type;
 import j2script.types.VoidType;
+import parser.types.ClassType;
 
 public class TypeChecker {
     // maps name of class to its instance variables and methods in a pair
@@ -112,7 +114,14 @@ public class TypeChecker {
                 final Type leftType = typeofExp(asBinop.left);
                 final Type rightType = typeofExp(asBinop.right);
                 return binopType(leftType, asBinop.op, rightType);
-            } else if (exp instanceof MakeStructureExp) {
+            } else if(exp instanceof ClassExp) {
+                return new ClassType(exp.name);
+            } else if(exp instanceof VarMethodExp){
+                return new 
+            }
+            
+            
+            else if (exp instanceof MakeStructureExp) {
                 final MakeStructureExp asStruct = (MakeStructureExp)exp;
                 checkMakeStructure(asStruct.name,
                                     typeofExps(asStruct.parameters));
