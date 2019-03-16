@@ -98,18 +98,10 @@ public class TypeChecker {
         public Type typeofExp(final Exp exp) throws TypeErrorException {
             if (exp instanceof IntExp) {
                 return new IntType();
-            } else if (exp instanceof CharExp) {
-                return new CharType();
             } else if (exp instanceof BoolExp) {
                 return new BoolType();
             } else if (exp instanceof VariableExp) {
                 return lookupVariable(((VariableExp)exp).variable);
-            } else if (exp instanceof MallocExp) {
-                // Malloc takes an integer and returns void*
-                final MallocExp asMalloc = (MallocExp)exp;
-                ensureTypesSame(new IntType(),
-                                typeofExp(asMalloc.amount));
-                return new PointerType(new VoidType());
             } else if (exp instanceof SizeofExp) {
                 // takes a type and returns an int
                 // there is no sort of checking that can be done on the type
