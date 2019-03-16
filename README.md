@@ -24,7 +24,7 @@ returntype ::= type | void
 op ::= + | - | * | /
 
 // might want to change.  Look at java grammar documentation
-exp ::= i | true | false
+exp ::= i | true | false | var |
         additive |
         new classname(exp*) |
         var.methodname(exp*) | // will need to check if void
