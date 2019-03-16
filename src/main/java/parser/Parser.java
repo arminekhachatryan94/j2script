@@ -9,10 +9,10 @@ import j2script.operators.*;
 import j2script.statements.*;
 import j2script.types.*;
 import j2script.ParserException;
+
+import java.sql.Statement;
 import java.util.*;
-import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.HashMap;
 
 public class Parser {
     // begin static variables
@@ -38,6 +38,9 @@ public class Parser {
 
     //begin instance variables
     private final Token[] tokens;
+    //The stack is to keep track of curly braces, each entry counts as a left curly brace
+    Stack<Integer> CurlyBraceStack = new Stack<Integer>();
+
     // end instance variables
 
     public Parser(final Token[] tokens) {
@@ -192,7 +195,23 @@ public class Parser {
     }
 
     private ParseResult<Statement> parseStatement(final int startPos) throws ParserException {
-        final Token tokenhere = tokens[startPos];
+        int resultpos = startPos;
+        //This is a block statement
+        if (ensureToken(resultpos, new LeftCurlyToken())){
+            final ParseResult<Statement> block = parseBlock(startPos);
+        }
+        return null;
+    }
+    private ParseResult<Statement> parseBlock(final int startPos) throws ParserException{
+        List<Statement> stmts= new ArrayList<Statement>();
+        int resultpos = startPos;
+        CurlyBraceStack.push(1);
+        resultpos++;
+        while (!ensureToken(resultpos, new RightCurlyToken())){
+            final ParseResult<Statement> stmt = parseStatement(resultpos);
+            stmts.add(stmt.result);
+            resultpos = stmt.tokenPos;
+        }
         return null;
     }
 
@@ -203,22 +222,36 @@ public class Parser {
     }
 
     private ParseResult<InstanceDec> parseInstanceDec(final int startPos) throws ParserException {
-        final Token tokenhere = tokens[startPos];
-
-        return null;
+        int resultpos = startPos;
+        InstanceDec instanceDec;
+        final Type type = TYPE_MAP.get(getToken(resultpos + 1));
+        final VarDec varDec = new VarDec(type,
+        new Variable(tokens[resultpos+2].toString()));
+        if (ensureToken(resultpos, new PublicToken())){
+            instanceDec = new InstanceDec(new PublicAccess(),
+            varDec);
+            ensureTokenIs(resultpos + 3, new SemiToken());
+            resultpos = resultpos + 4;
+        }
+        else{
+            instanceDec = new InstanceDec(new PrivateAccess(),
+            varDec);
+            ensureTokenIs(resultpos + 3, new SemiToken());
+            resultpos = resultpos + 4;
+        }
+        
+        return new ParseResult<InstanceDec>(instanceDec, resultpos);
     }
 
     private ParseResult<ClassDef> parseClassDef(final int startPos) throws ParserException {
         final Token tokenhere = tokens[startPos];
-        //The stack is to keep track of curly braces, each entry counts as a left curly brace
-        Stack<Integer> CurlyBraceStack = new Stack<Integer>();
         int resultpos = startPos;
-        ClassDef resultClassDef;
-        ClassName extendedClass;
-        Constructor constructor;
-        List<InstanceDec> instanceVars;
-        Statement statement;
-        List<MethodDef> methodDefs;
+        ClassDef resultClassDef = null;
+        ClassName extendedClass = null;
+        Constructor constructor = null;
+        List<InstanceDec> instanceVars = new ArrayList<InstanceDec>();
+        Statement statement = null;
+        List<MethodDef> methodDefs = new ArrayList<MethodDef>();
 
         resultpos++;
         final ClassName name = new ClassName(tokens[resultpos].toString());
@@ -239,19 +272,54 @@ public class Parser {
             //this is a an instance dec
             if ((ensureToken(resultpos, new PublicToken()) || 
                 ensureToken(resultpos, new PrivateToken())) && 
-                ensureToken(resultpos + 1, new VariableToken())){
-                    final Type type = TYPE_MAP.get(getToken(resultpos));
-                    final VarDec varDec = new VarDec(type,
-                    new Variable(tokens[resultpos+1].toString()));
-                    if (ensureToken(resultpos, new PublicToken())){
-                        final InstanceDec instanceDec = new InstanceDec(new PublicAccess(),
-                        varDec);
-                    }
-                    else{
-                        final InstanceDec instanceDec = new InstanceDec(new PrivateAccess(),
-                        varDec);
-                    }
+                (ensureToken(resultpos + 1, new BooleanToken()) ||
+                ensureToken(resultpos + 1, new IntToken()) ||
+                ensureToken(resultpos + 1, new StringToken())) &&
+                ensureToken(resultpos + 2, new VariableToken()) &&
+                ensureToken(resultpos + 3, new SemiToken())){
+                    final ParseResult<InstanceDec> instancedec = parseInstanceDec(resultpos);
+                    resultpos = instancedec.tokenPos;
+                    instanceVars.add(instancedec.result);
                 }
+                //This is a constructor
+            else if(ensureToken(resultpos, new ConstructorToken())){
+                ensureTokenIs(resultpos+1, new LeftParenToken());
+                List<VarDec> parameters = new ArrayList<VarDec>();
+                int currentpos = resultpos + 2;
+                while (ensureToken(currentpos, new BooleanToken()) ||
+                ensureToken(currentpos, new IntToken()) ||
+                ensureToken(currentpos, new StringToken())){
+                    final Type type = TYPE_MAP.get(getToken(currentpos));
+                    final VarDec varDec = new VarDec(type,
+                    new Variable(tokens[currentpos+1].toString()));
+                    parameters.add(varDec);
+                    currentpos = currentpos + 2;
+                    //If there is a comma, more parameters
+                    if (ensureToken(currentpos, new CommaToken())){
+                        currentpos++;
+                    }
+                    //Currentpos should then have a right parenthesis
+                    resultpos = currentpos;
+                }
+                ensureTokenIs(resultpos, new RightParenToken());
+                resultpos++;
+                final ParseResult<Statement> stmt = parseStatement(resultpos);
+                statement = stmt.result;
+                resultpos = stmt.tokenPos;
+            }
+            //This is a method def
+            else if((ensureToken(resultpos, new PublicToken()) || 
+            ensureToken(resultpos, new PrivateToken())) && 
+            (ensureToken(resultpos + 1, new BooleanToken()) ||
+            ensureToken(resultpos + 1, new IntToken()) ||
+            ensureToken(resultpos + 1, new StringToken()) ||
+            ensureToken(resultpos + 1, new VoidToken())) &&
+            ensureToken(resultpos + 2, new VariableToken()) &&
+            ensureToken(resultpos + 3, new LeftParenToken())){
+                final ParseResult<MethodDef> methoddef = parseMethodDef(resultpos);
+                methodDefs.add(methoddef.result);
+                resultpos = methoddef.tokenPos;
+            }
         }
 
         return null;
@@ -272,15 +340,6 @@ public class Parser {
                 classdefs.add(classDef.result);
             }
         }
-        //check how many statements there are and create the program
-        //Check if statement
-        // else if ( tokenhere instanceof BooleanToken || tokenhere instanceof BreakToken
-        //         || tokenhere instanceof IfToken || tokenhere instanceof IntToken
-        //         || tokenhere instanceof PrintToken || tokenhere instanceof VariableToken 
-        //         || tokenhere instanceof WhileToken  ){
-        //     final ParseResult Statemnt = parseStatement(startPos);
-        //     resultProgram = new Program(Statemnt.result);
-        // }
         else {
             throw new ParserException("not a Class at pos: " + startPos);
         }
