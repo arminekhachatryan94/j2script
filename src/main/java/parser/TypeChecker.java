@@ -190,11 +190,6 @@ public class TypeChecker {
                 final InScope resultInScope =
                     addVariable(dec.varDec.variable, expectedType);
                 return new Pair<InScope, Boolean>(resultInScope, Boolean.valueOf(false));
-            } else if (stmt instanceof AssignmentStmt) {
-                final AssignmentStmt asAssign = (AssignmentStmt)stmt;
-                ensureTypesSame(typeofLhs(asAssign.lhs),
-                                typeofExp(asAssign.exp));
-                return new Pair<InScope, Boolean>(this, Boolean.valueOf(false));
             } else if (stmt instanceof ReturnVoidStmt) {
                 ensureTypesSame(new VoidType(), returnType);
                 return new Pair<InScope, Boolean>(this, Boolean.valueOf(true));
