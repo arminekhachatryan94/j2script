@@ -9,8 +9,6 @@ import j2script.operators.*;
 import j2script.statements.*;
 import j2script.types.*;
 import j2script.ParserException;
-
-import java.sql.Statement;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 
