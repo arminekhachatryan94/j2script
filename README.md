@@ -54,8 +54,6 @@ access ::= public | private
 
 methoddef ::= access returntype methodname(vardec*) stmnt  // comma seperated vardecs
 
-instancedec ::= access vardec;
-
 // can’t access instance variables with dot.  Need getters and setters.
 classdef ::= class classname [extends classname] {
              instancedec*

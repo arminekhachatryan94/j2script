@@ -1,15 +1,20 @@
 package j2script;
 
+import java.util.Map;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.AbstractMap;
+import java.util.List;
 
+import j2script.util.*;
 import j2script.TypeErrorException;
-import j2script.declarations.MethodDef;
-import j2script.declarations.Program;
-import j2script.expressions.ClassExp;
-import j2script.expressions.NumberExp;
-import j2script.types.Type;
-import j2script.types.VoidType;
-import parser.types.ClassType;
+import j2script.declarations.*;
+import j2script.expressions.*;
+import j2script.names.*;
+import j2script.operators.*;
+import j2script.statements.*;
+import j2script.types.*;
+
 
 public class TypeChecker {
     // maps name of class to its instance variables
@@ -17,13 +22,17 @@ public class TypeChecker {
     // maps name of class to its method definitions
     private final Map<ClassName, LinkedHashMap<MethodName, Pair<Type[], ReturnType>>> methodDefs;
 
-    private Typechecker(final Program program) throws TypeErrorException {
+    private TypeChecker(final Program program) throws TypeErrorException {
         // have to load these before checking structure or function validity
         instanceVars = makeInstanceVarMapping(program.classDefs);
         ensureInstanceVarsValid();
 
         methodDefs = makeMethodDefMapping(program.classDefs);
-        typecheckMethods();  // Not done
+        for(final ClassDef classDef : program.classDefs) {
+            for(final MethodDef methodDef : classDef.methodDefs) {
+                typecheckMethodDef(methodDef);
+            }
+        }
     }
 
     // not permitted to have repeated field names in the same class
@@ -36,10 +45,10 @@ public class TypeChecker {
 
         for (final VarDec dec : fields) {
             ensureNonVoidType(dec.type);
-            result.put(new Variable(dec.variable.name), dec.type);
+            result.put(new Variable(dec.var.name), dec.type);
         }
 
-        if (result.size() != fields.length) {
+        if (result.size() != fields.size()) {
             throw new TypeErrorException("Duplicate field name");
         }
 
@@ -47,18 +56,18 @@ public class TypeChecker {
     }
 
     // not permitted to have multiple class declarations with the same name
-    private static Map<ClassName, LinkedHashMap<Variable, Type>>
+    private Map<ClassName, LinkedHashMap<Variable, Type>>
         makeInstanceVarMapping(final List<ClassDef> clasDefs) throws TypeErrorException {
         final Map<ClassName, LinkedHashMap<Variable, Type>> result =
             new HashMap<ClassName, LinkedHashMap<Variable, Type>>();
 
         for (final ClassDef def : clasDefs) {
             final LinkedHashMap<Variable, Type> instanceVarMapping =
-                makeFieldMapping(def.fields);
-            result.put(def.name, fieldMapping);
+                makeFieldMapping(def.instanceVars);
+            result.put(def.name, instanceVarMapping);
         }
 
-        if (result.size() != clasDefs.length) {
+        if (result.size() != clasDefs.size()) {
             throw new TypeErrorException("Duplicate structure name");
         }
 
@@ -88,21 +97,21 @@ public class TypeChecker {
         return result;
     }
 
-    // not permitted to have multiple methods with the same name in a class
+    // not permitted to have multiple methods with the samfirste name in a class
     private LinkedHashMap<MethodName, Pair<Type[], ReturnType>>
         makeMethodMapping(final List<MethodDef> methodDefs) throws TypeErrorException {
 
         final LinkedHashMap<MethodName, Pair<Type[], ReturnType>> result =
             new LinkedHashMap<MethodName, Pair<Type[], ReturnType>>();
 
-        for (final MethodDef def : method) {
+        for (final MethodDef def : methodDefs) {
             final Type[] parameters = parameterTypes(def.varDecs);
-            final Pair<Type[], Type> value =
-                new Pair<Type[], Type>(parameters, def.returnType);
+            final Pair<Type[], ReturnType> value =
+                new Pair<Type[], ReturnType>(parameters, def.returnType);
             result.put(def.name, value);
         }
 
-        if (result.size() != functions.length) {
+        if (result.size() != methodDefs.size()) {
             throw new TypeErrorException("Duplicate method name");
         }
 
@@ -124,11 +133,11 @@ public class TypeChecker {
         return result;
     }
 
-    private void typecheckMethods() throws TypeErrorException {
+    private void typecheckMethodDef(MethodDef mdef) throws TypeErrorException {
         final InScope initialScope = new InScope(mdef.returnType,
-                                                 initialVariableMapping(mdef.parameters),
+                                                 initialVariableMapping(mdef.varDecs),
                                                  false);
-        final Pair<InScope, Boolean> stmtResult = initialScope.typecheckStmt(mdef.statement);
+        final Pair<InScope, Boolean> stmtResult = initialScope.typecheckStatement(mdef.statement);
 
         if (!stmtResult.second.booleanValue() &&
             !(mdef.returnType instanceof VoidType)) {
@@ -137,11 +146,11 @@ public class TypeChecker {
     }
 
     // error if duplicate variable names are used
-    private static Map<Variable, Type> initialVariableMapping(final VariableDeclaration[] parameters) throws TypeErrorException {
+    private static Map<Variable, Type> initialVariableMapping(final VarDec[] parameters) throws TypeErrorException {
         final Map<Variable, Type> result = new HashMap<Variable, Type>();
 
-        for (final VariableDeclaration dec : parameters) {
-            result.put(dec.variable, dec.type);
+        for (final VarDec dec : parameters) {
+            result.put(dec.var, dec.type);
         }
 
         if (result.size() != parameters.length) {
@@ -151,9 +160,10 @@ public class TypeChecker {
         return result;
     }
 
+    // Checks if a classtype has been defined
     private void ensureValidType(final Type type) throws TypeErrorException {
         if (type instanceof ClassType) {
-            final ClassName name = ((ClassType)type).name;
+            final ClassName name = new ClassName(((ClassType)type).name);
             if (!instanceVars.containsKey(name)) {
                 throw new TypeErrorException("Non-existent class referenced: " +
                                              name.toString());
@@ -200,28 +210,6 @@ public class TypeChecker {
         private InScope setInWhile() {
             return new InScope(returnType, inScope, true);
         }
- 
-        private Type typeofAccess(final Type maybeStructureType,
-                final FieldName field) throws TypeErrorException {
-            if (maybeStructureType instanceof StructureType) {
-                final StructureName name = ((StructureType)maybeStructureType).name;
-                final LinkedHashMap<FieldName, Type> expected = structDecs.get(name);
-                if (expected != null) {
-                    final Type fieldType = expected.get(field);
-                    if (fieldType != null) {
-                        return fieldType;
-                    } else {
-                        throw new TypeErrorException("Structure " + name.toString() +
-                            " does not have field " + field.toString());
-                    }
-                } else {
-                    throw new TypeErrorException("No structure with name: " + name.toString());
-                }
-            } else {
-                throw new TypeErrorException("Expected structure type; received: " +
-                                            maybeStructureType.toString());
-            }
-        }
              
         private Type[] typeofExps(final Exp[] exps) throws TypeErrorException {
             final Type[] types = new Type[exps.length];
@@ -245,9 +233,9 @@ public class TypeChecker {
             if (exp instanceof NumberExp) {
                 return new IntType();
             } else if (exp instanceof BoolExp) {
-                return new BoolType();
+                return new BooleanType();
             } else if (exp instanceof VariableExp) {
-                return lookupVariable(((VariableExp)exp).variable);
+                return lookupVariable(((VariableExp)exp).var);
             } else if (exp instanceof BinopExp) {
                 // the return type and expected parameter types all depend
                 // on the operator.  In all cases, we need to get the types
@@ -258,32 +246,8 @@ public class TypeChecker {
                 final Type rightType = typeofExp(asBinop.right);
                 return binopType(leftType, asBinop.op, rightType);
             } else if(exp instanceof ClassExp) {
-                return new ClassType(exp.name);
-            } else if(exp instanceof VarMethodExp){
-                return new 
-            }
-            
-            
-            else if (exp instanceof MakeStructureExp) {
-                final MakeStructureExp asStruct = (MakeStructureExp)exp;
-                checkMakeStructure(asStruct.name,
-                                    typeofExps(asStruct.parameters));
-                return new StructureType(asStruct.name);
-            } else if (exp instanceof FunctionCallExp) {
-                final FunctionCallExp asCall = (FunctionCallExp)exp;
-                return checkFunctionCall(asCall.name,
-                                        typeofExps(asCall.parameters));
-            } else if (exp instanceof CastExp) {
-                // Explicit cast.  Trust the user.  Ideally, we'd check
-                // this at runtime.  We still need to look at the expression
-                // to make sure that this is itself well-typed.
-                final CastExp asCast = (CastExp)exp;
-                typeofExp(asCast.exp);
-                return asCast.type;
-            } else if (exp instanceof FieldAccessExp) {
-                final FieldAccessExp asAccess = (FieldAccessExp)exp;
-                return typeofAccess(typeofExp(asAccess.exp),
-                                    asAccess.field);
+                ClassExp classExp = (ClassExp) exp;
+                return new ClassType(classExp.name);
             } else {
                 assert(false);
                 throw new TypeErrorException("Unrecognized expression: " + exp.toString());
@@ -292,76 +256,96 @@ public class TypeChecker {
 
         // returns any new scope to use, along with whether or not return was observed on
         // all paths
-        public Pair<InScope, Boolean> typecheckStmt(final Stmt stmt) throws TypeErrorException {
-            if (stmt instanceof IfStmt) {
-                final IfStmt asIf = (IfStmt)stmt;
-                ensureTypesSame(new BoolType(), typeofExp(asIf.guard));
+        public Pair<InScope, Boolean> typecheckStatement(final Statement stmt) throws TypeErrorException {
+            if (stmt instanceof IfStatement) {
+                final IfStatement asIf = (IfStatement)stmt;
+                ensureTypesSame(new BooleanType(), typeofExp(asIf.guard));
 
                 // since the true and false branches form their own blocks, we
                 // don't care about any variables they put in scope
-                final Pair<InScope, Boolean> leftResult = typecheckStmt(asIf.ifTrue);
-                final Pair<InScope, Boolean> rightResult = typecheckStmt(asIf.ifFalse);
+                final Pair<InScope, Boolean> leftResult = typecheckStatement(asIf.ifTrue);
+                final Pair<InScope, Boolean> rightResult = typecheckStatement(asIf.ifFalse);
                 final boolean returnOnBoth =
                     leftResult.second.booleanValue() && rightResult.second.booleanValue();
                 return new Pair<InScope, Boolean>(this, returnOnBoth);
-            } else if (stmt instanceof WhileStmt) {
-                final WhileStmt asWhile = (WhileStmt)stmt;
-                ensureTypesSame(new BoolType(), typeofExp(asWhile.guard));
+            } else if (stmt instanceof WhileStatement) {
+                final WhileStatement asWhile = (WhileStatement)stmt;
+                ensureTypesSame(new BooleanType(), typeofExp(asWhile.condition));
 
                 // Don't care about variables in the while.
                 // Because the body of the while loop will never execute if the condition is
                 // initially false, even if all paths in the while loop have return, this doesn't
                 // mean that we are guaranteed to hit return.
-                setInWhile().typecheckStmt(asWhile.body);
+                setInWhile().typecheckStatement(asWhile.stmt);
                 return new Pair<InScope, Boolean>(this, Boolean.valueOf(false));
-            } else if (stmt instanceof BreakStmt ||
-                        stmt instanceof ContinueStmt) {
+            } else if (stmt instanceof BreakStatement) {
                 if (!inWhile) {
                     throw new TypeErrorException("Break or continue outside of loop");
                 }
                 return new Pair<InScope, Boolean>(this, Boolean.valueOf(false));
-            } else if (stmt instanceof VariableDeclarationInitializationStmt) {
-                final VariableDeclarationInitializationStmt dec =
-                    (VariableDeclarationInitializationStmt)stmt;
+            } else if (stmt instanceof VarDecAssignment) {
+                final VarDecAssignment dec =
+                    (VarDecAssignment)stmt;
                 final Type expectedType = dec.varDec.type;
                 ensureNonVoidType(expectedType);
                 ensureValidType(expectedType);
                 ensureTypesSame(expectedType,
                                 typeofExp(dec.exp));
                 final InScope resultInScope =
-                    addVariable(dec.varDec.variable, expectedType);
+                    addVariable(dec.varDec.var, expectedType);
                 return new Pair<InScope, Boolean>(resultInScope, Boolean.valueOf(false));
-            } else if (stmt instanceof ReturnVoidStmt) {
+            } else if (stmt instanceof ReturnVoidStatement) {
                 ensureTypesSame(new VoidType(), returnType);
                 return new Pair<InScope, Boolean>(this, Boolean.valueOf(true));
-            } else if (stmt instanceof ReturnExpStmt) {
-                final Type receivedType = typeofExp(((ReturnExpStmt)stmt).exp);
+            } else if (stmt instanceof ReturnExpStatement) {
+                final Type receivedType = typeofExp(((ReturnExpStatement)stmt).exp);
                 ensureTypesSame(returnType, receivedType);
                 return new Pair<InScope, Boolean>(this, Boolean.valueOf(true));
-            } else if (stmt instanceof FreeStmt) {
-                ensureTypesSame(new PointerType(new VoidType()),
-                                typeofExp(((FreeStmt)stmt).value));
-                return new Pair<InScope, Boolean>(this, Boolean.valueOf(false));
-            } else if (stmt instanceof SequenceStmt) {
-                final SequenceStmt asSeq = (SequenceStmt)stmt;
-                final Pair<InScope, Boolean> fromLeft = typecheckStmt(asSeq.first);
-                
-                if (fromLeft.second.booleanValue()) {
-                    throw new TypeErrorException("Dead code from early return");
-                }
-
-                return fromLeft.first.typecheckStmt(asSeq.second);
-            } else if (stmt instanceof ExpStmt) {
-                // Just need to check that it's well-typed.  Permitted to
-                // return anything.
-                typeofExp(((ExpStmt)stmt).exp);
-                return new Pair<InScope, Boolean>(this, Boolean.valueOf(false));
             } else {
                 assert(false);
                 throw new TypeErrorException("Unrecognized statement: " + stmt.toString());
             }
-        } // typecheckStmt
+        } // typecheckStatement
     } // InScope
+
+    private static Type binopType(final Type left, final Op op, final Type right) throws TypeErrorException {
+        final IntType intType = new IntType();
+        if (op instanceof PlusOp) {
+            // TWO kinds are permitted:
+            // int + int: returns int
+            // pointer + int: returns same pointer type
+            //
+            // in both cases, the right side is an int
+            ensureTypesSame(intType, right);
+            if (left instanceof IntType) {
+                // int + int returns int
+                return intType;
+            } else {
+                throw new TypeErrorException("invalid lhs for +: " + left.toString());
+            }
+        } else if (op instanceof MinusOp ||
+                   op instanceof MultOp ||
+                   op instanceof DivOp) {
+            // int (-|*|/) int = int
+            ensureTypesSame(intType, left);
+            ensureTypesSame(intType, right);
+            return intType;
+        // } else if (op instanceof EqualsOp) {
+        //     // type == type = boolean
+        //     // both need to be of the same type
+        //     ensureTypesSame(left, right);
+        //     return new BoolType();                     USE LATER IF ADD == AND/OR <
+        // } else if (op instanceof LessThanOp) {
+        //     // int < int = boolean
+        //     ensureTypesSame(intType, left);
+        //     ensureTypesSame(intType, right);
+        //     return new BoolType();
+        } else {
+            // should be no other operators
+            assert(false);
+            throw new TypeErrorException("Unknown operator: " + op.toString());
+        }
+    } // binopType
 
     // intended for testing
     private Type expTypeNoScopeForTesting(final Exp exp) throws TypeErrorException {
@@ -372,14 +356,14 @@ public class TypeChecker {
 
     // intended for testing
     public static Type expTypeForTesting(final Exp exp) throws TypeErrorException {
-        final Typechecker checker =
-            new Typechecker(new Program(new List<ClassDef>(),
-                                        new Statement));
+        final TypeChecker checker =
+            new TypeChecker(new Program(new List<ClassDef>(),
+                                        new Statement()));
         return checker.expTypeNoScopeForTesting(exp);
     }
 
     // Called in testing to type check the given program
     public static void typecheckProgram(final Program program) throws TypeErrorException {
-        new Typechecker(program);
+        new TypeChecker(program);
     }
 }

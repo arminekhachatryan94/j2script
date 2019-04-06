@@ -123,7 +123,7 @@ public class Parser {
             resultPos = startPos + 1;
         } 
         else if (current instanceof VariableToken) {
-            resultExp = new VariableExp(((VariableToken)current).name);
+            resultExp = new VariableExp(new Variable(((VariableToken)current).name));
             resultPos = startPos + 1;
         } 
         else {
@@ -188,12 +188,6 @@ public class Parser {
     }
 
     private ParseResult<MethodDef> parseMethodDef(final int startPos) throws ParserException {
-        final Token tokenhere = tokens[startPos];
-
-        return null;
-    }
-
-    private ParseResult<InstanceDec> parseInstanceDec(final int startPos) throws ParserException {
         final Token tokenhere = tokens[startPos];
 
         return null;

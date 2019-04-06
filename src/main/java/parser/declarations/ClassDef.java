@@ -9,14 +9,14 @@ public class ClassDef {
     public final ClassName name;
     public final ClassName extendedClass;
     public final Constructor constructor;
-    public final List<InstanceDec> instanceVars;
+    public final List<VarDec> instanceVars;
     public final Statement statement;
     public final List<MethodDef> methodDefs;
 
     // non extended class
     public ClassDef(final ClassName name,
                     final Constructor constructor,
-                    final List<InstanceDec> instanceVars,
+                    final List<VarDec> instanceVars,
                     final Statement statement,
                     final List<MethodDef> methodDefs) {
         this.name = name;
@@ -31,7 +31,7 @@ public class ClassDef {
     public ClassDef(final ClassName name,
                     final Constructor constructor,
                     final ClassName extendedClass,
-                    final List<InstanceDec> instanceVars,
+                    final List<VarDec> instanceVars,
                     final Statement statement,
                     final List<MethodDef> methodDefs) {
         this.name = name;
