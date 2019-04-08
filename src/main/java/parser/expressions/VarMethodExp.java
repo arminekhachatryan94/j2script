@@ -38,6 +38,14 @@ public class VarMethodExp implements Exp {
     }
 
     public String emit() {
-        return "";
+        String exp = methodName + "(";
+        for(int i = 0; i < parameters.length; i++) {
+            exp += parameters[i].emit();
+            if(i+1 < parameters.length) {
+                exp += ", ";
+            }
+        }
+        exp += ")";
+        return exp;
     }
 }

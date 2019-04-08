@@ -8,6 +8,6 @@ public class NumberExp implements Exp {
     }
     
     public String emit() {
-        return number;
+        return number + "";
     }
 }

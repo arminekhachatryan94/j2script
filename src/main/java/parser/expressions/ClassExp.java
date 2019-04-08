@@ -34,14 +34,14 @@ public class ClassExp implements Exp {
     }
 
     public String emit() {
-        String ret = name.toString() + "(";
+        String exp = name.toString() + "(";
         for(int i = 0; i < parameters.length; i++) {
-            ret += parameters[i].emit();
+            exp += parameters[i].emit();
             if(i+1 < parameters.length) {
-                ret += ",";
+                exp += ",";
             }
         }
-        ret += ");";
-        return ret;
+        exp += ");";
+        return exp;
     }
 }
