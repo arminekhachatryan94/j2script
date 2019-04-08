@@ -15,23 +15,27 @@ import j2script.operators.*;
 import j2script.statements.*;
 import j2script.types.*;
 import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 public class CodeGenTest {
 
 	public void assertResult(String expected, Exp expression) throws IOException {
-		Codegen code = new Codegen();
-		code.compileExp(expression);
-		final File file = File.createTempFile("test", ".js");
+		
 		try {
 			// Codegen.writeExptoFile(expression, file);
-			
-			code.writeCompleteFile(file);
+			Codegen code = new Codegen();
+			//code.compileExp(expression);
+			final File file = File.createTempFile("test", ".js");
+			code.writeExptoFile(expression, file);
+			//code.writeCompleteFile(file);
 			final String output = readFile(file);
+			System.out.println(output);
+			//assertEquals(output, expected);
 			assertTrue(expected.equals(output));
-
-
-		} finally {
 			file.delete();
+
+		} catch (Exception e) {
+			System.out.println("somethings up");
 		}
 
 	}
