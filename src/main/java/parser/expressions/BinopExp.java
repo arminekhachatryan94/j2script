@@ -32,9 +32,9 @@ public class BinopExp implements Exp {
     }
 
     public String toString() {
-        return ("(" + left.toString() +
+        return left.toString() +
                 " " + op.toString() +
-                " " + right.toString() + ")");
+                " " + right.toString();
     }
 
     public String emit() {
