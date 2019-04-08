@@ -130,14 +130,14 @@ public class CodeGenTest {
 	}
 
 
-	/**Complex Algebraic Equations**/
+	/* Complex Algebraic Equations */
 
 	@Test // 1 - 2 / 3 = 0
 	public void testArithmeticEquation() throws IOException {
 	        assertResult("0", new BinopExp(new NumberExp(1),
-	new MinusOp(),
-	new BinopExp(new NumberExp(2), new DivOp(), new NumberExp(3))
-	));
+				new MinusOp(),
+				new BinopExp(new NumberExp(2), new DivOp(), new NumberExp(3))
+		));
 	}
 
 	@Test // 1 + 2 - 3 = 0
