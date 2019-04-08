@@ -38,10 +38,10 @@ public class ClassExp implements Exp {
         for(int i = 0; i < parameters.length; i++) {
             exp += parameters[i].emit();
             if(i+1 < parameters.length) {
-                exp += ",";
+                exp += ", ";
             }
         }
-        exp += ");";
+        exp += ")";
         return exp;
     }
 }

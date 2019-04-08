@@ -173,31 +173,31 @@ public class CodeGenTest {
 			new NumberExp(3)));
 	}
 
-	// /* StringExp */
-	// @Test 
-	// public void testString() throws IOException {
-	//         assertResult("\"Food\"", new StringExp("Food"));
-	// }
+	/* StringExp */
+	@Test 
+	public void testString() throws IOException {
+	        assertResult("\"Food\"", new StringExp("Food"));
+	}
 
-	// /* Method Expression */
-	// @Test // methodOne(4, stringName)
-	// public void testFucntionCall() throws IOException {
-	// 	Exp expressions [] = {new NumberExp(4), new VariableExp("stringName")};
-	//         assertResult("methodOne(4, stringName)", new VarMethodExp(new Variable("var"), new MethodName("methodOne"), expressions));
-	// }
+	/* Method Expression */
+	@Test // methodOne(4, stringName)
+	public void testFucntionCall() throws IOException {
+		Exp expressions [] = {new NumberExp(4), new VariableExp("stringName")};
+	        assertResult("methodOne(4, stringName)", new VarMethodExp(new Variable("var"), new MethodName("methodOne"), expressions));
+	}
 
-	// /* Class Expression */
-	// @Test // new Foo(4, "hello")
-	// public void testClassObjects() throws IOException {
-	// 	Exp expressions [] = {new NumberExp(4), new StringExp("hello")};
-	//         assertResult("Foo(4, hello)", new ClassExp(new ClassName("Foo"), expressions));
-	// }
+	/* Class Expression */
+	@Test // new Foo(4, "hello")
+	public void testClassObjects() throws IOException {
+		Exp expressions [] = {new NumberExp(4), new StringExp("hello")};
+	        assertResult("Foo(4, \"hello\")", new ClassExp(new ClassName("Foo"), expressions));
+	}
 
-	// /* Class Expression */
-	// @Test // new Foo(4, "hello")
-	// public void testClassObjectsWithNoParameters() throws IOException {
-	// 	Exp expressions [] = {};
-	//         assertResult("Foo();", new ClassExp(new ClassName("Foo"), expressions));
-	// }
+	/* Class Expression */
+	@Test // new Foo()
+	public void testClassObjectsWithNoParameters() throws IOException {
+		Exp expressions [] = {};
+	        assertResult("Foo()", new ClassExp(new ClassName("Foo"), expressions));
+	}
 	
 }
