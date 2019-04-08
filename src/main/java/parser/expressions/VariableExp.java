@@ -8,6 +8,6 @@ public class VariableExp implements Exp {
     }
 
     public String emit() {
-        return "";
+        return name;
     }
 }
