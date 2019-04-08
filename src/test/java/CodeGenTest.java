@@ -69,50 +69,50 @@ public class CodeGenTest {
 	@Test // 2 - 2 = 0
 	public void testSubtraction() throws IOException {
 	        assertResult("0", new BinopExp(new NumberExp(2),
-		new MinusOp(),
-		new NumberExp(2)));
+			new MinusOp(),
+			new NumberExp(2)));
 	}
 
 	@Test // 1 - 2 = -1
 	public void testSubtractionWithNegativeResult() throws IOException {
 	        assertResult("-1", new BinopExp(new NumberExp(1),
-		new MinusOp(),
-		new NumberExp(2)));
+			new MinusOp(),
+			new NumberExp(2)));
 	}
 
 	@Test // 1 - -2 = 3
 	public void testAdditionWithSubtractionOP() throws IOException {
 	        assertResult("3", new BinopExp(new NumberExp(1),
-	new MinusOp(),
-	new NumberExp(-2)));
+			new MinusOp(),
+			new NumberExp(-2)));
 	}
 
 	@Test // 2 * 2 = 4
 	public void testMult() throws IOException {
 	        assertResult("4", new BinopExp(new NumberExp(2),
-	new MultOp(),
-	new NumberExp(2)));
+			new MultOp(),
+			new NumberExp(2)));
 	}
 
 	@Test // 2 * -2 = -4
 	public void testMultWithNegative() throws IOException {
 	        assertResult("-4", new BinopExp(new NumberExp(2),
-	new MultOp(),
-	new NumberExp(-2)));
+			new MultOp(),
+			new NumberExp(-2)));
 	}
 
 	@Test // -2 * -2 = 4
 	public void testMultWithBothNegative() throws IOException {
 	        assertResult("4", new BinopExp(new NumberExp(-2),
-		new MultOp(),
-		new NumberExp(-2)));
+			new MultOp(),
+			new NumberExp(-2)));
 	}
 
 	@Test // 2 / 2 = 0
 	public void testDiv() throws IOException {
 	        assertResult("0", new BinopExp(new NumberExp(2),
-	new DivOp(),
-	new NumberExp(2)));
+			new DivOp(),
+			new NumberExp(2)));
 	}
 
 	/*@Test // 2 / 0 = 0
@@ -125,8 +125,8 @@ public class CodeGenTest {
 	@Test // 2 / 4 = 0
 	public void testDivTwo() throws IOException {
 	        assertResult("0", new BinopExp(new NumberExp(2),
-		new DivOp(),
-		new NumberExp(2)));
+			new DivOp(),
+			new NumberExp(2)));
 	}
 
 
@@ -135,36 +135,36 @@ public class CodeGenTest {
 	@Test // 1 - 2 / 3 = 0
 	public void testArithmeticEquation() throws IOException {
 	        assertResult("0", new BinopExp(new NumberExp(1),
-				new MinusOp(),
-				new BinopExp(new NumberExp(2), new DivOp(), new NumberExp(3))
+			new MinusOp(),
+			new BinopExp(new NumberExp(2), new DivOp(), new NumberExp(3))
 		));
 	}
 
 	@Test // 1 + 2 - 3 = 0
 	public void testArithmeticEquationTwo() throws IOException {
 	        assertResult("0", new BinopExp(new BinopExp(new NumberExp(1),
-				new PlusOp(),
-				new NumberExp(2)),
-				new MinusOp(),
-				new NumberExp(3)));
+			new PlusOp(),
+			new NumberExp(2)),
+			new MinusOp(),
+			new NumberExp(3)));
 	}
 
 	@Test // 1 * 2 - 3 = -1
 	public void testArithmeticEquationThree() throws IOException {
 	        assertResult("-1", new BinopExp(new BinopExp(new NumberExp(1),
-				new MultOp(),
-				new NumberExp(2)),
-				new MinusOp(),
-				new NumberExp(3)));
+			new MultOp(),
+			new NumberExp(2)),
+			new MinusOp(),
+			new NumberExp(3)));
 	}
 
 	@Test // 3 * 2 / 3 = 1
 	public void testArithmeticEquationFour() throws IOException {
 	        assertResult("1", new BinopExp(new BinopExp(new NumberExp(3),
-				new MultOp(),
-				new NumberExp(2)),
-				new DivOp(),
-				new NumberExp(3)));
+			new MultOp(),
+			new NumberExp(2)),
+			new DivOp(),
+			new NumberExp(3)));
 	}
 
 	/* StringExp */
