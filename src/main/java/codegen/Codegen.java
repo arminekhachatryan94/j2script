@@ -39,27 +39,27 @@ public class Codegen{
     }
     public void compileBinOpExp(Exp exp){
         BinopExp e = (BinopExp)exp;
-        Code.add(e.toString());
+        Code.add(e.emit());
     }
     
     public void compileClassExp(Exp exp){
         ClassExp e = (ClassExp)exp;
-        Code.add(e.toString());
+        Code.add(e.emit());
     }
 
     public void compileNumberExp(Exp exp){
         NumberExp e = (NumberExp)exp;
-        Code.add(e.toString());
+        Code.add(e.emit());
     }
     
     public void compileStringExp(Exp exp){
         StringExp e = (StringExp)exp;
-        Code.add(e.toString());
+        Code.add(e.emit());
     }
 
     public void compileVarMethodExp(Exp exp){
         VarMethodExp e = (VarMethodExp)exp;
-        Code.add(e.toString());
+        Code.add(e.emit());
     }
     public void writeExptoFile(final Exp exp, final File file) throws IOException{
         final Codegen gen = new Codegen();
