@@ -23,7 +23,7 @@ public class CodeGenTest {
 
 	public void assertResult(String expected, Exp expression) throws IOException {
 		
-		//try {
+		try {
 			// Codegen.writeExptoFile(expression, file);
 			Codegen code = new Codegen();
 			//code.compileExp(expression);
@@ -31,16 +31,16 @@ public class CodeGenTest {
 			code.writeExptoFile(expression, file);
 			//code.writeCompleteFile(file);
 			final String output = readFile(file);
-			System.out.println(output);
+			//System.out.println(output);
 			//System.out.println(expected);
 			assertEquals(expected, output);
 			//Assert.assertThat(output.equals(expected));
 			//assertTrue(expected.equals(output));
 			file.delete();
 
-		//} catch (Exception e) {
-			//System.out.println("somethings up");
-		//}
+		} catch (Exception e) {
+			System.out.println("somethings up");
+		}
 
 	}
 
