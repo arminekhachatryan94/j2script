@@ -1,6 +1,8 @@
 package j2script;
 import java.util.List;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertThat;
+import org.junit.Assert;
 import static org.junit.Assert.assertArrayEquals;
 import java.io.File;
 import java.util.Scanner;
@@ -21,7 +23,7 @@ public class CodeGenTest {
 
 	public void assertResult(String expected, Exp expression) throws IOException {
 		
-		try {
+		//try {
 			// Codegen.writeExptoFile(expression, file);
 			Codegen code = new Codegen();
 			//code.compileExp(expression);
@@ -30,13 +32,15 @@ public class CodeGenTest {
 			//code.writeCompleteFile(file);
 			final String output = readFile(file);
 			System.out.println(output);
-			//assertEquals(output, expected);
-			assertTrue(expected.equals(output));
+			//System.out.println(expected);
+			assertEquals(expected, output);
+			//Assert.assertThat(output.equals(expected));
+			//assertTrue(expected.equals(output));
 			file.delete();
 
-		} catch (Exception e) {
-			System.out.println("somethings up");
-		}
+		//} catch (Exception e) {
+			//System.out.println("somethings up");
+		//}
 
 	}
 
@@ -46,7 +50,7 @@ public class CodeGenTest {
 
 		try (Scanner scanner = new Scanner(file)) {
 			while(scanner.hasNextLine()) {
-			fileContents.append(scanner.nextLine() + System.lineSeparator());
+			fileContents.append(scanner.nextLine());// + System.lineSeparator());
 			}
 			return fileContents.toString();
 		}
@@ -164,7 +168,7 @@ public class CodeGenTest {
 
 	@Test // 3 * 2 / 3 = 1
 	public void testArithmeticEquationFour() throws IOException {
-	        assertResult("1", new BinopExp(new BinopExp(new NumberExp(3),
+	        assertResult("3 * 2 / 3", new BinopExp(new BinopExp(new NumberExp(3),
 			new MultOp(),
 			new NumberExp(2)),
 			new DivOp(),
@@ -174,14 +178,14 @@ public class CodeGenTest {
 	/* StringExp */
 	@Test 
 	public void testString() throws IOException {
-	        assertResult("Food", new StringExp("Food"));
+	        assertResult("\"Food\"", new StringExp("Food"));
 	}
 
 	/* Method Expression */
-	@Test // var.methodOne(4, stringName)
+	@Test // methodOne(4, stringName)
 	public void testFucntionCall() throws IOException {
 		Exp expressions [] = {new NumberExp(4), new VariableExp("stringName")};
-	        assertResult("var.methodOne(4, stringName)", new VarMethodExp(new Variable("var"), new MethodName("methodOne"), expressions));
+	        assertResult("methodOne(4, stringName)", new VarMethodExp(new Variable("var"), new MethodName("methodOne"), expressions));
 	}
 
 	/* Class Expression */
@@ -195,6 +199,7 @@ public class CodeGenTest {
 	@Test // new Foo(4, "hello")
 	public void testClassObjectsWithNoParameters() throws IOException {
 		Exp expressions [] = {};
-	        assertResult("Foo()", new ClassExp(new ClassName("Foo"), expressions));
+	        assertResult("Foo();", new ClassExp(new ClassName("Foo"), expressions));
 	}
+	
 }
