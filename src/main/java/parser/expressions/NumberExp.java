@@ -6,4 +6,8 @@ public class NumberExp implements Exp {
     public NumberExp(final int number) {
         this.number = number;
     }
+    
+    public String emit() {
+        return number;
+    }
 }

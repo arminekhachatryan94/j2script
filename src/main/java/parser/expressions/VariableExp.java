@@ -6,4 +6,8 @@ public class VariableExp implements Exp {
     public VariableExp(final String name) {
         this.name = name;
     }
+
+    public String emit() {
+        return "";
+    }
 }

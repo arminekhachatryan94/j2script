@@ -36,4 +36,8 @@ public class VarMethodExp implements Exp {
         return (var.toString() + "(" +
                 methodName.toString() + ")");
     }
+
+    public String emit() {
+        return "";
+    }
 }
