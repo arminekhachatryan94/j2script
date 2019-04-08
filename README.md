@@ -27,7 +27,8 @@ returntype ::= type | void
 op ::= + | - | * | /
 
 // might want to change.  Look at java grammar documentation
-exp ::= additive |
+exp ::= i | true | false | var |
+        additive |
         new classname(exp*) |
         var.methodname(exp*) | // will need to check if void
         str | 
@@ -41,16 +42,16 @@ primary ::= i | var
  
 vardec ::= type var
 
-stmnt ::= exp;
-	         vardec = exp; |
-          var = exp; |
-          while(exp) stmnt |
+stmnt ::= exp; |
+	      return exp; |
+          return;
           break; |  
           println(exp); |
           { stmnt* } |
+          vardec = exp; |
+          var = exp; |
           if (exp) stmnt else stmnt |
-          return exp; |
-          return;
+          while(exp) stmnt
  
 access ::= public | private
 
@@ -67,3 +68,25 @@ classdef ::= class classname [extends classname] {
 
 program ::= classdef* stmnt
 ```
+
+## Features  
+- Computation Abstraction Non-Trivial Feature: Class-based inheritance
+                        
+- Non-Trivial Feature #2: Access Modifiers
+                        
+- Non-Trivial Feature #3: Generic Programming
+                
+- Work Planned for Custom Milestone: Generics
+
+## Type Checker
+- Variables have the correct type when assigned
+
+- Variables are defined when assigned
+
+- Expressions evaluate to the correct type
+
+- Variables and Classes have the correct access for the current scope
+
+- Return is called in a method
+
+- Break is called within a while loop or if statement
