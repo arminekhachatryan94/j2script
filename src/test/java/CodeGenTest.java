@@ -18,38 +18,37 @@ import org.junit.Test;
 
 public class CodeGenTest {
 
-	public void assertResult(String expected, Exp expression) throws IOException{
+	public void assertResult(String expected, Exp expression) throws IOException {
 		Codegen code = new Codegen();
 		code.compileExp(expression);
 		final File file = File.createTempFile("test", ".txt");
-		try{
-			//Codegen.writeExptoFile(expression, file);
+		try {
+			// Codegen.writeExptoFile(expression, file);
 			
 			code.writeCompleteFile(file);
 			final String output = readFile(file);
 			assertTrue(expected.equals(output));
 
 
-		}finally{
+		} finally {
 			file.delete();
 		}
 
 	}
 
 	private String readFile(File file) throws IOException {
+		// File file = new File(pathname);
+		StringBuilder fileContents = new StringBuilder((int)file.length());        
 
-    //File file = new File(pathname);
-    StringBuilder fileContents = new StringBuilder((int)file.length());        
+		try (Scanner scanner = new Scanner(file)) {
+			while(scanner.hasNextLine()) {
+			fileContents.append(scanner.nextLine() + System.lineSeparator());
+			}
+			return fileContents.toString();
+		}
+	}
 
-    try (Scanner scanner = new Scanner(file)) {
-        while(scanner.hasNextLine()) {
-            fileContents.append(scanner.nextLine() + System.lineSeparator());
-        }
-        return fileContents.toString();
-    }
-}
-
-	/*Number Expressions*/
+	/* Number Expressions */
 	@Test
 	public void testInt() throws IOException {
 	        assertResult("99", new NumberExp(99));
@@ -61,79 +60,79 @@ public class CodeGenTest {
 	}
 
 
-	/*Binop Expressions*/
-	@Test //1+2 = 3
+	/* Binop Expressions */
+	@Test // 1 + 2 = 3
 	public void testAddition() throws IOException {
 	        assertResult("3", new BinopExp(new NumberExp(1), new PlusOp(), new NumberExp(2)));
 	}
 
-	@Test //2-2 = 0
+	@Test // 2 - 2 = 0
 	public void testSubtraction() throws IOException {
 	        assertResult("0", new BinopExp(new NumberExp(2),
-	new MinusOp(),
-	new NumberExp(2)));
+		new MinusOp(),
+		new NumberExp(2)));
 	}
 
-	@Test //1 -2 = -1
+	@Test // 1 - 2 = -1
 	public void testSubtractionWithNegativeResult() throws IOException {
 	        assertResult("-1", new BinopExp(new NumberExp(1),
-	new MinusOp(),
-	new NumberExp(2)));
+		new MinusOp(),
+		new NumberExp(2)));
 	}
 
-	@Test //1- -2 = 3
+	@Test // 1 - -2 = 3
 	public void testAdditionWithSubtractionOP() throws IOException {
 	        assertResult("3", new BinopExp(new NumberExp(1),
 	new MinusOp(),
 	new NumberExp(-2)));
 	}
 
-	@Test //2*2 = 4
+	@Test // 2 * 2 = 4
 	public void testMult() throws IOException {
 	        assertResult("4", new BinopExp(new NumberExp(2),
 	new MultOp(),
 	new NumberExp(2)));
 	}
 
-	@Test //2*-2 = -4
+	@Test // 2 * -2 = -4
 	public void testMultWithNegative() throws IOException {
 	        assertResult("-4", new BinopExp(new NumberExp(2),
 	new MultOp(),
 	new NumberExp(-2)));
 	}
 
-	@Test //-2*-2 = 4
+	@Test // -2 * -2 = 4
 	public void testMultWithBothNegative() throws IOException {
 	        assertResult("4", new BinopExp(new NumberExp(-2),
-	new MultOp(),
-	new NumberExp(-2)));
+		new MultOp(),
+		new NumberExp(-2)));
 	}
 
-	@Test //2/2 = 0
+	@Test // 2 / 2 = 0
 	public void testDiv() throws IOException {
 	        assertResult("0", new BinopExp(new NumberExp(2),
 	new DivOp(),
 	new NumberExp(2)));
 	}
 
-	/*@Test //2/0 = 0
+	/*@Test // 2 / 0 = 0
 	public void testDiv() throws IOException {
 	        assertResult(null, new BinopExp(new NumberExp(2),
-	new DivOp(),
-	new NumberExp(2)));
+		new DivOp(),
+		new NumberExp(2)));
 	}*/
 
-	@Test //2/4 = 0
+	@Test // 2 / 4 = 0
 	public void testDivTwo() throws IOException {
 	        assertResult("0", new BinopExp(new NumberExp(2),
-	new DivOp(),
-	new NumberExp(2)));
+		new DivOp(),
+		new NumberExp(2)));
 	}
 
 
 	/**Complex Algebraic Equations**/
 
-	@Test // 1-2/3 =0
+	@Test // 1 - 2 / 3 = 0
 	public void testArithmeticEquation() throws IOException {
 	        assertResult("0", new BinopExp(new NumberExp(1),
 	new MinusOp(),
@@ -141,7 +140,7 @@ public class CodeGenTest {
 	));
 	}
 
-	@Test // 1+2-3 =0
+	@Test // 1 + 2 - 3 = 0
 	public void testArithmeticEquationTwo() throws IOException {
 	        assertResult("0", new BinopExp(new BinopExp(new NumberExp(1),
 				new PlusOp(),
@@ -150,7 +149,7 @@ public class CodeGenTest {
 				new NumberExp(3)));
 	}
 
-	@Test // 1*2-3 =-1
+	@Test // 1 * 2 - 3 = -1
 	public void testArithmeticEquationThree() throws IOException {
 	        assertResult("-1", new BinopExp(new BinopExp(new NumberExp(1),
 				new MultOp(),
@@ -159,7 +158,7 @@ public class CodeGenTest {
 				new NumberExp(3)));
 	}
 
-	@Test // 3*2/3 =1
+	@Test // 3 * 2 / 3 = 1
 	public void testArithmeticEquationFour() throws IOException {
 	        assertResult("1", new BinopExp(new BinopExp(new NumberExp(3),
 				new MultOp(),
@@ -168,36 +167,30 @@ public class CodeGenTest {
 				new NumberExp(3)));
 	}
 
-	/**StringExp**/
+	/* StringExp */
 	@Test 
 	public void testString() throws IOException {
 	        assertResult("Food", new StringExp("Food"));
 	}
 
-	/*Method Expression*/
-	@Test //var.methodOne(4, stringName)
+	/* Method Expression */
+	@Test // var.methodOne(4, stringName)
 	public void testFucntionCall() throws IOException {
 		Exp expressions [] = {new NumberExp(4), new VariableExp("stringName")};
 	        assertResult("var.methodOne(4, stringName)", new VarMethodExp(new Variable("var"), new MethodName("methodOne"), expressions));
 	}
 
-	/*Class Expression*/
-	@Test //new Foo(4, "hello")
+	/* Class Expression */
+	@Test // new Foo(4, "hello")
 	public void testClassObjects() throws IOException {
 		Exp expressions [] = {new NumberExp(4), new StringExp("hello")};
 	        assertResult("Foo(4, hello)", new ClassExp(new ClassName("Foo"), expressions));
 	}
 
-	/*Class Expression*/
-	@Test //new Foo(4, "hello")
+	/* Class Expression */
+	@Test // new Foo(4, "hello")
 	public void testClassObjectsWithNoParameters() throws IOException {
 		Exp expressions [] = {};
 	        assertResult("Foo()", new ClassExp(new ClassName("Foo"), expressions));
-		
-		
 	}
-
-
-
-
 }
