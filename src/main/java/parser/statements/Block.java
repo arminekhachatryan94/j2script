@@ -3,8 +3,8 @@ import java.util.*;
 
 
 public class Block implements Statement {
-    public List<Statement> statements;
-    public Block(List<Statement> statements){
+    public final List<Statement> statements;
+    public Block(final List<Statement> statements){
         this.statements = statements;
     }
     // public int hashCode() {

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.AbstractMap;
 import java.util.List;
+import java.util.ArrayList;
 
 import j2script.util.*;
 import j2script.TypeErrorException;
@@ -33,6 +34,10 @@ public class TypeChecker {
                 typecheckMethodDef(methodDef);
             }
         }
+        final InScope statementScope = new InScope(new VoidType(),
+                                                  new HashMap<Variable, Type>(),
+                                                  false);
+        statementScope.typecheckStatement(program.statement);
     }
 
     // not permitted to have repeated field names in the same class
@@ -163,7 +168,7 @@ public class TypeChecker {
     // Checks if a classtype has been defined
     private void ensureValidType(final Type type) throws TypeErrorException {
         if (type instanceof ClassType) {
-            final ClassName name = new ClassName(((ClassType)type).name);
+            final ClassName name = ((ClassType)type).name;
             if (!instanceVars.containsKey(name)) {
                 throw new TypeErrorException("Non-existent class referenced: " +
                                              name.toString());
@@ -248,16 +253,23 @@ public class TypeChecker {
             } else if(exp instanceof ClassExp) {
                 ClassExp classExp = (ClassExp) exp;
                 return new ClassType(classExp.name);
+            } else if(exp instanceof StringExp) {
+              StringExp stringExp = (StringExp) exp;
+              return new StringType(stringExp.name);
             } else {
-                assert(false);
-                throw new TypeErrorException("Unrecognized expression: " + exp.toString());
+              assert(false);
+              throw new TypeErrorException("Unrecognized expression: " + exp.toString());
             }
         } // typeofExp
 
         // returns any new scope to use, along with whether or not return was observed on
         // all paths
         public Pair<InScope, Boolean> typecheckStatement(final Statement stmt) throws TypeErrorException {
-            if (stmt instanceof IfStatement) {
+            if (stmt instanceof ExpStatement) {
+                final ExpStatement expStmt = (ExpStatement)stmt;
+                typeofExp(expStmt.exp);
+                return new Pair<InScope, Boolean>(this, Boolean.valueOf(false));
+            } else if (stmt instanceof IfStatement) {
                 final IfStatement asIf = (IfStatement)stmt;
                 ensureTypesSame(new BooleanType(), typeofExp(asIf.guard));
 
@@ -280,7 +292,7 @@ public class TypeChecker {
                 return new Pair<InScope, Boolean>(this, Boolean.valueOf(false));
             } else if (stmt instanceof BreakStatement) {
                 if (!inWhile) {
-                    throw new TypeErrorException("Break or continue outside of loop");
+                    throw new TypeErrorException("Break outside of loop");
                 }
                 return new Pair<InScope, Boolean>(this, Boolean.valueOf(false));
             } else if (stmt instanceof VarDecAssignment) {
@@ -294,13 +306,30 @@ public class TypeChecker {
                 final InScope resultInScope =
                     addVariable(dec.varDec.var, expectedType);
                 return new Pair<InScope, Boolean>(resultInScope, Boolean.valueOf(false));
+            } else if (stmt instanceof VarAssignment) {
+                final VarAssignment assign = (VarAssignment)stmt;
+                // check if exists
+                Type varType = lookupVariable(assign.variable);
+                // chack if right type
+                ensureTypesSame(varType, typeofExp(assign.exp));
+                return new Pair<InScope, Boolean>(this, Boolean.valueOf(false));
             } else if (stmt instanceof ReturnVoidStatement) {
                 ensureTypesSame(new VoidType(), returnType);
                 return new Pair<InScope, Boolean>(this, Boolean.valueOf(true));
             } else if (stmt instanceof ReturnExpStatement) {
                 final Type receivedType = typeofExp(((ReturnExpStatement)stmt).exp);
-                ensureTypesSame(returnType, receivedType);
+                ensureTypesSame(receivedType, returnType);
                 return new Pair<InScope, Boolean>(this, Boolean.valueOf(true));
+            } else if (stmt instanceof PrintStatement) {
+                final PrintStatement expStmt = (PrintStatement)stmt;
+                ensureTypesSame(new StringType(new StringName(null)), typeofExp(expStmt.exp));
+                return new Pair<InScope, Boolean>(this, Boolean.valueOf(false));
+            } else if (stmt instanceof Block) {
+                final Block block = (Block)stmt;
+                for (Statement statement : block.statements) {
+                  typecheckStatement(statement);
+                }
+                return new Pair<InScope, Boolean>(this, Boolean.valueOf(false));
             } else {
                 assert(false);
                 throw new TypeErrorException("Unrecognized statement: " + stmt.toString());
@@ -357,8 +386,8 @@ public class TypeChecker {
     // intended for testing
     public static Type expTypeForTesting(final Exp exp) throws TypeErrorException {
         final TypeChecker checker =
-            new TypeChecker(new Program(new List<ClassDef>(),
-                                        new Statement()));
+            new TypeChecker(new Program(new ArrayList<ClassDef>(),
+                                        new Block(new ArrayList())));
         return checker.expTypeNoScopeForTesting(exp);
     }
 

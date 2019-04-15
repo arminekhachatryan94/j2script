@@ -1,9 +1,11 @@
 package j2script.types;
 
-public class ClassType implements Type {
-    public final String name;
+import j2script.names.ClassName;
 
-    public ClassType(String name) {
+public class ClassType implements Type {
+    public final ClassName name;
+
+    public ClassType(ClassName name) {
         this.name = name;
     }
 

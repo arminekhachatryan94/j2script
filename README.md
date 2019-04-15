@@ -28,8 +28,7 @@ exp ::= i | true | false | var |
         additive |
         new classname(exp*) |
         var.methodname(exp*) | // will need to check if void
-        str |
-        this
+        str
  
 additive ::= multiplicative ( ('+' | '-') multiplicative)*
 
