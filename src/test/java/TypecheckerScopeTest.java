@@ -1,20 +1,10 @@
-package j2script.TypeChecker;
+package j2script.typechecker;
 
 import j2script.*;
-import j2script.tokens.*;
-import j2script.access.*;
-import j2script.declarations.*;
-import j2script.expressions.*;
-import j2script.names.*;
-import j2script.operators.*;
-import j2script.statements.*;
-import j2script.types.*;
-import org.junit.Test;
-import java.util.List;
-import j2script.TypeChecker;
-import java.util.ArrayList;
 
-public class TypeCheckerScopeTest {
+import org.junit.Test;
+
+public class TypecheckerScopeTest {
 
 public void testConstructorAssignmentsOfIntegerInstanceVariables() {
     /* class Foo{
@@ -29,17 +19,17 @@ public void testConstructorAssignmentsOfIntegerInstanceVariables() {
     List<InstanceDec> instanceVars = new ArrayList<>();
     List<ClassDef> methodDefs = new ArrayList<>(); //empty
 
-    VarDec[] VarDec = {}; //empty
+    VarDec[] varDec = {}; //empty
     instanceVars.add(new InstanceDec(new PrivateAccess(), new VarDec(new IntType(), new Variable("x"))));
     classDef.add(new ClassDef(  new ClassName("foo"),
                                 
-                                new Constructor(VarDec, new VarAssignment(new Variable("x"), new NumberExp(0))),
+                                new Constructor(vardec, new VarAssignment(new Variable("x"), new NumberExp(0))),
                                 instanceVars,
                                 methodDefs));
 
     Statement statment = new VarDecAssignment(new VarDec(new IntType(), new Variable("x")), new NumberExp(0));
     final Program program = new Program(classDef, statment);
-    TypeChecker.typecheckProgram(program);
+    Typechecker.typecheckProgram(program);
 }
 
 public void testConstructorAssignmentsOfIntegerInstanceVariablesWithParameter() {
@@ -53,16 +43,16 @@ public void testConstructorAssignmentsOfIntegerInstanceVariablesWithParameter() 
     List<InstanceDec> instanceVars = new ArrayList<>();
     List<ClassDef> methodDefs = new ArrayList<>(); //empty
 
-    VarDec[] VarDec = {new VarDec(new IntType(), new Variable("y"))}; //empty
+    VarDec[] varDec = {new VarDec(new IntType(), new Variable("y"))}; //empty
     instanceVars.add(new InstanceDec(new PrivateAccess(), new VarDec(new IntType(), new Variable("x"))));
     classDef.add(new ClassDef(  new ClassName("foo"),
                                 
-                                new Constructor(VarDec, new VarAssignment(new Variable("x"), new VariableExp("y"))),
+                                new Constructor(vardec, new VarAssignment(new Variable("x"), new VariableExp("y"))),
                                 instanceVars,
                                 methodDefs));
     //Statement statment = new VarDecAssignment(new VarDec(new IntType(), new Variable("x")), new NumberExp(0));
     final Program program = new Program(classDef, null);
-    TypeChecker.typecheckProgram(program);
+    Typechecker.typecheckProgram(program);
 }
 
 
@@ -79,18 +69,18 @@ public void testConstructorAssignmentsOfIntegerInstanceVariableWithASetterMethod
     List<InstanceDec> instanceVars = new ArrayList<>();
     List<MethodDef> methodDefs = new ArrayList<>();
 
-    VarDec[] VarDec = {new VarDec(new IntType(), new Variable("y"))}; 
-    VarDec[] VarDec2 = {new VarDec(new IntType(), new Variable("z"))};
+    VarDec[] varDec = {new VarDec(new IntType(), new Variable("y"))}; 
+    VarDec[] varDec2 = {new VarDec(new IntType(), new Variable("z"))};
     instanceVars.add(new InstanceDec(new PrivateAccess(), new VarDec(new IntType(), new Variable("x"))));
-    methodDefs.add(new MethodDef(new PublicAccess(), new VoidType(), new MethodName("setX"), VarDec2, new VarAssignment(new Variable("x"), new VariableExp("z"))));
+    methodDefs.add(new MethodDef(new PublicAccess(), new VoidType(), new MethodName("setX"), varDec2, new VarAssignment(new Variable("x"), new VariableExp("z"))));
     classDef.add(new ClassDef(  new ClassName("foo"),
                                 
-                                new Constructor(VarDec, new VarAssignment(new Variable("x"), new VariableExp("y"))),
+                                new Constructor(vardec, new VarAssignment(new Variable("x"), new VariableExp("y"))),
                                 instanceVars,
                                 methodDefs));
     //Statement statment = new VarDecAssignment(new VarDec(new IntType(), new Variable("x")), new NumberExp(0));
     final Program program = new Program(classDef, null);
-    TypeChecker.typecheckProgram(program);
+    Typechecker.typecheckProgram(program);
 }
 
 
@@ -106,16 +96,16 @@ public void testConstructorAssignmentsOfStringInstanceVariables() {
     List<InstanceDec> instanceVars = new ArrayList<>();
     List<ClassDef> methodDefs = new ArrayList<>(); //empty
 
-    VarDec[] VarDec = {}; //empty
+    VarDec[] varDec = {}; //empty
     instanceVars.add(new InstanceDec(new PrivateAccess(), new VarDec(new StringType(), new Variable("x"))));
     classDef.add(new ClassDef(  new ClassName("foo"),
                                 
-                                new Constructor(VarDec, new VarAssignment(new Variable("x"), new StringExp("ex"))),
+                                new Constructor(vardec, new VarAssignment(new Variable("x"), new StringExp("ex"))),
                                 instanceVars,
                                 methodDefs));
     //Statement statment = new VarDecAssignment(new VarDec(new IntType(), new Variable("x")), new NumberExp(0));
     final Program program = new Program(classDef, null);
-    TypeChecker.typecheckProgram(program);
+    Typechecker.typecheckProgram(program);
 }
 
 
@@ -130,16 +120,16 @@ public void testConstructorAssignmentsOfStringInstanceVariablesWithParameter() {
     List<InstanceDec> instanceVars = new ArrayList<>();
     List<ClassDef> methodDefs = new ArrayList<>(); //empty
 
-    VarDec[] VarDec = {new VarDec(new StringType(), new Variable("y"))}; //empty
+    VarDec[] varDec = {new VarDec(new StringType(), new Variable("y"))}; //empty
     instanceVars.add(new InstanceDec(new PrivateAccess(), new VarDec(new StringType(), new Variable("x"))));
     classDef.add(new ClassDef(  new ClassName("foo"),
                                 
-                                new Constructor(VarDec, new VarAssignment(new Variable("x"), new VariableExp("y"))),
+                                new Constructor(vardec, new VarAssignment(new Variable("x"), new VariableExp("y"))),
                                 instanceVars,
                                 methodDefs));
     //Statement statment = new VarDecAssignment(new VarDec(new IntType(), new Variable("x")), new NumberExp(0));
     final Program program = new Program(classDef, null);
-    TypeChecker.typecheckProgram(program);
+    Typechecker.typecheckProgram(program);
 }
 
 
@@ -156,18 +146,18 @@ public void testConstructorAssignmentsOfStringInstanceVariableWithASetterMethod(
     List<InstanceDec> instanceVars = new ArrayList<>();
     List<MethodDef> methodDefs = new ArrayList<>();
 
-    VarDec[] VarDec = {}; 
-    VarDec[] VarDec2 = {new VarDec(new StringType(), new Variable("z"))};
+    VarDec[] varDec = {}; 
+    VarDec[] varDec2 = {new VarDec(new StringType(), new Variable("z"))};
     instanceVars.add(new InstanceDec(new PrivateAccess(), new VarDec(new StringType(), new Variable("x"))));
-    methodDefs.add(new MethodDef(new PublicAccess(), new VoidType(), new MethodName("setX"), VarDec2, new VarAssignment(new Variable("x"), new VariableExp("z"))));
+    methodDefs.add(new MethodDef(new PublicAccess(), new VoidType(), new MethodName("setX"), varDec2, new VarAssignment(new Variable("x"), new VariableExp("z"))));
     classDef.add(new ClassDef(  new ClassName("foo"),
                                 
-                                new Constructor(VarDec, new VarAssignment(new Variable("x"), new StringExp(""))),
+                                new Constructor(vardec, new VarAssignment(new Variable("x"), new StringExp(""))),
                                 instanceVars,
                                 methodDefs));
     //Statement statment = new VarDecAssignment(new VarDec(new IntType(), new Variable("x")), new NumberExp(0));
     final Program program = new Program(classDef, null);
-    TypeChecker.typecheckProgram(program);
+    Typechecker.typecheckProgram(program);
 }
 
 
@@ -184,18 +174,18 @@ public void testConstructorAssignmentsOfIntInstanceVariableWithAGetterMethod() {
     List<InstanceDec> instanceVars = new ArrayList<>();
     List<MethodDef> methodDefs = new ArrayList<>();
 
-    VarDec[] VarDec = {}; 
-    VarDec[] VarDec2 = {};
+    VarDec[] varDec = {}; 
+    VarDec[] varDec2 = {};
     instanceVars.add(new InstanceDec(new PrivateAccess(), new VarDec(new IntType(), new Variable("x"))));
-    methodDefs.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getX"), VarDec2, new ReturnExpStatement(new StringExp("x"))));
+    methodDefs.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getX"), varDec2, new ReturnExpStatement(new StringExp("x"))));
     classDef.add(new ClassDef(  new ClassName("foo"),
                                 
-                                new Constructor(VarDec, new VarAssignment(new Variable("x"), new NumberExp(4))),
+                                new Constructor(vardec, new VarAssignment(new Variable("x"), new NumberExp(4))),
                                 instanceVars,
                                 methodDefs));
     //Statement statment = new VarDecAssignment(new VarDec(new IntType(), new Variable("x")), new NumberExp(0));
     final Program program = new Program(classDef, null);
-    TypeChecker.typecheckProgram(program);
+    Typechecker.typecheckProgram(program);
 }
 
 
@@ -212,22 +202,22 @@ public void testConstructorAssignmentsOfStringInstanceVariableWithAGetterMethod(
     List<InstanceDec> instanceVars = new ArrayList<>();
     List<MethodDef> methodDefs = new ArrayList<>();
 
-    VarDec[] VarDec = {}; 
-    VarDec[] VarDec2 = {};
+    VarDec[] varDec = {}; 
+    VarDec[] varDec2 = {};
     instanceVars.add(new InstanceDec(new PrivateAccess(), new VarDec(new StringType(), new Variable("x"))));
-    methodDefs.add(new MethodDef(new PublicAccess(), new StringType(), new MethodName("getX"), VarDec2, new ReturnExpStatement(new StringExp("x"))));
+    methodDefs.add(new MethodDef(new PublicAccess(), new StringType(), new MethodName("getX"), varDec2, new ReturnExpStatement(new StringExp("x"))));
     classDef.add(new ClassDef(  new ClassName("foo"),
                                 
-                                new Constructor(VarDec, new VarAssignment(new Variable("x"), new StringExp("joey wants food"))),
+                                new Constructor(vardec, new VarAssignment(new Variable("x"), new StringExp("joey wants food"))),
                                 instanceVars,
                                 methodDefs));
     //Statement statment = new VarDecAssignment(new VarDec(new IntType(), new Variable("x")), new NumberExp(0));
     final Program program = new Program(classDef, null);
-    TypeChecker.typecheckProgram(program);
+    Typechecker.typecheckProgram(program);
 }
 
 @Test(expected = TypeErrorException.class) 
-public void testConstructorAssignmentsOfStringInstanceVariableWithAGetterMethod2() {
+public void testConstructorAssignmentsOfStringInstanceVariableWithAGetterMethod() {
     /** class foo{
     private String x;
     foo() 
@@ -240,18 +230,18 @@ public void testConstructorAssignmentsOfStringInstanceVariableWithAGetterMethod2
     List<InstanceDec> instanceVars = new ArrayList<>();
     List<MethodDef> methodDefs = new ArrayList<>();
 
-    VarDec[] VarDec = {}; 
-    VarDec[] VarDec2 = {};
+    VarDec[] varDec = {}; 
+    VarDec[] varDec2 = {};
     instanceVars.add(new InstanceDec(new PrivateAccess(), new VarDec(new StringType(), new Variable("x"))));
-    methodDefs.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getX"), VarDec2, new ReturnExpStatement(new StringExp("x"))));
+    methodDefs.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getX"), varDec2, new ReturnExpStatement(new StringExp("x"))));
     classDef.add(new ClassDef(  new ClassName("foo"),
                                 
-                                new Constructor(VarDec, new VarAssignment(new Variable("x"), new StringExp("joey wants food"))),
+                                new Constructor(vardec, new VarAssignment(new Variable("x"), new StringExp("joey wants food"))),
                                 instanceVars,
                                 methodDefs));
     //Statement statment = new VarDecAssignment(new VarDec(new IntType(), new Variable("x")), new NumberExp(0));
     final Program program = new Program(classDef, null);
-    TypeChecker.typecheckProgram(program);
+    Typechecker.typecheckProgram(program);
 }
 
 
@@ -269,18 +259,18 @@ public void testAssigningVariables() {
     List<InstanceDec> instanceVars = new ArrayList<>();
     List<MethodDef> methodDefs = new ArrayList<>();
 
-    VarDec[] VarDec = {}; 
-    VarDec[] VarDec2 = {new VarDec(new StringType(), new Variable("z"))};
+    VarDec[] varDec = {}; 
+    VarDec[] varDec2 = {new VarDec(new StringType(), new Variable("z"))};
     instanceVars.add(new InstanceDec(new PrivateAccess(), new VarDec(new StringType(), new Variable("x"))));
-    methodDefs.add(new MethodDef(new PublicAccess(), new VoidType(), new MethodName("setX"), VarDec2, new VarAssignment(new Variable("x"), new VariableExp("z"))));
+    methodDefs.add(new MethodDef(new PublicAccess(), new VoidType(), new MethodName("setX"), varDec2, new VarAssignment(new Variable("x"), new VariableExp("z"))));
     classDef.add(new ClassDef(  new ClassName("foo"),
                                 
-                                new Constructor(VarDec, new VarAssignment(new Variable("x"), new NumberExp(3))),
+                                new Constructor(vardec, new VarAssignment(new Variable("x"), new NumberExp(3))),
                                 instanceVars,
                                 methodDefs));
     //Statement statment = new VarDecAssignment(new VarDec(new IntType(), new Variable("x")), new NumberExp(0));
     final Program program = new Program(classDef, null);
-    TypeChecker.typecheckProgram(program);
+    Typechecker.typecheckProgram(program);
 }
 
 @Test(expected = TypeErrorException.class) 
@@ -298,16 +288,16 @@ public void testUnDeclaredVariables() {
     List<InstanceDec> instanceVars = new ArrayList<>();
     List<MethodDef> methodDefs = new ArrayList<>();
 
-    VarDec[] VarDec = {};
+    VarDec[] varDec = {};
     
     classDef.add(new ClassDef(  new ClassName("foo"),
                                 
-                                new Constructor(VarDec, new VarAssignment(new Variable("x"), new NumberExp(4))),
+                                new Constructor(vardec, new VarAssignment(new Variable("x"), new NumberExp(4))),
                                 instanceVars,
                                 methodDefs));
     //Statement statment = new VarDecAssignment(new VarDec(new IntType(), new Variable("x")), new NumberExp(0));
     final Program program = new Program(classDef, null);
-    TypeChecker.typecheckProgram(program);
+    Typechecker.typecheckProgram(program);
 
 
 }
@@ -331,19 +321,19 @@ public void testUnAssignedVariables() {
     List<InstanceDec> instanceVars = new ArrayList<>();
     List<MethodDef> methodDefs = new ArrayList<>();
 
-    VarDec[] VarDec = {}; 
-    VarDec[] VarDec2 = {};
+    VarDec[] varDec = {}; 
+    VarDec[] varDec2 = {};
     instanceVars.add(new InstanceDec(new PrivateAccess(), new VarDec(new IntType(), new Variable("x"))));
     instanceVars.add(new InstanceDec(new PrivateAccess(), new VarDec(new IntType(), new Variable("y"))));
-    methodDefs.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getY"), VarDec2, new ReturnExpStatement(new StringExp("y"))));
+    methodDefs.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getY"), varDec2, new ReturnExpStatement(new StringExp("y"))));
     classDef.add(new ClassDef(  new ClassName("foo"),
                                 
-                                new Constructor(VarDec, new VarAssignment(new Variable("x"), new NumberExp(4))),
+                                new Constructor(vardec, new VarAssignment(new Variable("x"), new NumberExp(4))),
                                 instanceVars,
                                 methodDefs));
     //Statement statment = new VarDecAssignment(new VarDec(new IntType(), new Variable("x")), new NumberExp(0));
     final Program program = new Program(classDef, null);
-    TypeChecker.typecheckProgram(program);
+    Typechecker.typecheckProgram(program);
 
 
 }
@@ -372,18 +362,18 @@ public void testScopeOfTheMethodVariable() {
     st.add(new VarAssignment(new Variable("x"), new NumberExp(0)));
     st.add(new VarDecAssignment(new VarDec(new IntType(), new Variable("z")), new NumberExp(4)));
 
-    VarDec[] VarDec = {new VarDec(new IntType(), new Variable("y"))}; 
-    VarDec[] VarDec2 = {new VarDec(new IntType(), new Variable("z"))};
+    VarDec[] varDec = {new VarDec(new IntType(), new Variable("y"))}; 
+    VarDec[] varDec2 = {new VarDec(new IntType(), new Variable("z"))};
     instanceVars.add(new InstanceDec(new PrivateAccess(), new VarDec(new IntType(), new Variable("x"))));
-    methodDefs.add(new MethodDef(new PublicAccess(), new VoidType(), new MethodName("setY"), VarDec2, new VarAssignment(new Variable("y"), new VariableExp("z"))));
+    methodDefs.add(new MethodDef(new PublicAccess(), new VoidType(), new MethodName("setY"), varDec2, new VarAssignment(new Variable("y"), new VariableExp("z"))));
     classDef.add(new ClassDef(  new ClassName("foo"),
                                 
-                                new Constructor(VarDec, new Block(st)),
+                                new Constructor(vardec, new Block(st)),
                                 instanceVars,
                                 methodDefs));
     //Statement statment = new VarDecAssignment(new VarDec(new IntType(), new Variable("x")), new NumberExp(0));
     final Program program = new Program(classDef, null);
-    TypeChecker.typecheckProgram(program);
+    Typechecker.typecheckProgram(program);
 
 }
 
@@ -404,18 +394,18 @@ public void testReturnIsCalledForAMethod() {
     List<InstanceDec> instanceVars = new ArrayList<>();
     List<MethodDef> methodDefs = new ArrayList<>();
 
-    VarDec[] VarDec = {}; 
+    VarDec[] varDec = {}; 
     instanceVars.add(new InstanceDec(new PrivateAccess(), new VarDec(new IntType(), new Variable("x"))));
     instanceVars.add(new InstanceDec(new PrivateAccess(), new VarDec(new IntType(), new Variable("y"))));
-    methodDefs.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getY"), VarDec, new VarAssignment(new Variable("y"), new NumberExp(4))));
+    methodDefs.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getY"), varDec, new VarAssignment(new Variable("y"), new NumberExp(4))));
     classDef.add(new ClassDef(  new ClassName("foo"),
                                 
-                                new Constructor(VarDec, new VarAssignment(new Variable("x"), new NumberExp(4))),
+                                new Constructor(vardec, new VarAssignment(new Variable("x"), new NumberExp(4))),
                                 instanceVars,
                                 methodDefs));
     //Statement statment = new VarDecAssignment(new VarDec(new IntType(), new Variable("x")), new NumberExp(0));
     final Program program = new Program(classDef, null);
-    TypeChecker.typecheckProgram(program);
+    Typechecker.typecheckProgram(program);
 
 
 
@@ -436,16 +426,16 @@ public void testBreakStatement() {
     List<InstanceDec> instanceVars = new ArrayList<>();
     List<MethodDef> methodDefs = new ArrayList<>();
 
-    VarDec[] VarDec = {};
+    VarDec[] varDec = {};
     
     classDef.add(new ClassDef(  new ClassName("foo"),
                                 
-                                new Constructor(VarDec, new BreakStatement()),
+                                new Constructor(vardec, new BreakStatement()),
                                 instanceVars,
                                 methodDefs));
     //Statement statment = new VarDecAssignment(new VarDec(new IntType(), new Variable("x")), new NumberExp(0));
     final Program program = new Program(classDef, null);
-    TypeChecker.typecheckProgram(program);
+    Typechecker.typecheckProgram(program);
 
 
 }
@@ -466,18 +456,18 @@ public void testUniqueNamesForVariables() {
     List<InstanceDec> instanceVars = new ArrayList<>();
     List<MethodDef> methodDefs = new ArrayList<>();
 
-    VarDec[] VarDec = {}; 
+    VarDec[] varDec = {}; 
     instanceVars.add(new InstanceDec(new PrivateAccess(), new VarDec(new IntType(), new Variable("x"))));
     instanceVars.add(new InstanceDec(new PrivateAccess(), new VarDec(new IntType(), new Variable("x"))));
 
-    classDef.add(new ClassDef( new ClassName("foo"),
+    classDef.add(new ClassDef(  new ClassName("foo"),
                                 
-                                new Constructor(VarDec, new VarAssignment(new Variable("x"), new NumberExp(4))),
+                                new Constructor(vardec, new VarAssignment(new Variable("x"), new NumberExp(4))),
                                 instanceVars,
                                 methodDefs));
     //Statement statment = new VarDecAssignment(new VarDec(new IntType(), new Variable("x")), new NumberExp(0));
     final Program program = new Program(classDef, null);
-    TypeChecker.typecheckProgram(program);
+    Typechecker.typecheckProgram(program);
 
 
 }
@@ -504,16 +494,16 @@ public void testCLassesWithSameNames() {
     List<InstanceDec> instanceVars2 = new ArrayList<>();
     List<MethodDef> methodDefs = new ArrayList<>();
     List<MethodDef> methodDefs2 = new ArrayList<>();
-    VarDec[] VarDec = {};
 
-    methodDefs.add(new MethodDef(new PublicAccess(), new VoidType(), new MethodName("method"), VarDec, new VarDecAssignment(new VarDec(new IntType(), new Variable("z")), new NumberExp(0))));
+
+    methodDefs.add(new MethodDef(new PublicAccess(), new VoidType(), new MethodName("method"), varDec, new VarDecAssignment(new VarDec(new IntType(), new Variable("z")), new NumberExp(0))));
     instanceVars.add(new InstanceDec(new PrivateAccess(), new VarDec(new IntType(), new Variable("x"))));
 
-    
+    VarDec[] varDec = {};
     
     classDef.add(new ClassDef(new ClassName("foo"),
                                 
-                                new Constructor(VarDec, new VarAssignment(new Variable("x"), new NumberExp(4))),
+                                new Constructor(vardec, new VarAssignment(new Variable("x"), new NumberExp(4))),
                                 instanceVars,
                                 methodDefs));
 
@@ -524,7 +514,7 @@ public void testCLassesWithSameNames() {
                                 methodDefs2));
     //Statement statment = new VarDecAssignment(new VarDec(new IntType(), new Variable("x")), new NumberExp(0));
     final Program program = new Program(classDef, null);
-    TypeChecker.typecheckProgram(program);
+    Typechecker.typecheckProgram(program);
 
 
 }
@@ -543,18 +533,18 @@ public void testFunnctionCallsWithRightParameters() {
     List<ClassDef> classDef = new ArrayList<>();
     List<InstanceDec> instanceVars = new ArrayList<>();
     List<MethodDef> methodDefs = new ArrayList<>();
-    VarDec[] VarDec = {}; 
+    VarDec[] varDec = {}; 
     
     instanceVars.add(new InstanceDec(new PrivateAccess(), new VarDec(new IntType(), new Variable("y"))));
-    methodDefs.add(new MethodDef(new PublicAccess(), new VoidType(), new MethodName("setY"), VarDec, new VarAssignment(new Variable("y"), new NumberExp(4))));
+    methodDefs.add(new MethodDef(new PublicAccess(), new VoidType(), new MethodName("setY"), varDec, new VarAssignment(new Variable("y"), new NumberExp(4))));
     classDef.add(new ClassDef(  new ClassName("foo"),
                                 
-                                new Constructor(VarDec, new VarAssignment(new Variable("x"), new NumberExp(4))),
+                                new Constructor(vardec, new VarAssignment(new Variable("x"), new NumberExp(4))),
                                 instanceVars,
                                 methodDefs));
     //Statement statment = new VarDecAssignment(new VarDec(new IntType(), new Variable("x")), new NumberExp(0));
     final Program program = new Program(classDef, null);
-    TypeChecker.typecheckProgram(program);
+    Typechecker.typecheckProgram(program);
 }*/
 
 //whats ur business logic
@@ -565,13 +555,13 @@ public void testFunnctionCallsWithRightParameters() {
 /*@Test(expected = TypeErrorException.class) 
 public void blah() {
     final Program program;
-    TypeChecker.typecheckProgram(program);
+    Typechecker.typecheckProgram(program);
 }
     /*public static final StructureDeclaration[] EMPTY_STRUCTURES =
         new StructureDeclaration[0];
     public static final FunctionDefinition[] EMPTY_FUNCTIONS =
         new FunctionDefinition[0];
-    public static final VariableDeclaration[] EMPTY_VarDecS =
+    public static final VariableDeclaration[] EMPTY_VARDECS =
         new VariableDeclaration[0];
     
     public static Stmt stmts(final Stmt... input) {
@@ -591,7 +581,7 @@ public void blah() {
     public static FunctionDefinition voidFunction(final Stmt body) {
         return new FunctionDefinition(new VoidType(),
                                       new FunctionName("foo"),
-                                      EMPTY_VarDecS,
+                                      EMPTY_VARDECS,
                                       body);
     }*/
 }

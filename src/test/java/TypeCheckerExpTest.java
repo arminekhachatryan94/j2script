@@ -5,20 +5,12 @@ import static org.junit.Assert.assertArrayEquals;
 
 import j2script.*;
 import org.junit.Test;
-import j2script.tokens.*;
-import j2script.access.*;
-import j2script.declarations.*;
-import j2script.expressions.*;
-import j2script.names.*;
-import j2script.operators.*;
-import j2script.statements.*;
-import j2script.types.*;
 
 public class TypeCheckerExpTest {
     // use null if there should be a type error
     public void assertExpType(final Type expected, final Exp exp) {
         try {
-            final Type received = TypeChecker.expTypeForTesting(exp);
+            final Type received = Typechecker.expTypeForTesting(exp);
             assertTrue("Expected type error; got: " + received.toString(),
                        expected != null);
             assertEquals(expected, received);
@@ -53,7 +45,7 @@ public class TypeCheckerExpTest {
     }
 
     @Test
-    public void testBoolTypeFalse() { //false
+    public void testBoolTypeTrue() { //false
         final Type type = new BooleanType();
         final Exp expression = new BoolExp(false);
         assertExpType(type, expression);
