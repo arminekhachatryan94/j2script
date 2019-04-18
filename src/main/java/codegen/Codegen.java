@@ -8,6 +8,9 @@ import j2script.expressions.ClassExp;
 import j2script.expressions.NumberExp;
 import j2script.expressions.StringExp;
 import j2script.expressions.VarMethodExp;
+import j2script.statements.IfStatement;
+import j2script.statements.WhileStatement;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.FileWriter;
@@ -36,6 +39,22 @@ public class Codegen{
         else if (exp instanceof VarMethodExp){
             compileVarMethodExp((VarMethodExp)exp);
         }
+    }
+    public void compileStatement(Statement stmt){
+        if (stmt instanceof IfStatement){
+            compileIfStmt((IfStatement)stmt);
+        }
+        else if (stmt instanceof WhileStatement){
+            compileWhileStmt((WhileStatement)stmt);
+        }
+    }
+    public void compileIfStmt(Statement ifstmt){
+        IfStatement e = (IfStatement)ifstmt;
+        Code.add(e.emit());
+    }
+    public void compileWhileStmt(Statement whilestmt){
+        WhileStatement e = (WhileStatement)whilestmt;
+        Code.add(e.emit());
     }
     public void compileBinOpExp(Exp exp){
         BinopExp e = (BinopExp)exp;
