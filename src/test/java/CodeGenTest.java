@@ -297,9 +297,42 @@ public class CodeGenTest {
 		*/
 
 		Statement whileNested = new WhileStatement(new VariableExp("y"), new VarAssignment(new Variable("x"), new BoolExp(true));
-		assertResultStatements("while(x) while(y) x = true;", new WhileStatement(new VariableExp("y"), whileNested));
+		assertResultStatements("while(x) while(y) x = true;", new WhileStatement(new VariableExp("y"), whileNested)));
 
 	}
+
+	@Test
+	public void testIfTrueWithInequality() {
+		/*
+		if (x<22) x = 0;
+		else x = 1;
+		*/
+	}
+
+	@Test
+	public void testIfTrueWithInequalityWithNested() {
+		/*
+		if(x<22)
+			if(x==2)
+				x = 1;
+			else 
+				x = 2;
+		else
+			x = 3;
+		*/
+	}
+
+	@Test
+	public void testWhileLoopWithIfStmtWithBreaksAndEquality(){
+		/*
+		while(x<22)
+			if(x==21)
+			break;
+			else
+			x=21;
+		*/	
+
+
 
 
 /***
