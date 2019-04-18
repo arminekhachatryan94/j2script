@@ -20,6 +20,8 @@ import java.io.PrintWriter;
 public class Codegen{
     //Code generated will be inserted into the list
     private final List<String> Code;
+    private final Map<ClassName, ClassDefinition> classes;
+    private final Map<ClassName, List<MethodName>> vtableMethodOffsets;
     public Codegen(){
         Code = new ArrayList<String>();
     }
@@ -50,11 +52,11 @@ public class Codegen{
     }
     public void compileIfStmt(Statement ifstmt){
         IfStatement e = (IfStatement)ifstmt;
-        Code.add(e.emit());
+        // Code.add(e.emit());
     }
     public void compileWhileStmt(Statement whilestmt){
         WhileStatement e = (WhileStatement)whilestmt;
-        Code.add(e.emit());
+        // Code.add(e.emit());
     }
     public void compileBinOpExp(Exp exp){
         BinopExp e = (BinopExp)exp;
