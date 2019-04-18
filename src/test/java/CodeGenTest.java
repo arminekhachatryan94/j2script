@@ -44,6 +44,30 @@ public class CodeGenTest {
 
 	}
 
+
+	public void assertResultStatements(String expected, Statement stmt) throws IOException {
+		
+		try {
+			// Codegen.writeExptoFile(expression, file);
+			Codegen code = new Codegen();
+			//code.compileExp(expression);
+			final File file = File.createTempFile("test", ".js");
+			code.writeExptoFile(stmt, file);
+			//code.writeCompleteFile(file);
+			final String output = readFile(file);
+			//System.out.println(output);
+			//System.out.println(expected);
+			assertEquals(expected, output);
+			//Assert.assertThat(output.equals(expected));
+			//assertTrue(expected.equals(output));
+			file.delete();
+
+		} catch (Exception e) {
+			System.out.println("somethings up");
+		}
+
+	}
+
 	private String readFile(File file) throws IOException {
 		// File file = new File(pathname);
 		StringBuilder fileContents = new StringBuilder((int)file.length());        
@@ -198,6 +222,164 @@ public class CodeGenTest {
 	public void testClassObjectsWithNoParameters() throws IOException {
 		Exp expressions [] = {};
 	        assertResult("Foo()", new ClassExp(new ClassName("Foo"), expressions));
+	}
+
+	@Test
+	public void testIfTrue() {
+		/*
+		if (true) x = 0;
+		else x = 1;
+		*/
+		assertResultStatements("if(true) x = 0; else x = 1;", new IfStatement(new BoolExp(true), new VarAssignment(new Variable("x"), new NumberExp(0)), new VarAssignment(new Variable("x"), new NumberExp(1))));
+	}
+
+	@Test
+	public void testIfFalse() {
+		/*
+		if (false) x = 0;
+		else x = 1;
+		*/
+		assertResultStatements("if(false) x = 0; else x = 1;", new IfStatement(new BoolExp(false), new VarAssignment(new Variable("x"), new NumberExp(0)), new VarAssignment(new Variable("x"), new NumberExp(1))));
+	}
+	
+
+	@Test
+	public void testIfWithVariableExp(){
+
+		String expected = "{
+			int x = 22;
+			boolean y = true;
+			if(y) x = 0;
+			else x = 1;
+		}";
+
+		Statement xStm = new VarDecAssignement(new VarDec(new IntType(), new Variable("x")), new NumberExp(22));
+		Statement yStm = new VarDecAssignement(new VarDec(new BooleanType(), new Variable("x")), new BoolExp(true));
+		Statement ifStm = new IfStatement(new VariableExp("y"), new VarAssignment(new Variable("x"), new NumberExp(0)), new VarAssignment(new Variable("x"), new NumberExp(1))));
+
+		List<Statement> statements = new ArrayList<>();
+		statements.add(xStm);
+		statements.add(yStm);
+		statements.add(ifStm);
+
+		assertResultStatements(expected, new Block(statements));
+	}
+
+	@Test
+	public void testWhileLoop() {
+
+		String expected = "
+		{
+		boolean y = true;
+		while(y)
+			y = false;
+		}
+		";
+
+		Statement yStm = new VarDecAssignement(new VarDec(new BooleanType(), new Variable("x")), new BoolExp(true));
+		Statement whileStm = new WhileStatement(new VariableExp("y"), new VarAssignment(new Variable("y"), new BoolExp(false)));
+
+		List<Statement> statements = new ArrayList<>();
+		statements.add(yStm);
+		statements.add(whileStm);
+
+		assertResultStatements(expected, new Block(statements));
+
+	}
+
+	@Test
+	public void nestedIfStatements(){
+
+		String expected = "
+		{
+		int x = 0;
+		if(true)
+			if(true)
+				x = 1;
+			else 
+				x = 2;
+		else
+			x = 3;
+		}
+		";
+
+		Statement xStm = new VarDecAssignement(new VarDec(new IntType(), new Variable("x")), new NumberExp(0));
+		Statement ifNestedStm = new IfStatement(new BoolExp(true), new VarAssignment(new Variable("x"), new NumberExp(1)), new VarAssignment(new Variable("x"), new NumberExp(2))));
+		Statement ifStm = new IfStatement(new BoolExp(true), ifNestedStm, new VarAssignment(new Variable("x"), new NumberExp(3))));
+
+		List<Statement> statements = new ArrayList<>();
+		statements.add(xStm);
+		statements.add(ifStm);
+
+		assertResultStatements(expected, new Block(statements));
+
+	}
+
+	@Test
+	public void nestedIfElseStatements(){
+
+		String expected = "
+		{
+		int x = 0;
+		if(true)
+			if(true)
+				x = 1;
+			else 
+				x = 2;
+		else
+			if(true) 
+				x = 3;
+			else 
+				x = 4;
+		}
+		";
+
+		Statement xStm = new VarDecAssignement(new VarDec(new IntType(), new Variable("x")), new NumberExp(0));
+		Statement ifNestedStm = new IfStatement(new BoolExp(true), new VarAssignment(new Variable("x"), new NumberExp(1)), new VarAssignment(new Variable("x"), new NumberExp(2))));
+		Statement elseNestedStm = new IfStatement(new BoolExp(true), new VarAssignment(new Variable("x"), new NumberExp(3)), new VarAssignment(new Variable("x"), new NumberExp(4))));
+		Statement ifStm = new IfStatement(new BoolExp(true), ifNestedStm, elseNestedStm));
+
+		List<Statement> statements = new ArrayList<>();
+		statements.add(xStm);
+		statements.add(ifStm);
+
+		assertResultStatements(expected, new Block(statements));
+
+	}
+
+	@Test
+	public void nestedWhileIfStatements(){
+
+		String expected = "
+		{
+		int x = 0;
+		while(true) 
+			if(true)
+				if(true)
+					x = 1;
+					break;
+				else 
+					x = 2;
+			else
+				x = 3;
+		}
+		";
+
+		Statement xStm = new VarDecAssignement(new VarDec(new IntType(), new Variable("x")), new NumberExp(0));
+		List<Statement> nested = new ArrayList<>();
+		nested.add(new VarAssignment(new Variable("x"), new NumberExp(1)));
+		nested.add(new BreakStatement());
+		Statement ifNestedStm = new IfStatement(new BoolExp(true), new Block(nested), new VarAssignment(new Variable("x"), new NumberExp(2))));
+		Statement ifStm = new IfStatement(new BoolExp(true), ifNestedStm, new VarAssignment(new Variable("x"), new NumberExp(3))));
+		Statement whileStm = new WhileStatement(new BoolExp(true), ifStm);
+		
+
+		List<Statement> statements = new ArrayList<>();
+		statements.add(xStm);
+		statements.add(ifStm);
+
+		assertResultStatements(expected, new Block(statements));
+
 	}
 	
 }
