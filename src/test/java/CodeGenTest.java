@@ -24,18 +24,11 @@ public class CodeGenTest {
 	public void assertResult(String expected, Exp expression) throws IOException {
 		
 		try {
-			// Codegen.writeExptoFile(expression, file);
 			Codegen code = new Codegen();
-			//code.compileExp(expression);
 			final File file = File.createTempFile("test", ".js");
 			code.writeExptoFile(expression, file);
-			//code.writeCompleteFile(file);
 			final String output = readFile(file);
-			//System.out.println(output);
-			//System.out.println(expected);
 			assertEquals(expected, output);
-			//Assert.assertThat(output.equals(expected));
-			//assertTrue(expected.equals(output));
 			file.delete();
 
 		} catch (Exception e) {
@@ -48,18 +41,11 @@ public class CodeGenTest {
 	public void assertResultStatements(String expected, Statement stmt) throws IOException {
 		
 		try {
-			// Codegen.writeExptoFile(expression, file);
 			Codegen code = new Codegen();
-			//code.compileExp(expression);
 			final File file = File.createTempFile("test", ".js");
-			code.writeExptoFile(stmt, file);
-			//code.writeCompleteFile(file);
+			code.writeStatementstoFile(stmt, file);
 			final String output = readFile(file);
-			//System.out.println(output);
-			//System.out.println(expected);
 			assertEquals(expected, output);
-			//Assert.assertThat(output.equals(expected));
-			//assertTrue(expected.equals(output));
 			file.delete();
 
 		} catch (Exception e) {
@@ -241,8 +227,82 @@ public class CodeGenTest {
 		*/
 		assertResultStatements("if(false) x = 0; else x = 1;", new IfStatement(new BoolExp(false), new VarAssignment(new Variable("x"), new NumberExp(0)), new VarAssignment(new Variable("x"), new NumberExp(1))));
 	}
-	
 
+	@Test
+	public void testWhileLoop(){
+		/*
+		while(true)
+			x = 0;
+		*/
+		assertResultStatements("while(true) x = 0;", new WhileStatement(new BoolExp(true), new VarAssignment(new Variable("x"), new NumberExp(0))));
+
+	}
+
+	@Test
+	public void testWhileLoopWithIfStmt(){
+		/*
+		while(true)
+			if(true)
+			x =0;
+			else
+			x =1;
+		*/
+		assertResultStatements("while(true) if(true) x =0; else x =1;", new WhileStatement(new BoolExp(true), 
+			new IfStatement(new BoolExp(true), 
+				new VarAssignment(new Variable("x"), 
+					new NumberExp(0)), 
+				new VarAssignment(new Variable("x"), new NumberExp(1)))));
+
+	}
+
+	@Test
+	public void testWhileLoopWithIfStmtWithBreaks(){
+		/*
+		while(true)
+			if(true)
+			break;
+			else
+			break;
+		*/
+		assertResultStatements("while(true) if(true) break; else break;", new WhileStatement(new BoolExp(true), 
+			new IfStatement(new BoolExp(true), 
+				new BreakStatement(), 
+				new BreakStatement())));
+
+	}
+
+	@Test
+	public void testNestedIfStmts(){
+		/*
+		if(true)
+			if(true)
+				x = 1;
+			else 
+				x = 2;
+		else
+			x = 3;
+		*/
+		Statement ifNestedStm = new IfStatement(new BoolExp(true), new VarAssignment(new Variable("x"), new NumberExp(1)), new VarAssignment(new Variable("x"), new NumberExp(2))));
+
+		assertResultStatements("if(true) if(true) x = 1; else x = 2; else x = 3;", new IfStatement(new BoolExp(true), ifNestedStm, new VarAssignment(new Variable("x"), new NumberExp(3))));
+
+	}
+
+	@Test
+	public void testNestedWhileStmts(){
+		/*
+		while(x) 
+			while(y)
+				x = true;
+		*/
+
+		Statement whileNested = new WhileStatement(new VariableExp("y"), new VarAssignment(new Variable("x"), new BoolExp(true));
+		assertResultStatements("while(x) while(y) x = true;", new WhileStatement(new VariableExp("y"), whileNested));
+
+	}
+
+
+/***
 	@Test
 	public void testIfWithVariableExp(){
 
@@ -380,6 +440,6 @@ public class CodeGenTest {
 
 		assertResultStatements(expected, new Block(statements));
 
-	}
+	}***/
 	
 }
