@@ -211,35 +211,35 @@ public class CodeGenTest {
 	}
 
 	@Test
-	public void testIfTrue() {
+	public void testIfTrue() throws IOException {
 		/*
 		if (true) x = 0;
 		else x = 1;
 		*/
-		assertResultStatements("if(true) x = 0; else x = 1;", new IfStatement(new BoolExp(true), new VarAssignment(new Variable("x"), new NumberExp(0)), new VarAssignment(new Variable("x"), new NumberExp(1))));
+		assertResultStatements("if (true) { x = 0 } else { x = 1}", new IfStatement(new BoolExp(true), new VarAssignment(new Variable("x"), new NumberExp(0)), new VarAssignment(new Variable("x"), new NumberExp(1))));
 	}
 
 	@Test
-	public void testIfFalse() {
+	public void testIfFalse() throws IOException {
 		/*
 		if (false) x = 0;
 		else x = 1;
 		*/
-		assertResultStatements("if(false) x = 0; else x = 1;", new IfStatement(new BoolExp(false), new VarAssignment(new Variable("x"), new NumberExp(0)), new VarAssignment(new Variable("x"), new NumberExp(1))));
+		assertResultStatements("if (false) { x = 0 } else { x = 1}", new IfStatement(new BoolExp(false), new VarAssignment(new Variable("x"), new NumberExp(0)), new VarAssignment(new Variable("x"), new NumberExp(1))));
 	}
 
 	@Test
-	public void testWhileLoop(){
+	public void testWhileLoop() throws IOException{
 		/*
 		while(true)
 			x = 0;
 		*/
-		assertResultStatements("while(true) x = 0;", new WhileStatement(new BoolExp(true), new VarAssignment(new Variable("x"), new NumberExp(0))));
+		assertResultStatements("while(true) {x = 0}", new WhileStatement(new BoolExp(true), new VarAssignment(new Variable("x"), new NumberExp(0))));
 
 	}
 
 	@Test
-	public void testWhileLoopWithIfStmt(){
+	public void testWhileLoopWithIfStmt() throws IOException {
 		/*
 		while(true)
 			if(true)
@@ -247,7 +247,7 @@ public class CodeGenTest {
 			else
 			x =1;
 		*/
-		assertResultStatements("while(true) if(true) x =0; else x =1;", new WhileStatement(new BoolExp(true), 
+		assertResultStatements("while(true) {if (true) { x = 0 } else { x = 1}}", new WhileStatement(new BoolExp(true), 
 			new IfStatement(new BoolExp(true), 
 				new VarAssignment(new Variable("x"), 
 					new NumberExp(0)), 
@@ -256,7 +256,7 @@ public class CodeGenTest {
 	}
 
 	@Test
-	public void testWhileLoopWithIfStmtWithBreaks(){
+	public void testWhileLoopWithIfStmtWithBreaks() throws IOException{
 		/*
 		while(true)
 			if(true)
@@ -264,7 +264,7 @@ public class CodeGenTest {
 			else
 			break;
 		*/
-		assertResultStatements("while(true) if(true) break; else break;", new WhileStatement(new BoolExp(true), 
+		assertResultStatements("while(true) {if (true) { break } else { break}}", new WhileStatement(new BoolExp(true), 
 			new IfStatement(new BoolExp(true), 
 				new BreakStatement(), 
 				new BreakStatement())));
@@ -272,7 +272,7 @@ public class CodeGenTest {
 	}
 
 	@Test
-	public void testNestedIfStmts(){
+	public void testNestedIfStmts() throws IOException{
 		/*
 		if(true)
 			if(true)
@@ -282,35 +282,46 @@ public class CodeGenTest {
 		else
 			x = 3;
 		*/
-		Statement ifNestedStm = new IfStatement(new BoolExp(true), new VarAssignment(new Variable("x"), new NumberExp(1)), new VarAssignment(new Variable("x"), new NumberExp(2))));
+		Statement ifNestedStm = new IfStatement(
+			new BoolExp(true), 
+			new VarAssignment(
+				new Variable("x"), new NumberExp(1)
+				), 
+			new VarAssignment(new Variable("x"), new NumberExp(2)));
 
-		assertResultStatements("if(true) if(true) x = 1; else x = 2; else x = 3;", new IfStatement(new BoolExp(true), ifNestedStm, new VarAssignment(new Variable("x"), new NumberExp(3))));
+		assertResultStatements("if (true) { if (true) { x = 1 } else { x = 2} } else { x = 3}", new IfStatement(new BoolExp(true), ifNestedStm, new VarAssignment(new Variable("x"), new NumberExp(3))));
 
 	}
 
 	@Test
-	public void testNestedWhileStmts(){
+	public void testNestedWhileStmts() throws IOException{
 		/*
 		while(x) 
 			while(y)
 				x = true;
 		*/
 
-		Statement whileNested = new WhileStatement(new VariableExp("y"), new VarAssignment(new Variable("x"), new BoolExp(true));
-		assertResultStatements("while(x) while(y) x = true;", new WhileStatement(new VariableExp("y"), whileNested)));
+		Statement whileNested = new WhileStatement(new VariableExp("y"), new VarAssignment(new Variable("x"), new BoolExp(true)));
+		assertResultStatements("while(x) {while(y) {x = true}}", new WhileStatement(new VariableExp("x"), whileNested));
 
 	}
 
 	@Test
-	public void testIfTrueWithInequality() {
+	public void testIfTrueWithInequality() throws IOException {
 		/*
 		if (x<22) x = 0;
 		else x = 1;
 		*/
+
+		//assertResultStatements("if(x<2) x = 0; else x = 1;", new IfStatement(new ****, new VarAssignment(new Variable("x"), new NumberExp(0)), new VarAssignment(new Variable("x"), new NumberExp(1))));
+
+
+
+
 	}
 
 	@Test
-	public void testIfTrueWithInequalityWithNested() {
+	public void testIfTrueWithInequalityWithNested() throws IOException {
 		/*
 		if(x<22)
 			if(x==2)
@@ -320,10 +331,14 @@ public class CodeGenTest {
 		else
 			x = 3;
 		*/
+
+		//Statement ifNestedStm = new IfStatement(new BoolExp(true), new VarAssignment(new Variable("x"), new NumberExp(1)), new VarAssignment(new Variable("x"), new NumberExp(2))));
+
+		//assertResultStatements("if(true) if(true) x = 1; else x = 2; else x = 3;", new IfStatement(new BoolExp(true), ifNestedStm, new VarAssignment(new Variable("x"), new NumberExp(3))));
 	}
 
 	@Test
-	public void testWhileLoopWithIfStmtWithBreaksAndEquality(){
+	public void testWhileLoopWithIfStmtWithBreaksAndEquality() throws IOException {
 		/*
 		while(x<22)
 			if(x==21)
@@ -331,8 +346,9 @@ public class CodeGenTest {
 			else
 			x=21;
 		*/	
+			//assertResultStatements("while(true) if(true) break; else break;", new WhileStatement(new BoolExp(true), new IfStatement(new BoolExp(true), new BreakStatement(), new BreakStatement())));
 
-
+	}
 
 
 /***

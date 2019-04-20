@@ -18,4 +18,8 @@ public class BoolExp implements Exp {
     public String toString() {
         return Boolean.toString(value);
     }
+
+    public String emit(){ 
+        return value + "";
+    }
 }
