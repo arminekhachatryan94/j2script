@@ -25,8 +25,8 @@ import java.lang.instrument.ClassDefinition;
 public class Codegen{
     //Code generated will be inserted into the list
     private final List<String> Code;
-    private final Map<ClassName, ClassDefinition> classes;
-    private final Map<ClassName, List<MethodName>> vtableMethodOffsets;
+    // private final Map<ClassName, ClassDefinition> classes;
+    // private final Map<ClassName, List<MethodName>> vtableMethodOffsets;
     public Codegen(){
         Code = new ArrayList<String>();
     }
