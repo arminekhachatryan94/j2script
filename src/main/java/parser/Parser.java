@@ -18,7 +18,6 @@ public class Parser {
       new HashMap<Token, Op>() {{
           put(new AddToken(), new PlusOp());
           put(new MinusToken(), new MinusOp());
-          System.out.println("hello");
       }};
     private static final Map<Token, Op> MULTIPLICATIVE_OP_MAP =
       new HashMap<Token, Op>() {{
