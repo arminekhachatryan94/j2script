@@ -1,5 +1,8 @@
 # j2script
 
+Vtables require classes so not doing this week
+Made some changes to grammar and implimented those changes
+
 ## Team Members:
 ```
 Armine Khachatryan
@@ -24,15 +27,15 @@ type ::= int |
 
 returntype ::= type | void
 
-op ::= + | - | * | /
+op ::= + | - | * | / | < | ==
 
 // might want to change.  Look at java grammar documentation
 exp ::= i | true | false | var |
         additive |
         new classname(exp*) |
-        var.methodname(exp*) | // will need to check if void
-        str | 
-        this
+        var.methodname(exp*) | // need to check if any exp void
+        methodname(exp*)  // need to check if any exp void
+        str
  
 additive ::= multiplicative ( ('+' | '-') multiplicative)*
 

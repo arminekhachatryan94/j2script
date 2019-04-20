@@ -32,4 +32,16 @@ public class ClassExp implements Exp {
         return (name.toString() + "(" +
                 String.join(", ", parameters.toString()) + ")");
     }
+
+    public String emit() {
+        String exp = name.toString() + "(";
+        for(int i = 0; i < parameters.length; i++) {
+            exp += parameters[i].emit();
+            if(i+1 < parameters.length) {
+                exp += ", ";
+            }
+        }
+        exp += ")";
+        return exp;
+    }
 }

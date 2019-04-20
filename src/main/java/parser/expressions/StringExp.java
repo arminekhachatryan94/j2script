@@ -16,5 +16,10 @@ public class StringExp implements Exp {
         return (other instanceof StringExp &&
                 ((StringExp)other).name.equals(name));
     }
+
     public String toString() { return name.toString(); }
+
+    public String emit() {
+        return "\"" + name + "\"";
+    }
 }
