@@ -32,6 +32,13 @@ public class IfStatement implements Statement {
     }
 
     public String toString() {
-        return ("if(" + guard.toString() + ")");
+        return ("if (" + guard.emit() + ") { " +
+                ifTrue.toString() + " } else { " +
+                ifFalse.toString() + "}");
     }
+
+    public String emit() {
+        return ("if (" + guard.emit() + ") { " +
+            ifTrue.toString() + " } else { " +
+            ifFalse.toString() + "}");    }
 }

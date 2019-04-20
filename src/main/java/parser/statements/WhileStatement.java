@@ -28,6 +28,10 @@ public class WhileStatement implements Statement {
     }
 
     public String toString() {
-        return ("while(" + condition.toString() + ")");
+        return ("while(" + condition.emit() + ") {" + stmt.toString() + "}");
+    }
+
+    public String emit() {
+        return ("while(" + condition.emit() + ") {" + stmt.toString() + "}");
     }
 }
