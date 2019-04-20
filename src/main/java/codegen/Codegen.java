@@ -57,11 +57,11 @@ public class Codegen{
     }
     public void compileIfStmt(Statement ifstmt){
         IfStatement e = (IfStatement)ifstmt;
-        // Code.add(e.emit());
+        Code.add(e.emit());
     }
     public void compileWhileStmt(Statement whilestmt){
         WhileStatement e = (WhileStatement)whilestmt;
-        // Code.add(e.emit());
+        Code.add(e.emit());
     }
     public void compileBinOpExp(Exp exp){
         BinopExp e = (BinopExp)exp;
