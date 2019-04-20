@@ -39,6 +39,9 @@ public class Codegen{
         else if (exp instanceof VarMethodExp){
             compileVarMethodExp((VarMethodExp)exp);
         }
+        else if (exp instanceof BoolExp){
+            compileBoolExp((BoolExp)exp);
+        }
     }
     public void compileStatement(Statement stmt){
         if (stmt instanceof IfStatement){
@@ -58,6 +61,11 @@ public class Codegen{
     }
     public void compileBinOpExp(Exp exp){
         BinopExp e = (BinopExp)exp;
+        Code.add(e.emit());
+    }
+
+    public void compileBoolExp(Exp exp){
+        BoolExp e = (BoolExp)exp;
         Code.add(e.emit());
     }
     
