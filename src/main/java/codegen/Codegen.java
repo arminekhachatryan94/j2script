@@ -3,26 +3,10 @@ package j2script;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-<<<<<<< HEAD
 import j2script.expressions.*;
 import j2script.statements.*;
 import j2script.names.*;
 import j2script.declarations.*;
-=======
-import j2script.expressions.Exp;
-import j2script.expressions.BinopExp;
-import j2script.expressions.ClassExp;
-import j2script.expressions.NumberExp;
-import j2script.expressions.StringExp;
-import j2script.expressions.VarMethodExp;
-import j2script.names.ClassName;
-import j2script.names.MethodName;
-import j2script.statements.IfStatement;
-import j2script.statements.Statement;
-import j2script.statements.WhileStatement;
->>>>>>> 9a352e25df2c107250573e75cca6fa3952db2de4
-
 import java.io.File;
 import java.io.IOException;
 import java.io.FileWriter;
