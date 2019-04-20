@@ -30,4 +30,8 @@ public class WhileStatement implements Statement {
     public String toString() {
         return ("while(" + condition.toString() + ")");
     }
+
+    public String emit() {
+        return ("while(" + condition.toString() + ")");
+    }
 }

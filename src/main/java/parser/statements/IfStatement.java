@@ -34,4 +34,8 @@ public class IfStatement implements Statement {
     public String toString() {
         return ("if(" + guard.toString() + ")");
     }
+
+    public String emit() {
+        return ("if(" + guard.toString() + ")");
+    }
 }

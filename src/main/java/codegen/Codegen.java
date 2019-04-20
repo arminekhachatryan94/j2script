@@ -1,6 +1,7 @@
 package j2script;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import j2script.expressions.Exp;
 import j2script.expressions.BinopExp;
@@ -8,7 +9,10 @@ import j2script.expressions.ClassExp;
 import j2script.expressions.NumberExp;
 import j2script.expressions.StringExp;
 import j2script.expressions.VarMethodExp;
+import j2script.names.ClassName;
+import j2script.names.MethodName;
 import j2script.statements.IfStatement;
+import j2script.statements.Statement;
 import j2script.statements.WhileStatement;
 
 import java.io.File;
@@ -16,6 +20,7 @@ import java.io.IOException;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
 import java.io.PrintWriter;
+import java.lang.instrument.ClassDefinition;
 
 public class Codegen{
     //Code generated will be inserted into the list
