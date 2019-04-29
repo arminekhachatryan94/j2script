@@ -18,8 +18,8 @@ import java.lang.instrument.ClassDefinition;
 public class Codegen{
     //Code generated will be inserted into the list
     private final List<String> Code;
-    // private final Map<ClassName, ClassDef> classes;
-    // private final Map<ClassName, List<MethodName>> vtableMethodOffsets;
+    private final Map<ClassName, ClassDef> classes;
+    private final Map<ClassName, List<MethodName>> vtableMethodOffsets;
     public Codegen(){
         Code = new ArrayList<String>();
     }
@@ -42,6 +42,9 @@ public class Codegen{
         else if (exp instanceof BoolExp){
             compileBoolExp((BoolExp)exp);
         }
+    }
+    public void compileProgram(Program prog){
+        
     }
     public void compileStatement(Statement stmt){
         if (stmt instanceof IfStatement){
