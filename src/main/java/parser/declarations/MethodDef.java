@@ -13,7 +13,7 @@ public class MethodDef {
     public final Access access;
     public final ReturnType returnType;
     public final MethodName name;
-    public final VarDec[] varDecs;
+    public final List<VarDec> varDecs;
     public final Statement statement;
 
     public MethodDef(final Access access, final ReturnType returnType, final MethodName name, 

@@ -6,24 +6,24 @@ import j2script.statements.Statement;
 import java.util.Arrays;
 
 public class Constructor {
-    public final VarDec[] parameters;
-    public final Statement statement;
+    public final List<VarDec> parameters;
+    public final Statement body;
 
-    public Constructor(final VarDec[] parameters,
-                       final Statement statement) {
+    public Constructor(final List<VarDec> parameters,
+                       final Statement body) {
         this.parameters = parameters;
-        this.statement = statement;
+        this.body = body;
     }
 
     public int hashCode() {
-        return statement.hashCode() + Arrays.deepHashCode(parameters);
+        return body.hashCode() + Arrays.deepHashCode(parameters);
     }
 
     public boolean equals(final Object other) {
         if (other instanceof Constructor) {
             final Constructor otherDec =
                 (Constructor)other;
-            return (otherDec.statement.equals(statement) &&
+            return (otherDec.body.equals(body) &&
                     Arrays.deepEquals(otherDec.parameters, parameters));
         } else {
             return false;
@@ -32,6 +32,6 @@ public class Constructor {
 
     public String toString() {
         return ("constructor(" + String.join(", ", parameters.toString()) + ") { " +
-                statement.toString() + " }");
+                body.toString() + " }");
     } 
 }

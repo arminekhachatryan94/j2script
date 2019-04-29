@@ -1,7 +1,6 @@
 package j2script.statements;
 import java.util.*;
 
-
 public class Block implements Statement {
     public final List<Statement> statements;
     public Block(final List<Statement> statements){
