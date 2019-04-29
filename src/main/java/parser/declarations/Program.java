@@ -15,6 +15,10 @@ public class Program {
         this.classDefs = classDefs;
         this.statement = statement;
     }
+    public Program(final Statement statement){
+        this.classDefs = new ArrayList<ClassDef>();
+        this.statement = statement;
+    }
     public int hashCode() {
         return (statement.hashCode());
     }

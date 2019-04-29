@@ -3,6 +3,7 @@ package j2script;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 import j2script.expressions.*;
 import j2script.statements.*;
 import j2script.names.*;
@@ -19,9 +20,10 @@ public class Codegen{
     //Code generated will be inserted into the list
     private final List<String> Code;
     private final Map<ClassName, ClassDef> classes;
-    private final Map<ClassName, List<MethodName>> vtableMethodOffsets;
+    // private final Map<ClassName, List<MethodName>> vtableMethodOffsets;
     public Codegen(){
         Code = new ArrayList<String>();
+        classes = new HashMap<ClassName,ClassDef>();
     }
     public void compileExp(Exp exp){
         if (exp instanceof BinopExp){

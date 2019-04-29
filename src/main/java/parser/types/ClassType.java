@@ -1,6 +1,6 @@
 package j2script.types;
 
-public class ClassType implements Type {
+public class ClassType implements Type, ReturnType {
     public final String name;
 
     public ClassType(String name) {

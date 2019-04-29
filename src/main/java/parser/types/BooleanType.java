@@ -1,6 +1,8 @@
 package j2script.types;
 
-public class BooleanType implements Type {
+import j2script.types.ReturnType;
+
+public class BooleanType implements Type, ReturnType {
     public int hashCode() {
         return 1;
     }

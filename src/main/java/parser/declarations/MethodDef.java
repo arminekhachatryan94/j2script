@@ -1,23 +1,24 @@
 package j2script.declarations;
 
-import j2script.access.Access;
 import j2script.types.Type;
 import j2script.types.ReturnType;
 import j2script.names.MethodName;
 import j2script.names.Variable;
 import j2script.statements.Statement;
+import j2script.access.*;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MethodDef {
     public final Access access;
     public final ReturnType returnType;
     public final MethodName name;
-    public final VarDec[] varDecs;
+    public final List<VarDec> varDecs;
     public final Statement statement;
 
     public MethodDef(final Access access, final ReturnType returnType, final MethodName name, 
-                     final VarDec[] varDecs, final Statement statement) {
+                     final List<VarDec> varDecs, final Statement statement) {
       this.access = access;
       this.returnType = returnType;
       this.name = name;
@@ -26,8 +27,8 @@ public class MethodDef {
     }
 
     public int hashCode() {
-        return access.hashCode() + returnType.hashCode() + name.hashCode() + 
-               Arrays.deepHashCode(varDecs) + statement.hashCode();
+        return returnType.hashCode() + name.hashCode() + 
+               statement.hashCode();
     }
 
     public boolean equals(final Object other) {
@@ -36,7 +37,6 @@ public class MethodDef {
             return otherMethodDef.access.equals(access) &&
                    otherMethodDef.returnType.equals(returnType) &&
                    otherMethodDef.name.equals(name) &&
-                   Arrays.deepEquals(otherMethodDef.varDecs, varDecs) &&
                    otherMethodDef.statement.equals(statement);
         } else {
             return false;
