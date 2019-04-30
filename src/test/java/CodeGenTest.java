@@ -3,8 +3,10 @@ import java.util.List;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertThat;
 import org.junit.Assert;
+import java.util.Arrays;
 import static org.junit.Assert.assertArrayEquals;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.IOException;
 import j2script.*;
@@ -72,10 +74,6 @@ public class CodeGenTest {
 	        assertResult("99", new NumberExp(99));
 	}
 
-	@Test
-	public void testNegativeInt() throws IOException {
-	        assertResult("-99", new NumberExp(-99));
-	}
 
 	/* Binop Expressions */
 	@Test // 1 + 2
@@ -97,12 +95,6 @@ public class CodeGenTest {
 			new NumberExp(2)));
 	}
 
-	@Test // 1 - -2 
-	public void testAdditionWithSubtractionOP() throws IOException {
-	        assertResult("1 - -2", new BinopExp(new NumberExp(1),
-			new MinusOp(),
-			new NumberExp(-2)));
-	}
 
 	@Test // 2 * 2 
 	public void testMult() throws IOException {
@@ -111,19 +103,6 @@ public class CodeGenTest {
 			new NumberExp(2)));
 	}
 
-	@Test // 2 * -2 
-	public void testMultWithNegative() throws IOException {
-	        assertResult("2 * -2", new BinopExp(new NumberExp(2),
-			new MultOp(),
-			new NumberExp(-2)));
-	}
-
-	@Test // -2 * -2
-	public void testMultWithBothNegative() throws IOException {
-	        assertResult("-2 * -2", new BinopExp(new NumberExp(-2),
-			new MultOp(),
-			new NumberExp(-2)));
-	}
 
 	@Test // 2 / 2
 	public void testDiv() throws IOException {
@@ -174,7 +153,7 @@ public class CodeGenTest {
 			new NumberExp(3)));
 	}
 
-	@Test // 3 * 2 / 3 = 1
+	@Test // 3 * 2 / 3 
 	public void testArithmeticEquationFour() throws IOException {
 	        assertResult("3 * 2 / 3", new BinopExp(new BinopExp(new NumberExp(3),
 			new MultOp(),
@@ -199,14 +178,16 @@ public class CodeGenTest {
 	/* Class Expression */
 	@Test // new Foo(4, "hello")
 	public void testClassObjects() throws IOException {
-		Exp expressions [] = {new NumberExp(4), new StringExp("hello")};
+		List<Exp> expressions = new ArrayList<>();
+		 expressions.add(new NumberExp(4));
+		 expressions.add(new StringExp("hello"));
 	        assertResult("Foo(4, \"hello\")", new ClassExp(new ClassName("Foo"), expressions));
 	}
 
 	/* Class Expression */
 	@Test // new Foo()
 	public void testClassObjectsWithNoParameters() throws IOException {
-		Exp expressions [] = {};
+		List<Exp> expressions = new ArrayList<>();
 	        assertResult("Foo()", new ClassExp(new ClassName("Foo"), expressions));
 	}
 
@@ -309,11 +290,11 @@ public class CodeGenTest {
 	@Test
 	public void testIfTrueWithInequality() throws IOException {
 		/*
-		if (x<22) x = 0;
+		if (x<2) x = 0;
 		else x = 1;
 		*/
 
-		//assertResultStatements("if(x<2) x = 0; else x = 1;", new IfStatement(new ****, new VarAssignment(new Variable("x"), new NumberExp(0)), new VarAssignment(new Variable("x"), new NumberExp(1))));
+		assertResultStatements("if (x < 2) { x = 0 } else { x = 1}", new IfStatement(new BinopExp(new VariableExp("x"), new LessThanOp(), new NumberExp(2)), new VarAssignment(new Variable("x"), new NumberExp(0)), new VarAssignment(new Variable("x"), new NumberExp(1))));
 
 
 
@@ -332,9 +313,9 @@ public class CodeGenTest {
 			x = 3;
 		*/
 
-		//Statement ifNestedStm = new IfStatement(new BoolExp(true), new VarAssignment(new Variable("x"), new NumberExp(1)), new VarAssignment(new Variable("x"), new NumberExp(2))));
+		Statement ifNestedStm = new IfStatement(new BinopExp(new VariableExp("x"), new EqualsOp(), new NumberExp(2)), new VarAssignment(new Variable("x"), new NumberExp(1)), new VarAssignment(new Variable("x"), new NumberExp(2)));
 
-		//assertResultStatements("if(true) if(true) x = 1; else x = 2; else x = 3;", new IfStatement(new BoolExp(true), ifNestedStm, new VarAssignment(new Variable("x"), new NumberExp(3))));
+		assertResultStatements("if (x < 22) { if (x == 2) { x = 1 } else { x = 2} } else { x = 3}", new IfStatement(new BinopExp(new VariableExp("x"), new LessThanOp(), new NumberExp(22)), ifNestedStm, new VarAssignment(new Variable("x"), new NumberExp(3))));
 	}
 
 	@Test
@@ -346,7 +327,16 @@ public class CodeGenTest {
 			else
 			x=21;
 		*/	
-			//assertResultStatements("while(true) if(true) break; else break;", new WhileStatement(new BoolExp(true), new IfStatement(new BoolExp(true), new BreakStatement(), new BreakStatement())));
+			assertResultStatements("while(x < 22) {if (x == 21) { break } else { break}}", 
+				new WhileStatement(
+					new BinopExp(new VariableExp("x"), new LessThanOp(), new NumberExp(22)), 
+					new IfStatement(
+						new BinopExp(new VariableExp("x"), new EqualsOp(), new NumberExp(21)), 
+						new BreakStatement(), 
+						new BreakStatement()
+						)
+					)
+				);
 
 	}
 
