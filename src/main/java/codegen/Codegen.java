@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.HashMap;
 import j2script.expressions.*;
 import j2script.statements.*;
+import j2script.types.ClassType;
 import j2script.names.*;
 import j2script.VTableClassTable;
 import j2script.declarations.*;
@@ -63,48 +64,94 @@ public class Codegen{
         
     }
     public void compileParentclass(ClassDef cls){
-        //Vtable holds the methods with updated names
-        List<MethodDef> Vtable = new ArrayList<>();
-        //Connects old methodnames to new methodnames
-        HashMap<MethodName, MethodName> tempname = new HashMap<MethodName,MethodName>();
-        //ADD all the methods into the vtable as CNAME_MethodNAME, link old names to new names.
-        //the original method name is connected to the new method (name) here
-        int count =0;
+        //We know this is the top of the ladder, print the methods out as is.
+        int count = 0;
+        Map<MethodName, MethodDef> methodMap = new HashMap<>();
+        Map<MethodName, Integer> offsets = new HashMap<>();
+        List<String> vTable = new ArrayList<>(); 
+        String vtable = "var " + cls.name.toString() + "_" + "vtable = [";
         for (MethodDef md : cls.methodDefs) {
-            MethodName vname = new MethodName(cls.name + "_" + md.name);
-            MethodDef temp = new MethodDef(md.access, md.returnType,vname,md.varDecs,md.statement);
-            Vtable.add(temp);
-            tempname.put(md.name, vname);
-            offsets.put(md.name, count );
+            String method = "var " + cls.name.toString() + "_" + md.name.toString() + " = function(self) {\n\t" + md.statement.toString() + "};" ;
+            Code.add(method);
+            methodMap.put(md.name, md);
+            offsets.put(md.name, count);
+            vTable.add(md.name.toString());
+            vtable += cls.name.toString() + "_" + md.name.toString();
+            if (count + 1 < cls.methodDefs.size()){
+                vtable += ", ";
+            }
             count++;
         }
-        //connect vtable to class
-        VTableClassTable v = new VTableClassTable(Vtable, cls, tempname, offsets);
+        vtable += "];";
+        Code.add(vtable);        
+        VTableClassTable v = new VTableClassTable(vTable,cls, methodMap, offsets);
         compmap.put(cls.name, v);
     }
     public void compileChildClass(ClassDef cls){
+        Map<MethodName, MethodDef> methodMap;
+        Map<MethodName, Integer> offsets;
+        List<String> vTable; 
+        //Inherits parents stuff
+        VTableClassTable parent = compmap.get(cls.extendedClass);
+        methodMap = parent.methodMap;
+        offsets = parent.offsets;
+        vTable = parent.vTable;
+        int count = parent.vTable.size();
 
-    }
-    public void compileClass(ClassDef cls){
-        if (cls.extendedClass == null && compmap.get(cls.name) == null){
-            compileParentclass(cls);
-            List<MethodDef> methods = compmap.get(cls.name).vTable;
-            String vt = "var " + cls.name + "_Vtable" + "= [";
-            for (int i =0; i < methods.size(); i++){
-                vt += methods.get(i).name.toString();
-                if (i+1 < methods.size()){
-                    vt+=",";
+        String vtable = "var " + cls.name.toString() + "_" + "vtable = [";
+        for (MethodDef md : cls.methodDefs) {
+            String method = "var " + cls.name.toString() + "_" + md.name.toString() + " = function(self) {\n\t" + md.statement.toString() + "};" ;
+            Code.add(method);
+            //check if method is being overridden
+            if (methodMap.get(md.name) != null){
+                if(methodMap.get(md.name).varDecs.equals(md.varDecs)){
+                    int j=0;
+                    //replace in childs vtable
+                    methodMap.replace(md.name, md);
+                    for (int i = 0 ; i < vTable.size(); i++) {
+                        String s = vTable.get(i);
+                        if (s.equals(md.name.toString())){
+                            vTable.set(i,md.name.toString());
+                            j=i;
+                        }
+                    }
+                    offsets.replace(md.name, j);
                 }
             }
-            vt += "];";
-            Code.add(vt);
+            //Its not being overridden, add it to the vtable.
+            else{
+                methodMap.put(md.name, md);
+                offsets.put(md.name, count);
+                vTable.add(md.name.toString());
+                count++;
+            }
+
+        }
+        int k =0;
+        for (String s : vTable) {
+            vtable += cls.name.toString() + "_" + s;
+            if (k + 1 < cls.methodDefs.size()){
+                vtable += ", ";
+            }
+            k++;
+        }
+        vtable += "];";
+        Code.add(vtable);    
+        VTableClassTable v = new VTableClassTable(vTable,cls, methodMap, offsets);
+        compmap.put(cls.name, v);
+    }
+    public void compileClass(ClassDef cls){
+        //If doesnt extend and hasnt been compiled, compile it.
+        if (cls.extendedClass == null && compmap.get(cls.name) == null){
+            compileParentclass(cls);
         }
         else{
             //FIND PARENT AND COMPILE IT IF IT HASNT BEEN SO
             if (compmap.get(cls.extendedClass) == null){
                 compileClass(classes.get(cls.extendedClass));
             }
-            //COMPILE THE CLASS
+            //Now compile the extended class itself
+            compileChildClass(cls);
         }
     }
     public void compileStatement(Statement stmt){
@@ -113,6 +160,54 @@ public class Codegen{
         }
         else if (stmt instanceof WhileStatement){
             compileWhileStmt((WhileStatement)stmt);
+        }
+        else if (stmt instanceof Block){
+
+        }
+        else if (stmt instanceof BreakStatement){
+            
+        }
+        else if (stmt instanceof PrintStatement){
+            
+        }
+        else if (stmt instanceof ReturnExpStatement){
+            
+        }
+        else if (stmt instanceof ReturnVoidStatement){
+            
+        }
+        else if (stmt instanceof VarAssignment){
+            
+        }
+        else if (stmt instanceof VarDecAssignment){
+            compilevarDecAssign((VarDecAssignment)stmt);
+            
+        }
+    }
+    public void compilevarDecAssign(Statement stmt){
+        //Assuming this type checks, check if it is a class type and if so then create a json with the appropriate fields.
+        VarDecAssignment v = (VarDecAssignment)stmt;
+        if (v.varDec.type instanceof ClassType){
+            ClassName cname = new ClassName(v.varDec.type.toString());
+            String actualCode = "var " + v.varDec.var.toString() + " = {\n\tvtable: " + cname.toString() + "_vtable";
+            VTableClassTable vt = compmap.get(cname);
+            //if class has no variables, thats about it.
+            if (vt.theClass.varDecs.isEmpty()){
+                actualCode += "\n}";
+            }
+            //else check the class' constructor and instantiate the fields
+            else{
+                if(v.exp instanceof ClassExp){
+                    ClassExp cexp = (ClassExp) v.exp;
+                    actualCode +=",\n\t";
+                    for(int i=0; i < vt.theClass.constructor.parameters.size(); i++){
+                        actualCode += vt.theClass.varDecs.get(i).var.toString() + ": " + cexp;
+
+                    }
+                }
+
+            }
+
         }
     }
     public void compileIfStmt(Statement ifstmt){

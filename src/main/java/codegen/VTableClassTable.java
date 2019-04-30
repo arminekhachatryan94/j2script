@@ -16,16 +16,16 @@ import java.io.PrintWriter;
 import java.lang.instrument.ClassDefinition;
 
 public class VTableClassTable{
-    public List<MethodDef> vTable;
+    public List<String> vTable;
     public ClassDef theClass;
-    public Map<MethodName, MethodName> temp;
+    public Map<MethodName, MethodDef> methodMap;
     public Map<MethodName, Integer> offsets;
 
 
-    public VTableClassTable(List<MethodDef> vTable, ClassDef theclass,HashMap<MethodName, MethodName> temp, HashMap<MethodName,Integer> offsets){
+    public VTableClassTable(List<String> vTable, ClassDef theclass,Map<MethodName, MethodDef> methodMap, Map<MethodName,Integer> offsets){
         this.vTable=vTable;
         this.theClass=theclass;
-        this.temp = temp;
+        this.methodMap = methodMap;
         this.offsets = offsets;
     }
 }

@@ -15,7 +15,12 @@ public class Block implements Statement {
     //     //TODO
     // }
 
-    // public String toString() {
-    //     //TODO
-    // }
+    public String toString() {
+        String statement = new String();
+        for (Statement s : statements) {
+            statement += s.toString();
+            statement += "\n";
+        }
+        return statement;
+    }
 }
