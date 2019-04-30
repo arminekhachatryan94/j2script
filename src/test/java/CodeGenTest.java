@@ -354,8 +354,111 @@ public class CodeGenTest {
 
 	}
 
+	@Test
+	public void testClass(){
+		//class Car{
+			//Car(String bmw) {
+				//String name = bmw;
+			//}
+		//}
+
+		//Car car = new Car("bmw");
+
+		List<Exp> parameters = new ArrayList<>();
+		parameters.add(new StringExp("bmw"));
+		List<VarDec> emptyVarDecs = new ArrayList<>();
+		ArrayListList<VarDec> varDecs = new ArrayList<>();
+		varDecs.add(new StringType(), new VariableExp("bmw"));
+		List<MethodDef> methodDefs = new ArrayList<>();
+		List<ClassDef> classes = new ArrayList<>();
+		final ClassDef classOne = new ClassDef(new ClassName("Car"), new Constructor(varDecs, new VarDecAssignment(new VarDec(new StringType(), new Variable("name")), new VariableExp("bmw")), emptyVarDecs, methodDefs));
+		Program program = new Program(classes, new VarDecAssignement(new VarDec(new ClassType(), new Variable("car")), new ClassExp(new ClassName("Car"), parameters)));
+		assertResultProgram("", program);
+	
+	
+
+	}
+
+	@Test
+	public void testClasswithMethodCalls(){
+		//class Car{
+			//Car(String bmw) {
+				//String name = bmw;
+			//}
+			//public String getName(){
+				//return name;
+			//}
+		//}
+
+		//Car car = new Car("bmw");
+		//String name = car.getName();
+
+		
+		List<VarDec> emptyVarDecs = new ArrayList<>();
+		List<Exp> expressions = new ArrayList<>();
+
+		List<Exp> parameters = new ArrayList<>();
+		parameters.add(new StringExp("bmw"));
+
+		ArrayListList<VarDec> varDecs = new ArrayList<>();
+		varDecs.add(new StringType(), new VariableExp("bmw"));
+
+		List<MethodDef> methodDefs = new ArrayList<>();
+		methodDefs.add(new MethodDef(new PublicAccess(), new ReturnType(***), new MethodName("getName"), emptyVarDecs, new ReturnExpStatement(new VariableExp("name"))));
+		
+		List<Statement> statements = new ArrayList<>();
+		statements.add(new VarDecAssignement(new VarDec(new ClassType(), new Variable("car")), new ClassExp(new ClassName("Car"), parameters)));
+		statements.add(new VarDecAssignement(new VarDec(new StringType(), new Variable("name")), new VarMethodExp(new Variable("car"), new MethodName("getName"), expressions)));
+		
+		List<ClassDef> classes = new ArrayList<>();
+		final ClassDef classOne = new ClassDef(new ClassName("Car"), new Constructor(varDecs, new VarDecAssignment(new VarDec(new StringType(), new Variable("name")), new VariableExp("bmw")), emptyVarDecs, methodDefs));
+		classes.add(classOne);
+
+		Program program = new Program(classes, new Block(statements));
+		assertResultProgram("", program);
+	
+	
+
+	}
+	
+
+
 	/**vtables**/
 	
+	@Test
+	public void testVirtualMethodCall() {
+		/*class Students {
+			int id = 0;
+			int gpa = 3;
+			Students(){
+				int number = 50;
+			} 
+			public int getId() {
+				return id;
+			}
+		}
+		class Bran extends Students{
+			String name = "Bran";
+			Bran(){
+				super();
+			}
+			public String getName(){
+				return name;
+			}
+		}
+
+		Students studenOne = new Students();
+		Bran student = new Bran();
+
+		int resultID = studentOne.getId();
+		String studentName = student.getName();
+		int studentId = student.getId();
+		*/
+
+
+
+
+	}
 	
 
 
