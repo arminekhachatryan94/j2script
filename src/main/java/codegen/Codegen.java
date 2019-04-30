@@ -46,7 +46,7 @@ public class Codegen{
         }
     }
     public void compileProgram(Program prog){
-        
+        //todoooo
     }
     public void compileStatement(Statement stmt){
         if (stmt instanceof IfStatement){
@@ -101,6 +101,11 @@ public class Codegen{
     public void writeStatementstoFile(final Statement stmt, final File file) throws IOException{
         final Codegen gen = new Codegen();
         gen.compileStatement(stmt);
+        gen.writeCompleteFile(file);
+    }
+    public void writeProgramtoFile(final Program program, final File file) throws IOException{
+        final Codegen gen = new Codegen();
+        gen.compileProgram(program);
         gen.writeCompleteFile(file);
     }
     public void writeCompleteFile(final File file) throws IOException{

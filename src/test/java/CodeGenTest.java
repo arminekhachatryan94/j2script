@@ -56,6 +56,22 @@ public class CodeGenTest {
 
 	}
 
+	public void assertResultProgram(String expected, Program program) throws IOException {
+		
+		try {
+			Codegen code = new Codegen();
+			final File file = File.createTempFile("test", ".js");
+			code.writeProgramtoFile(program, file);
+			final String output = readFile(file);
+			assertEquals(expected, output);
+			file.delete();
+
+		} catch (Exception e) {
+			System.out.println("somethings up");
+		}
+
+	}
+
 	private String readFile(File file) throws IOException {
 		// File file = new File(pathname);
 		StringBuilder fileContents = new StringBuilder((int)file.length());        
@@ -297,8 +313,6 @@ public class CodeGenTest {
 		assertResultStatements("if (x < 2) { x = 0 } else { x = 1}", new IfStatement(new BinopExp(new VariableExp("x"), new LessThanOp(), new NumberExp(2)), new VarAssignment(new Variable("x"), new NumberExp(0)), new VarAssignment(new Variable("x"), new NumberExp(1))));
 
 
-
-
 	}
 
 	@Test
@@ -339,6 +353,12 @@ public class CodeGenTest {
 				);
 
 	}
+
+	/**vtables**/
+	
+	
+
+
 
 
 /***
