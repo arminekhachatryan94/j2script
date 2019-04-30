@@ -10,4 +10,7 @@ public class VariableExp implements Exp {
     public String emit() {
         return name;
     }
+    public String toString() {
+        return name + "";
+    }
 }

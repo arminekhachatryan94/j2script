@@ -54,6 +54,7 @@ public class Codegen{
         }
     }
     public void compileProgram(Program prog){
+<<<<<<< HEAD
         for (ClassDef cls : prog.classDefs) {
             classes.put(cls.name,cls);
         }
@@ -61,6 +62,9 @@ public class Codegen{
             compileClass(cls);
         }
         
+=======
+        //todoooo
+>>>>>>> 221e4af1e7ceb0aad0a4d61aab18d1a4b56a7f0d
     }
     public void compileParentclass(ClassDef cls){
         //Vtable holds the methods with updated names
@@ -160,6 +164,11 @@ public class Codegen{
     public void writeStatementstoFile(final Statement stmt, final File file) throws IOException{
         final Codegen gen = new Codegen();
         gen.compileStatement(stmt);
+        gen.writeCompleteFile(file);
+    }
+    public void writeProgramtoFile(final Program program, final File file) throws IOException{
+        final Codegen gen = new Codegen();
+        gen.compileProgram(program);
         gen.writeCompleteFile(file);
     }
     public void writeCompleteFile(final File file) throws IOException{
