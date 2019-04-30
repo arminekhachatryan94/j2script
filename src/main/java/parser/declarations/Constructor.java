@@ -4,6 +4,7 @@ import j2script.declarations.VarDec;
 import j2script.statements.Statement;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class Constructor {
     public final List<VarDec> parameters;
@@ -16,7 +17,7 @@ public class Constructor {
     }
 
     public int hashCode() {
-        return body.hashCode() + Arrays.deepHashCode(parameters);
+        return body.hashCode() + Arrays.deepHashCode(parameters.toArray());
     }
 
     public boolean equals(final Object other) {
@@ -24,7 +25,7 @@ public class Constructor {
             final Constructor otherDec =
                 (Constructor)other;
             return (otherDec.body.equals(body) &&
-                    Arrays.deepEquals(otherDec.parameters, parameters));
+                    Arrays.deepEquals(otherDec.parameters.toArray(), parameters.toArray()));
         } else {
             return false;
         }

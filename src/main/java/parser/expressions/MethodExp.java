@@ -1,31 +1,27 @@
 package j2script.expressions;
 
-import j2script.names.Variable;
 import j2script.names.MethodName;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class VarMethodExp implements Exp {
-    public final Variable var;
+public class MethodExp implements Exp {
     public final MethodName methodName;
     public final List<Exp> parameters;
 
-    public VarMethodExp(final Variable var,
-                    final MethodName methodName,
-                    final List<Exp> parameters){
-        this.var=var;
+    public MethodExp(final MethodName methodName,
+                     final List<Exp> parameters){
         this.methodName=methodName;
         this.parameters = parameters;
     }
     public int hashCode() {
-        return var.hashCode() + methodName.hashCode();
+        return methodName.hashCode() + Arrays.deepHashCode(parameters.toArray());
     }
 
     public boolean equals(final Object other) {
-        if (other instanceof VarMethodExp) {
-            final VarMethodExp otherExp = (VarMethodExp)other;
-            return (otherExp.var.equals(var) &&
+        if (other instanceof MethodExp) {
+            final MethodExp otherExp = (MethodExp)other;
+            return (otherExp.methodName.equals(methodName) &&
                     Arrays.deepEquals(parameters.toArray(),
                                       otherExp.parameters.toArray()));
         } else {
@@ -34,7 +30,6 @@ public class VarMethodExp implements Exp {
     }
     
     public String toString() {
-        return (var.toString() + "(" +
-                methodName.toString() + ")");
+        return methodName.toString();
     }
 }

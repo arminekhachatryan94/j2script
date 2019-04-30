@@ -1,11 +1,18 @@
-package j2script.typechecker;
+package j2script;
+
+import j2script.TypeChecker;
+import j2script.declarations.VarDec;
+import j2script.names.ClassName;
+import j2script.names.Variable;
+import j2script.types.Type;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
 
 public class TypeEnvironment {
     private final Map<Variable, Type> variables;
-    private final ClassName thisClass; // null if outside of method
+    public final ClassName thisClass; // null if outside of method
     public boolean inWhile;
     
     public TypeEnvironment(final Map<Variable, Type> variables,
@@ -14,14 +21,6 @@ public class TypeEnvironment {
         this.variables = variables;
         this.thisClass = thisClass;
         this.inWhile = inWhile;
-    }
-
-    public Type thisType() throws TypeErrorException {
-        if (thisClass == null) {
-            throw new TypeErrorException("this used outside of class");
-        } else {
-            return new ClassType(thisClass);
-        }
     }
     
     public Type lookup(final Variable variable) throws TypeErrorException {
@@ -38,27 +37,27 @@ public class TypeEnvironment {
         if (!variables.containsKey(variable)) {
             final Map<Variable, Type> newVariables = new HashMap<Variable, Type>(variables);
             newVariables.put(variable, type);
-            return new TypeEnvironment(newVariables, thisClass);
+            return new TypeEnvironment(newVariables, thisClass, inWhile);
         } else {
             throw new TypeErrorException("Redefinition of variable: " + variable);
         }
     }
 
     public TypeEnvironment addVariable(final VarDec vardec) throws TypeErrorException {
-        return addVariable(vardec.variable, vardec.type);
+        return addVariable(vardec.var, vardec.type);
     }
 
-    public static Map<Variable, Type> variableMapping(final VarDec[] params) throws TypeErrorException {
-        Typechecker.noDuplicates(params);
+    public static Map<Variable, Type> variableMapping(final List<VarDec> params) throws TypeErrorException {
+        TypeChecker.noDuplicates(params);
         final Map<Variable, Type> result = new HashMap<Variable, Type>();
         for (final VarDec param : params) {
-            result.put(param.variable, param.type);
+            result.put(param.var, param.type);
         }
         return result;
     } // variableMapping
 
-    public static TypeEnvironment initialEnv(final VarDec[] params,
+    public static TypeEnvironment initialEnv(final List<VarDec> params,
                                              final ClassName onClass) throws TypeErrorException {
-        return new TypeEnvironment(variableMapping(params), onClass);
+        return new TypeEnvironment(variableMapping(params), onClass, false);
     } // initialEnv
 }

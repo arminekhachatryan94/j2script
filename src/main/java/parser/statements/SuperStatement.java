@@ -2,10 +2,12 @@ package j2script.statements;
 
 import j2script.expressions.Exp;
 
-public class SuperStatement implements Statement {
-    public final Exp exp;
+import java.util.List;
 
-    public SuperStatement(Exp exp) {
+public class SuperStatement implements Statement {
+    public final List<Exp> exp;
+
+    public SuperStatement(List<Exp> exp) {
       this.exp = exp;
     }
 
@@ -13,5 +15,5 @@ public class SuperStatement implements Statement {
     public boolean equals(final Object other) {
         return other instanceof SuperStatement;
     }
-    public String toString() { return "super(" + exp + ")"; }
+    public String toString() { return "super()"; }
 }

@@ -1,14 +1,8 @@
 package j2script;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.List;
-import java.util.ArrayList;
-
-import j2script.util.*;
+import j2script.TypeEnvironment;
 import j2script.TypeErrorException;
+import j2script.access.*;
 import j2script.declarations.*;
 import j2script.expressions.*;
 import j2script.names.*;
@@ -16,11 +10,18 @@ import j2script.operators.*;
 import j2script.statements.*;
 import j2script.types.*;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.List;
+import java.util.ArrayList;
 
 public class TypeChecker {
   private final Map<ClassName, ClassDef> classes;
 
-  private TypeChecker(final Program program) throws TypeErrorException {
+  private TypeChecker(final Map<ClassName, ClassDef> classes) throws TypeErrorException {
     this.classes = classes;
   }
 
@@ -36,17 +37,57 @@ public class TypeChecker {
   public boolean isPrimitive(Type type) {
     return type.equals(new IntType()) || 
            type.equals(new BooleanType()) ||
-           type.equals(new StringType());
+           type.equals(new StringType(null));
+  }
+
+  private static void ensureTypesSame(final Type expected, final Type received) throws TypeErrorException {
+    if (!expected.equals(received)) {
+      throw new TypeErrorException(expected, received);
+    }
+  }
+
+  // returns null if it couldn't find it
+  public MethodDef findMethodDirect(final ClassName onClass,
+                                    final MethodName methodName) throws TypeErrorException {
+    final ClassDef classDef = getClass(onClass);
+    for (final MethodDef methodDef : classDef.methodDefs) {
+      if (methodDef.name.equals(methodName)) {
+        return methodDef;
+      }
+    }
+    return null;
+  } // findMethodDirect
+  
+  public MethodDef findMethod(final ClassName onClass,
+                              final MethodName methodName) throws TypeErrorException {
+    if (onClass == null) {
+      throw new TypeErrorException("No such method: " + methodName);
+    }
+
+    final MethodDef result = findMethodDirect(onClass, methodName);
+    if (result == null) {
+      final ClassDef classDef = getClass(onClass);
+      // Not on me; see if it's on my parent
+      return findMethod(classDef.extendedClass, methodName);
+    } else {
+      return result;
+    }
+  } // findMethod
+
+  private void checkParameters(final TypeEnvironment env, List<VarDec> methodDef, List<Exp> methodExp ) throws TypeErrorException {
+    for (int i = 0; i < methodDef.size(); i++) {
+      ensureTypesSame(((VarDec)methodDef.get(i)).type, typeofExp(env, methodExp.get(i)));
+    }
   }
 
   // Check for redefined instance vars from parent later
   public static void noDuplicates(final List<VarDec> params) throws TypeErrorException {
     final Set<Variable> seen = new HashSet<>();
     for (final VarDec current : params) {
-      if (seen.contains(current.variable)) {
-        throw new TypeErrorException("Duplicate variable: " + current.variable);
+      if (seen.contains(current.var)) {
+        throw new TypeErrorException("Duplicate variable: " + current.var);
       }
-      seen.add(current.variable);
+      seen.add(current.var);
     }
   } // noDuplicates
 
@@ -56,11 +97,11 @@ public class TypeChecker {
     final List<MethodDef> seen = new ArrayList<MethodDef>();
       for (int i = 0; i < methods.size(); i++) {
         for(int j = i+1; j < methods.size(); j++) {
-          if(methods[i] != methods[j]) {
+          if(methods.get(i) != methods.get(j)) {
             // check if same
-            if(methods[i].name == methods[j].name && 
-               Arrays.deepEquals(methods[i].varDecs, methods[j].varDecs)) {
-                 throw new TypeErrorException("Duplicate method defnied: " + method.name);
+            if(methods.get(i).name == methods.get(i).name && 
+               Arrays.deepEquals(methods.get(i).varDecs.toArray(), methods.get(j).varDecs.toArray())) {
+                 throw new TypeErrorException("Duplicate method defnied: " + methods.get(i).name);
                }
           }
         }
@@ -68,48 +109,66 @@ public class TypeChecker {
   } // noDuplicateMethodDefs
 
   // checks that subclasses don't redefined parent class instance variables
-  public static void instanceVariablesOk(final Set<Variable> seen, final ClassName current) throws TypeErrorException {
+  public void instanceVariablesOk(final Set<Variable> seen, final ClassName current) throws TypeErrorException {
     if (current != null) {
-      final ClassDefinition classDef = getClass(current);
-      for (final VarDec param : classDef.instanceVariables) {
-        if (seen.contains(param.variable)) {
+      final ClassDef classDef = getClass(current);
+      for (final VarDec param : classDef.instanceVars) {
+        if (seen.contains(param.var)) {
           throw new TypeErrorException("Instance variable " + param.var + " redefined in " + ": " + current.name);
         }
-        seen.add(param.variable);
+        seen.add(param.var);
       }
       instanceVariablesOk(seen, classDef.extendedClass);
       }
   } // instanceVariablesOk
 
   // checks that subclasses don't redefined parent class instance variables
-  public static void instanceVariablesOk(final ClassName current) throws TypeErrorException {
+  public void instanceVariablesOk(final ClassName current) throws TypeErrorException {
     instanceVariablesOk(new HashSet<Variable>(), current);
   } // instanceVariablesOk
 
-  public static boolean containsNoReturns(final List<Stmt> statements) {
+  public static boolean containsNoReturns(final List<Statement> statements) {
     for (int i = 1; i < statements.size(); i++) {
-      if (stmt instanceof ReturnStmt) {
+      if (statements.get(i) instanceof ReturnVoidStatement ||
+          statements.get(i) instanceof ReturnExpStatement) {
         return false;
       }
     }
     return true;
   } // containsNoReturns
 
-  public static boolean containsNoSupers(final List<Stmt> statements) {
-    for (final Stmt stmt : statements) {
+  public static boolean containsNoSupers(final List<Statement> statements) {
+    for (final Statement stmt : statements) {
       if (stmt instanceof SuperStatement) {
         return false;
       }
     }
     return true;
   } // containsNoSupers
+
+  public static void superReturnOkInMethod(final Statement stmt) throws TypeErrorException {
+    List<Statement> statements = new ArrayList<>();
+    if (stmt instanceof Block) {
+      statements = ((Block)stmt).statements;
+    } else {
+      statements.add(stmt);
+    }
+
+    final int numStatements = statements.size();
+    if (numStatements == 0 || containsNoReturns(statements)) {
+      throw new TypeErrorException("Missing return");
+    }
+    if (!containsNoSupers(statements)) {
+      throw new TypeErrorException("methods cannot contain super");
+    }
+  } // superReturnOkInMethod
   
   //  Checks if super call is OK
   public static void superReturnOkInConstructor(final boolean isBaseClass,
-                                                final Stmt stmt) throws TypeErrorException {
-    final List<Stmt> statements;
+                                                final Statement stmt) throws TypeErrorException {
+    List<Statement> statements = new ArrayList<>();
     if (stmt instanceof Block) {
-      final List<Stmt> statements = stmt.statements;
+      statements = ((Block) stmt).statements;
     } else {
       statements.add(stmt);
     }
@@ -120,7 +179,7 @@ public class TypeChecker {
     }
     // is not baseclass and has no statements or the first statement is not super
     if (!isBaseClass &&
-      (statements.size() == 0 || !(statements.get(0) instanceof SuperStmt))) {
+      (statements.size() == 0 || !(statements.get(0) instanceof SuperStatement))) {
       throw new TypeErrorException("super needs to be first in subclass constructor");
     }
     // constructor cannot have return
@@ -135,7 +194,7 @@ public class TypeChecker {
       // see if subType is a subtype of base type
       if (baseType instanceof ClassType && subType instanceof ClassType) {
         final ClassName subName = ((ClassType)subType).name;
-        final ClassDefinition subClassDef = getClass(subName);
+        final ClassDef subClassDef = getClass(subName);
         if (subClassDef.extendedClass != null) {
           typesOk(baseType, new ClassType(subClassDef.extendedClass));
         } else {
@@ -147,131 +206,247 @@ public class TypeChecker {
     }
   } // typesOk
 
+  private static Type binopType(final Type left, final Op op, final Type right) throws TypeErrorException {
+    final IntType intType = new IntType();
+    if (op instanceof PlusOp) {
+      // TWO kinds are permitted:
+      // int + int: returns int
+      // pointer + int: returns same pointer type
+      //
+      // in both cases, the right side is an int
+      ensureTypesSame(intType, right);
+      if (left instanceof IntType) {
+        // int + int returns int
+        return intType;
+      } else {
+        throw new TypeErrorException("invalid lhs for +: " + left.toString());
+      }
+    } else if (op instanceof MinusOp ||
+                op instanceof MultOp ||
+                op instanceof DivOp) {
+      // int (-|*|/) int = int
+      ensureTypesSame(intType, left);
+      ensureTypesSame(intType, right);
+      return intType;
+    } else if (op instanceof EqualsOp) {
+      // type == type = boolean
+      // both need to be of the same type
+      ensureTypesSame(left, right);
+      return new BooleanType();
+    } else if (op instanceof LessThanOp) {
+    // int < int = boolean
+      ensureTypesSame(intType, left);
+      ensureTypesSame(intType, right);
+      return new BooleanType();
+      } else {
+          // should be no other operators
+          assert(false);
+          throw new TypeErrorException("Unknown operator: " + op.toString());
+      }
+  } // binopType
+
   public Type typeofExp(final TypeEnvironment env,
                         final Exp exp) throws TypeErrorException {
-    if (exp instanceof IntExp) {
+    if (exp instanceof NumberExp) {
       return new IntType();
-    } else if (exp instanceof LhsExp) {
-      return typeofLhs(env, ((LhsExp)exp).lhs);
+    } else if (exp instanceof BoolExp) {
+      return new BooleanType();
+    } else if (exp instanceof VariableExp) {
+      return env.lookup(((VariableExp)exp).var);
+    } else if(exp instanceof StringExp) {
+      StringExp stringExp = (StringExp) exp;
+      return new StringType(stringExp.name);
+    } else if (exp instanceof BinopExp) {
+      // the return type and expected parameter types all depend
+      // on the operator.  In all cases, we need to get the types
+      // of the operands, and then check if this matches with the
+      // operator
+      final BinopExp asBinop = (BinopExp)exp;
+      final Type leftType = typeofExp(env, asBinop.left);
+      final Type rightType = typeofExp(env, asBinop.right);
+      return binopType(leftType, asBinop.op, rightType);
+    } else if(exp instanceof ClassExp) {
+      ClassExp classExp = (ClassExp) exp;
+      return new ClassType(classExp.name);
+    } else if(exp instanceof VarMethodExp) {
+      VarMethodExp asMethodExp = (VarMethodExp)exp;
+      // Var is defined
+      ClassType className = (ClassType) env.lookup(asMethodExp.var);
+      // var has methodname
+      MethodDef method = findMethod(className.name, asMethodExp.methodName);
+      // methodname is public
+      if (method.access != new PublicAccess()) {
+        throw new TypeErrorException("Method: " + method.name + " is declared private");
+      }
+      // Exp's types match up with method's types
+      checkParameters(env, method.varDecs, asMethodExp.parameters);
+      // return method return type
+      return method.returnType;
+    } else if(exp instanceof MethodExp) {
+      MethodExp asMethodExp = (MethodExp)exp;
+      // methodname is within current class
+      MethodDef method = findMethod(env.thisClass, asMethodExp.methodName);
+      // Exps match up with method types
+      checkParameters(env, method.varDecs, asMethodExp.parameters);
+      // return method return type
+      return method.returnType;
     } else {
-      return deadCode();
+      assert(false);
+      throw new TypeErrorException("Unrecognized expression: " + exp.toString());
     }
   } // typeofExp
 
-  private static TypeEnvironment typeCheckBlockStmt(final TypeEnvironment env,
+  private TypeEnvironment typeCheckBlockStmt(final TypeEnvironment env,
                                                     final Type returnType,      // null if return is not ok
                                                     final List<VarDec> superParams, // null if not expecting super
-                                                    final Stmt stmt) {
-    for (Statement s : block.statements) {
-      typecheckStatement(env, returnType, superParams, s);
-    }
+                                                    final Block stmt)  throws TypeErrorException {
+    return typecheckStatement(env, returnType, superParams, stmt);    // HELP  Not sure what to do since have list
+                                                                      // Example not list
   }
 
+  public void typecheckSuperStmt(final TypeEnvironment env,
+                                 final List<VarDec> superParams,
+                                 final SuperStatement stmt) throws TypeErrorException {
+    assert(superParams != null);
+    checkParameters(env, superParams, stmt.exp);
+  } // typecheckSuperStmt
+
   public void typecheckPrintStmt(final TypeEnvironment env,
-                                 final PrintStmt stmt) throws TypeErrorException {
+                                 final PrintStatement stmt) throws TypeErrorException {
     final Type printType = typeofExp(env, stmt.exp);
     if (!isPrimitive(printType)) {
         throw new TypeErrorException("print can only print primitives; got: " + printType);
     }
   } // typecheckPrintStmt
 
-  public void typecheckReturnExpStmt(TypeEnvironment env, Type returnType, ReturnExpStmt stmt) {
+  public void typecheckReturnExpStmt(TypeEnvironment env, Type returnType, ReturnExpStatement stmt)  throws TypeErrorException {
     assert(returnType != null);
     typesOk(returnType, typeofExp(env, stmt.exp));
   }
 
   public void typecheckVarDecAssign(final TypeEnvironment env,
-                                  final VarDecAssignement stmt) throws TypeErrorException {
+                                    final VarDecAssignment stmt) throws TypeErrorException {
     final Type lhsType = stmt.varDec.type;
     final Type expType = typeofExp(env, stmt.exp);
     typesOk(lhsType, expType);
   } // typecheckAssignStmt
 
   public void typecheckVarAssign(final TypeEnvironment env,
-                                final VarAssignement stmt) throws TypeErrorException {
+                                 final VarAssignment stmt) throws TypeErrorException {
     final Type lhsType = env.lookup(stmt.variable);
     final Type expType = typeofExp(env, stmt.exp);
     typesOk(lhsType, expType);
   } // typecheckAssignStmt
 
-  public static TypeEnvironment typeCheckWhileStmt(final TypeEnvironment env,
+  public TypeEnvironment typeCheckWhileStmt(final TypeEnvironment env,
                                                    final Type returnType,      // null if return is not ok
                                                    final List<VarDec> superParams, // null if not expecting super
-                                                   final Stmt stmt) {
-    Type condition = typeofExp(stmt.condition);
-    if (condition.equals(new BooleanType()) {
+                                                   final WhileStatement stmt)  throws TypeErrorException {
+    Type condition = typeofExp(env, stmt.condition);
+    if (condition.equals(new BooleanType())) {
       throw new TypeErrorException("While condition expects boolean type got " + condition);
     }
     env.inWhile = true;
     return typecheckStatement(env, returnType, superParams, stmt);
   }
 
-  public static TypeEnvironment typeCheckIfStmt(final TypeEnvironment env,
+  public TypeEnvironment typeCheckIfStmt(final TypeEnvironment env,
                                                 final Type returnType,      // null if return is not ok
                                                 final List<VarDec> superParams, // null if not expecting super
-                                                final Stmt stmt) {
-    Type guard = typeofExp(stmt.guard);
-    if (guard.equals(new BooleanType()) {
-      throw new TypeErrorException("If condition expects boolean type got " + guard);
-    }
-    TypeEnvironment trueEnv = typecheckStatement(env, returnType, superParams, stmt.ifTrue);      // STOPPED HERE!!!!
-    TypeEnvironment falseEnv = typecheckStatement(env, returnType, superParams, stmt.ifFalse);   // Need help here
+                                                final IfStatement stmt)  throws TypeErrorException {
+    ensureTypesSame(new BooleanType(), typeofExp(env, stmt.guard));
+    TypeEnvironment trueEnv = typecheckStatement(env, returnType, superParams, stmt.ifTrue);
+    TypeEnvironment falseEnv = typecheckStatement(env, returnType, superParams, stmt.ifFalse);   // HELP which to return.  Combine?
+    return trueEnv;
   }
 
-  public TypeEnvironment typecheckStmt(final TypeEnvironment env,
+  public TypeEnvironment typecheckStatement(final TypeEnvironment env,
                                        final Type returnType,      // null if return is not ok
                                        final List<VarDec> superParams, // null if not expecting super
-                                       final Stmt stmt) throws TypeErrorException {
-  if (stmt instanceof Block) {
-    return typeCheckBlockStmt(env, returnType, superParams, (Block)stmt);
-  } else if (stmt instanceof ExpStatement) {
-    typeofExp(env, stmt.exp);
-    return env;
-  } else if (stmt instanceof ReturnExpStatement) {
-    typecheckReturnExpStmt(env, returnType, (ReturnExpStmt)stmt);
-    return env;
-  } else if (stmt instanceof ReturnVoidStatement) {
-    assert(returnType != null);
-    return env;
-  } else if (stmt instanceof BreakStatement) {
-    if(env.inWhile == false) {
-      throw new TypeErrorException("Break outside of loop");
+                                       final Statement stmt) throws TypeErrorException {
+    if (stmt instanceof Block) {
+      return typeCheckBlockStmt(env, returnType, superParams, (Block)stmt);
+    } else if (stmt instanceof ExpStatement) {
+      typeofExp(env, ((ExpStatement)stmt).exp);
+      return env;
+    } else if (stmt instanceof SuperStatement) {
+      typecheckSuperStmt(env, superParams, (SuperStatement)stmt);
+      return env;
+    } else if (stmt instanceof ReturnExpStatement) {
+      typecheckReturnExpStmt(env, returnType, (ReturnExpStatement)stmt);
+      return env;
+    } else if (stmt instanceof ReturnVoidStatement) {
+      assert(returnType != null);
+      return env;
+    } else if (stmt instanceof BreakStatement) {
+      if(env.inWhile == false) {
+        throw new TypeErrorException("Break outside of loop");   //HELP all I need?
+      }
+      env.inWhile = false;
+      return env;
+    } else if (stmt instanceof PrintStatement) {
+      typecheckPrintStmt(env, (PrintStatement)stmt);
+      return env;
+    } else if (stmt instanceof VarDecAssignment) {
+      typecheckVarDecAssign(env, (VarDecAssignment)stmt);
+      return env;
+    } else if (stmt instanceof VarAssignment) {
+      typecheckVarAssign(env, (VarAssignment)stmt);
+      return env;
+    } else if (stmt instanceof IfStatement) {
+      return typeCheckIfStmt(env, returnType, superParams, (IfStatement)stmt);
+    } else if (stmt instanceof WhileStatement) {
+      return typeCheckWhileStmt(env, returnType, superParams, (WhileStatement)stmt);
+    }  else {
+        assert(false);
+        throw new TypeErrorException("Should be unreachable");
     }
-    env.inWhile = false;
-    return env;
-  } else if (stmt instanceof PrintStmt) {
-    typecheckPrintStmt(env, (PrintStmt)stmt);
-    return env;
-  } else if (stmt instanceof VarDecAssignement) {
-    typecheckVarDecAssign(env, (VarDecAssignement)stmt);
-    return env;
-  } else if (stmt instanceof VarAssignement) {
-    typecheckVarAssign(env, (VarAssignement)stmt);
-    return env;
-  } else if (stmt instanceof WhileStatement) {
-    return typeCheckWhileStmt(env, returnType, superParams, (WhileStatement)stmt);
-  } else if (stmt instanceof IfStatement) {
-    return typeCheckIfStmt(env, returnType, superParams, (IfStatement)stmt);
-  } else {
-      return deadCode();
-  }
   } // typecheckStmt
+
+  // if I'm virtual, all my superclasses need to be virtual
+  // similarly, if I'm not virtual, all my superclasses need to not be virtual
+  public void virtualOk(final ClassName onClass,
+                        final Boolean isVirtual,
+                        final MethodName methodName) throws TypeErrorException {
+    // if (onClass != null) {
+    //   final MethodDef current = findMethodDirect(onClass, methodName);
+    //   if (current != null && current.isVirtual != isVirtual) {
+    //     throw new TypeErrorException("virtual disagreement on " + methodName);
+    //   } else {
+    //     // Either I don't have the method, or virtual agreed.  Make sure
+    //     // the parent agrees.
+    //     final ClassDef classDef = getClass(onClass);
+    //     virtualOk(classDef.extendsName, isVirtual, methodName);
+    //   }
+    // }
+  } // virtualOk
 
   public List<VarDec> getSuperParams(final ClassName forClass) throws TypeErrorException {
     final ClassDef classDef = getClass(forClass);
-    if (classDef.extendsName != null) {
-      return getClass(classDef.extendsName).constructor.parameters;
+    if (classDef.extendedClass != null) {
+      return getClass(classDef.extendedClass).constructor.parameters;
     } else {
       return null;
     }
   } // getSuperParams
 
+  public void typecheckMethod(final ClassName onClass,
+                              final MethodDef methodDef) throws TypeErrorException {
+    // virtualOk(onClass, methodDef.isVirtual, methodDef.name);  // HELP don't need this?  ONly need to check if virtual?
+    noDuplicates(methodDef.varDecs);
+    superReturnOkInMethod(methodDef.body);
+    typecheckStatement(TypeEnvironment.initialEnv(methodDef.varDecs, onClass),
+                       methodDef.returnType,
+                       null,
+                       methodDef.body);
+  } // typecheckMethod
+
   public void typecheckConstructor(final ClassName onClass,
                                    final Constructor constructor) throws TypeErrorException {
-    final ClassDefinition classDef = getClass(onClass);
+    final ClassDef classDef = getClass(onClass);
     noDuplicates(constructor.parameters);
-    superReturnOkInConstructor(classDef.extendsName == null, constructor.body);
-    typecheckStmt(TypeEnvironment.initialEnv(constructor.parameters, onClass),
+    superReturnOkInConstructor(classDef.extendedClass == null, constructor.body);
+    typecheckStatement(TypeEnvironment.initialEnv(constructor.parameters, onClass),
                   null,
                   getSuperParams(onClass),
                   constructor.body);
@@ -283,7 +458,7 @@ public class TypeChecker {
     noDuplicates(classDef.instanceVars);
     instanceVariablesOk(className);
     typecheckConstructor(className, classDef.constructor);
-    for (final MethodDefinition methodDef : classDef.methods) {
+    for (final MethodDef methodDef : classDef.methodDefs) {
         typecheckMethod(className, methodDef);
     }
   } // typecheckClass 
@@ -315,36 +490,36 @@ public class TypeChecker {
   public static Map<ClassName, ClassDef> classMapping(final List<ClassDef> classes) throws TypeErrorException {
     final Map<ClassName, ClassDef> mapping = new HashMap<>();
     for (final ClassDef classDef : classes) {
-        if (mapping.containsKey(classDef.myName)) {
-            throw new TypeErrorException("Duplicate class name: " + classDef.myName);
+        if (mapping.containsKey(classDef.name)) {
+            throw new TypeErrorException("Duplicate class name: " + classDef.name);
         }
-        mapping.put(classDef.myName, classDef);
+        mapping.put(classDef.name, classDef);
     }
     return mapping;
   } // classMapping
 
-  // intended for testing
-  private Type expTypeNoScopeForTesting(final Exp exp) throws TypeErrorException {
-      return new InScope(new VoidType(),
-                          new HashMap<Variable, Type>(),
-                          false).typeofExp(exp);
-  }
+  // // intended for testing
+  // private Type expTypeNoScopeForTesting(final Exp exp) throws TypeErrorException {
+  //     return new InScope(new VoidType(),
+  //                         new HashMap<Variable, Type>(),
+  //                         false).typeofExp(exp);
+  // }
 
-  // intended for testing
-  public static Type expTypeForTesting(final Exp exp) throws TypeErrorException {
-      final TypeChecker checker =
-          new TypeChecker(new Program(new ArrayList<ClassDef>(),
-                                      new Block(new ArrayList())));
-      return checker.expTypeNoScopeForTesting(exp);
-  }
+  // // intended for testing
+  // public static Type expTypeForTesting(final Exp exp) throws TypeErrorException {
+  //     final TypeChecker checker =
+  //         new TypeChecker(new Program(new ArrayList<ClassDef>(),
+  //                                     new Block(new ArrayList())));
+  //     return checker.expTypeNoScopeForTesting(exp);
+  // }
 
   // Called in testing to type check the given program
   public static void typecheckProgram(final Program program) throws TypeErrorException {
     final TypeChecker typeChecker =  new TypeChecker(classMapping(program.classDefs));
     typeChecker.typecheckClasses();
-    typeChecker.typecheckStatement(new InScope(new VoidType(),
-                                              new HashMap<Variable, Type>(),
-                                              false);)
-    statementScope.typecheckStatement(program.statement);
+    typeChecker.typecheckStatement(TypeEnvironment.initialEnv(new ArrayList<>(), null),
+                                   null,
+                                   null,
+                                   program.statement);
   }
 }
