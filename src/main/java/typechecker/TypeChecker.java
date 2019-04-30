@@ -271,11 +271,11 @@ public class TypeChecker {
     } else if(exp instanceof VarMethodExp) {
       VarMethodExp asMethodExp = (VarMethodExp)exp;
       // Var is defined
-      ClassType className = (ClassType) env.lookup(asMethodExp.var);
+      ClassType classType = (ClassType) env.lookup(asMethodExp.var);
       // var has methodname
-      MethodDef method = findMethod(className.name, asMethodExp.methodName);
+      MethodDef method = findMethod(classType.name, asMethodExp.methodName);
       // methodname is public
-      if (method.access != new PublicAccess()) {
+      if (method.access != new PrivateAccess() && classType.equals(method.returnType)) {  
         throw new TypeErrorException("Method: " + method.name + " is declared private");
       }
       // Exp's types match up with method's types
@@ -297,11 +297,14 @@ public class TypeChecker {
   } // typeofExp
 
   private TypeEnvironment typeCheckBlockStmt(final TypeEnvironment env,
-                                                    final Type returnType,      // null if return is not ok
-                                                    final List<VarDec> superParams, // null if not expecting super
-                                                    final Block stmt)  throws TypeErrorException {
-    return typecheckStatement(env, returnType, superParams, stmt);    // HELP  Not sure what to do since have list
-                                                                      // Example not list
+                                             final Type returnType,      // null if return is not ok
+                                             final List<VarDec> superParams, // null if not expecting super
+                                             final Block stmt)  throws TypeErrorException {
+    TypeEnvironment loopEnv = env;;
+    for (Statement s : stmt.statements) {
+        loopEnv = typecheckStatement(loopEnv, returnType, superParams, stmt);
+    }
+    return loopEnv;                                             
   }
 
   public void typecheckSuperStmt(final TypeEnvironment env,
@@ -320,7 +323,7 @@ public class TypeChecker {
   } // typecheckPrintStmt
 
   public void typecheckReturnExpStmt(TypeEnvironment env, Type returnType, ReturnExpStatement stmt)  throws TypeErrorException {
-    assert(returnType != null);
+    // check if types are correct
     typesOk(returnType, typeofExp(env, stmt.exp));
   }
 
@@ -339,15 +342,19 @@ public class TypeChecker {
   } // typecheckAssignStmt
 
   public TypeEnvironment typeCheckWhileStmt(final TypeEnvironment env,
-                                                   final Type returnType,      // null if return is not ok
-                                                   final List<VarDec> superParams, // null if not expecting super
-                                                   final WhileStatement stmt)  throws TypeErrorException {
+                                            final Type returnType,      // null if return is not ok
+                                            final List<VarDec> superParams, // null if not expecting super
+                                            final WhileStatement stmt)  throws TypeErrorException {
     Type condition = typeofExp(env, stmt.condition);
     if (condition.equals(new BooleanType())) {
       throw new TypeErrorException("While condition expects boolean type got " + condition);
     }
-    env.inWhile = true;
-    return typecheckStatement(env, returnType, superParams, stmt);
+    // need to save state when entered loop
+    boolean prevWhile = env.inWhile;
+    // set inwhile to what it was after checking body
+    TypeEnvironment afterStatement = typecheckStatement(env, returnType, superParams, stmt);
+    afterStatement.inWhile = prevWhile;
+    return afterStatement;
   }
 
   public TypeEnvironment typeCheckIfStmt(final TypeEnvironment env,
@@ -356,14 +363,14 @@ public class TypeChecker {
                                                 final IfStatement stmt)  throws TypeErrorException {
     ensureTypesSame(new BooleanType(), typeofExp(env, stmt.guard));
     TypeEnvironment trueEnv = typecheckStatement(env, returnType, superParams, stmt.ifTrue);
-    TypeEnvironment falseEnv = typecheckStatement(env, returnType, superParams, stmt.ifFalse);   // HELP which to return.  Combine?
-    return trueEnv;
+    TypeEnvironment falseEnv = typecheckStatement(env, returnType, superParams, stmt.ifFalse);
+    return env;
   }
 
   public TypeEnvironment typecheckStatement(final TypeEnvironment env,
-                                       final Type returnType,      // null if return is not ok
-                                       final List<VarDec> superParams, // null if not expecting super
-                                       final Statement stmt) throws TypeErrorException {
+                                          final Type returnType,      // null if return is not ok
+                                          final List<VarDec> superParams, // null if not expecting super
+                                          final Statement stmt) throws TypeErrorException {
     if (stmt instanceof Block) {
       return typeCheckBlockStmt(env, returnType, superParams, (Block)stmt);
     } else if (stmt instanceof ExpStatement) {
@@ -376,13 +383,15 @@ public class TypeChecker {
       typecheckReturnExpStmt(env, returnType, (ReturnExpStatement)stmt);
       return env;
     } else if (stmt instanceof ReturnVoidStatement) {
-      assert(returnType != null);
+      ensureTypesSame(returnType, new VoidType());
+      if(returnType != null) {
+        throw new TypeErrorException("Return type is not void");
+      }
       return env;
     } else if (stmt instanceof BreakStatement) {
       if(env.inWhile == false) {
-        throw new TypeErrorException("Break outside of loop");   //HELP all I need?
+        throw new TypeErrorException("Break outside of loop");
       }
-      env.inWhile = false;
       return env;
     } else if (stmt instanceof PrintStatement) {
       typecheckPrintStmt(env, (PrintStatement)stmt);
@@ -403,24 +412,6 @@ public class TypeChecker {
     }
   } // typecheckStmt
 
-  // if I'm virtual, all my superclasses need to be virtual
-  // similarly, if I'm not virtual, all my superclasses need to not be virtual
-  public void virtualOk(final ClassName onClass,
-                        final Boolean isVirtual,
-                        final MethodName methodName) throws TypeErrorException {
-    // if (onClass != null) {
-    //   final MethodDef current = findMethodDirect(onClass, methodName);
-    //   if (current != null && current.isVirtual != isVirtual) {
-    //     throw new TypeErrorException("virtual disagreement on " + methodName);
-    //   } else {
-    //     // Either I don't have the method, or virtual agreed.  Make sure
-    //     // the parent agrees.
-    //     final ClassDef classDef = getClass(onClass);
-    //     virtualOk(classDef.extendsName, isVirtual, methodName);
-    //   }
-    // }
-  } // virtualOk
-
   public List<VarDec> getSuperParams(final ClassName forClass) throws TypeErrorException {
     final ClassDef classDef = getClass(forClass);
     if (classDef.extendedClass != null) {
@@ -432,7 +423,6 @@ public class TypeChecker {
 
   public void typecheckMethod(final ClassName onClass,
                               final MethodDef methodDef) throws TypeErrorException {
-    // virtualOk(onClass, methodDef.isVirtual, methodDef.name);  // HELP don't need this?  ONly need to check if virtual?
     noDuplicates(methodDef.varDecs);
     superReturnOkInMethod(methodDef.body);
     typecheckStatement(TypeEnvironment.initialEnv(methodDef.varDecs, onClass),
