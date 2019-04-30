@@ -54,7 +54,6 @@ public class Codegen{
         }
     }
     public void compileProgram(Program prog){
-<<<<<<< HEAD
         for (ClassDef cls : prog.classDefs) {
             classes.put(cls.name,cls);
         }
@@ -62,9 +61,6 @@ public class Codegen{
             compileClass(cls);
         }
         
-=======
-        //todoooo
->>>>>>> 221e4af1e7ceb0aad0a4d61aab18d1a4b56a7f0d
     }
     public void compileParentclass(ClassDef cls){
         //Vtable holds the methods with updated names
