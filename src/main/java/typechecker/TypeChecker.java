@@ -37,7 +37,7 @@ public class TypeChecker {
   public boolean isPrimitive(Type type) {
     return type.equals(new IntType()) || 
            type.equals(new BooleanType()) ||
-           type.equals(new StringType(null));
+           type.equals(new StringType());
   }
 
   private static void ensureTypesSame(final Type expected, final Type received) throws TypeErrorException {
@@ -255,7 +255,7 @@ public class TypeChecker {
       return env.lookup(((VariableExp)exp).var);
     } else if(exp instanceof StringExp) {
       StringExp stringExp = (StringExp) exp;
-      return new StringType(stringExp.name);
+      return new StringType();
     } else if (exp instanceof BinopExp) {
       // the return type and expected parameter types all depend
       // on the operator.  In all cases, we need to get the types

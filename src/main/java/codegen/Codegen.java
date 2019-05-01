@@ -72,7 +72,7 @@ public class Codegen{
         List<String> vTable = new ArrayList<>(); 
         String vtable = "var " + cls.name.toString() + "_" + "vtable = [";
         for (MethodDef md : cls.methodDefs) {
-            String method = "var " + cls.name.toString() + "_" + md.name.toString() + " = function(self) {\n\t" + md.statement.toString() + "};" ;
+            String method = "var " + cls.name.toString() + "_" + md.name.toString() + " = function(self) {\n\t" + md.body.toString() + "};" ;
             Code.add(method);
             methodMap.put(md.name, md);
             offsets.put(md.name, count);
@@ -114,7 +114,7 @@ public class Codegen{
 
         String vtable = "var " + cls.name.toString() + "_" + "vtable = [";
         for (MethodDef md : cls.methodDefs) {
-            String method = "var " + cls.name.toString() + "_" + md.name.toString() + " = function(self) {\n\t" + md.statement.toString() + "};" ;
+            String method = "var " + cls.name.toString() + "_" + md.name.toString() + " = function(self) {\n\t" + md.body.toString() + "};" ;
             Code.add(method);
             //check if method is being overridden
             if (methodMap.get(md.name) != null){
@@ -220,7 +220,7 @@ public class Codegen{
             String actualCode = "var " + v.varDec.var.toString() + " = {\n\tvtable: " + cname.toString() + "_vtable";
             VTableClassTable vt = compmap.get(cname);
             //if class has no variables, thats about it.
-            if (vt.theClass.varDecs.isEmpty()){
+            if (vt.theClass.instanceVars.isEmpty()){
                 actualCode += "\n}";
             }
             //else check the class' constructor and instantiate the fields
@@ -229,7 +229,7 @@ public class Codegen{
                     ClassExp cexp = (ClassExp) v.exp;
                     actualCode +=",\n\t";
                     for(int i=0; i < vt.theClass.constructor.parameters.size(); i++){
-                        actualCode += vt.theClass.varDecs.get(i).var.toString() + ": " + cexp;
+                        actualCode += vt.theClass.instanceVars.get(i).var.toString() + ": " + cexp;
 
                     }
                 }
