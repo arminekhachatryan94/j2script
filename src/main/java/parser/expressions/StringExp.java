@@ -2,9 +2,9 @@ package j2script.expressions;
 import j2script.names.*;
 
 public class StringExp implements Exp {
-    public final String name;
+    public final StringName name;
 
-    public StringExp(final String name) {
+    public StringExp(final StringName name) {
         this.name = name;
     }
 

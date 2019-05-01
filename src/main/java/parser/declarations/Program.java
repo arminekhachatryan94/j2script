@@ -6,8 +6,7 @@ import j2script.statements.Statement;
 import java.util.*;
 
 public class Program {
-    public List<ClassDef> classDefs;
-    // public final ClassDef[] classDefs;
+    public final List<ClassDef> classDefs;
     public final Statement statement;
 
     public Program(final List<ClassDef> classDefs,

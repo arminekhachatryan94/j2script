@@ -1,6 +1,14 @@
 package j2script.types;
 
-public class StringType implements Type, ReturnType {
+import j2script.names.StringName;
+
+public class StringType implements Type {
+    public final StringName name;
+
+    public StringType(StringName name) {
+        this.name = name;
+    }
+
     public int hashCode() {
         return 4;
     }

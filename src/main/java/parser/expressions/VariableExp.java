@@ -1,10 +1,12 @@
 package j2script.expressions;
 
-public class VariableExp implements Exp {
-    public final String name;
+import j2script.names.Variable;
 
-    public VariableExp(final String name) {
-        this.name = name;
+public class VariableExp implements Exp {
+    public final Variable var;
+
+    public VariableExp(final Variable var) {
+        this.var = var;
     }
 
     public String emit() {

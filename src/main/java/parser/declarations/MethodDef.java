@@ -7,7 +7,7 @@ import j2script.names.Variable;
 import j2script.statements.Statement;
 import j2script.access.*;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MethodDef {
@@ -15,20 +15,20 @@ public class MethodDef {
     public final ReturnType returnType;
     public final MethodName name;
     public final List<VarDec> varDecs;
-    public final Statement statement;
+    public final Statement body;
 
     public MethodDef(final Access access, final ReturnType returnType, final MethodName name, 
-                     final List<VarDec> varDecs, final Statement statement) {
+                     final List<VarDec> varDecs, final Statement body) {
       this.access = access;
       this.returnType = returnType;
       this.name = name;
       this.varDecs = varDecs;
-      this.statement = statement;
+      this.body = body;
     }
 
     public int hashCode() {
-        return returnType.hashCode() + name.hashCode() + 
-               statement.hashCode();
+        return access.hashCode() + returnType.hashCode() + name.hashCode() + 
+               Arrays.deepHashCode(varDecs.toArray()) + body.hashCode();
     }
 
     public boolean equals(final Object other) {
@@ -37,7 +37,8 @@ public class MethodDef {
             return otherMethodDef.access.equals(access) &&
                    otherMethodDef.returnType.equals(returnType) &&
                    otherMethodDef.name.equals(name) &&
-                   otherMethodDef.statement.equals(statement);
+                   Arrays.deepEquals(otherMethodDef.varDecs.toArray(), varDecs.toArray()) &&
+                   otherMethodDef.body.equals(body);
         } else {
             return false;
         }

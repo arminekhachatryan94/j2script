@@ -4,15 +4,16 @@ import j2script.names.Variable;
 import j2script.names.MethodName;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class VarMethodExp implements Exp {
     public final Variable var;
     public final MethodName methodName;
-    public final Exp[] parameters;
+    public final List<Exp> parameters;
 
     public VarMethodExp(final Variable var,
                     final MethodName methodName,
-                    final Exp[] parameters){
+                    final List<Exp> parameters){
         this.var=var;
         this.methodName=methodName;
         this.parameters = parameters;
@@ -25,8 +26,8 @@ public class VarMethodExp implements Exp {
         if (other instanceof VarMethodExp) {
             final VarMethodExp otherExp = (VarMethodExp)other;
             return (otherExp.var.equals(var) &&
-                    Arrays.deepEquals(parameters,
-                                      otherExp.parameters));
+                    Arrays.deepEquals(parameters.toArray(),
+                                      otherExp.parameters.toArray()));
         } else {
             return false;
         }

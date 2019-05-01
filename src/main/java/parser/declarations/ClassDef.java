@@ -10,30 +10,31 @@ public class ClassDef {
     public final ClassName name;
     public final ClassName extendedClass;
     public final Constructor constructor;
-    public final List<VarDec> varDecs;
+    public final List<VarDec> instanceVars;
     public final List<MethodDef> methodDefs;
 
     // extended class
     public ClassDef(final ClassName name,
                     final Constructor constructor,
+                    final List<VarDec> instanceVars,
+                    final List<MethodDef> methodDefs) {
+      this.name = name;
+      this.extendedClass = null;
+      this.constructor = constructor;
+      this.instanceVars = instanceVars;
+      this.methodDefs = methodDefs;
+    }
+
+    //not extended
+    public ClassDef(final ClassName name,
+                    final Constructor constructor,
                     final ClassName extendedClass,
-                    final List<VarDec> varDecs,
+                    final List<VarDec> instanceVars,
                     final List<MethodDef> methodDefs) {
         this.name = name;
         this.constructor = constructor;
         this.extendedClass = extendedClass;
-        this.varDecs = varDecs;
-        this.methodDefs = methodDefs;
-    }
-    //not extended
-    public ClassDef(final ClassName name,
-    final Constructor constructor,
-    final List<VarDec> varDecs,
-    final List<MethodDef> methodDefs) {
-        this.name = name;
-        this.constructor = constructor;
-        this.extendedClass = null;
-        this.varDecs = varDecs;
+        this.instanceVars = instanceVars;
         this.methodDefs = methodDefs;
     }
 
