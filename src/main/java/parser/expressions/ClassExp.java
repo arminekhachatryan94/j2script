@@ -1,6 +1,8 @@
 package j2script.expressions;
 
-import j2script.names.ClassName;
+import j2script.names.*;
+import j2script.declarations.*;
+import j2script.statements.*;
 
 import java.util.List;
 
@@ -42,5 +44,17 @@ public class ClassExp implements Exp {
         }
         exp += ")";
         return exp;
+    }
+    // Should Emit a JSON Object 
+    public String emit(ClassDef cls, Variable var){
+        String json = "var " + cls.name.toString() + " = {\n\tvtable: " + var.name + "_vtable,\n\t";
+        //Check constructor statement
+        if (cls.constructor.statement instanceof Block){
+            Block s = (Block) cls.constructor.statement;
+            for (Statement stmt : s.statements) {
+                
+            }
+        }
+        return json;
     }
 }
