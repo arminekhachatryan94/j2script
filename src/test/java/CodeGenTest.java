@@ -561,6 +561,88 @@ public class CodeGenTest {
 	}
 
 	@Test
+	public void testOverloading() throws IOException {
+		/*class ClassOne {
+			int id;
+			int gpa;
+			constructor(){
+				id = 50;
+			} 
+			public void setId() {
+				 id = 1;
+			}
+		}
+		class Bran extends ClassOne{
+			String name;
+			constructor(){
+				name = "bran";
+			}
+			public void setId(int i){
+				 id = i;
+			}
+		}
+
+		ClassOne studenOne = new ClassOne();
+		Bran student = new Bran();
+
+		int resultID = studentOne.getId();
+		String studentName = student.getName();
+		int studentId = student.getId();
+		*/
+
+
+
+		List<ClassDef> classes = new ArrayList<>();
+
+		List<VarDec> emptyVarDecs = new ArrayList<>();
+		ArrayList<VarDec> emptyyVarDecs = new ArrayList<>();
+
+		ArrayList<VarDec> varDecs = new ArrayList<>();
+		varDecs.add(new VarDec(new IntType(), new Variable("id")));
+		varDecs.add(new VarDec(new IntType(), new Variable("gpa")));
+
+		List<MethodDef> methodDefs = new ArrayList<>();
+		methodDefs.add(new MethodDef(new PublicAccess(), new VoidType(), new MethodName("setId"), emptyVarDecs, new VarAssignment(new Variable("id"), new NumberExp(1))));
+
+		VarAssignment var = new VarAssignment(new Variable("id"), new NumberExp(50));
+		//VarDecAssignment varDecAssgnForConstructor = new VarDecAssignment(new VarDec(new IntType(), new Variable("number")), new NumberExp(50));
+
+		classes.add(new ClassDef(new ClassName("ClassOne"), new Constructor(emptyyVarDecs, var), varDecs, methodDefs));
+		
+		List<VarDec> vardecc = new ArrayList<>();
+		vardecc.add(new VarDec(new IntType(), new Variable("i")));
+
+		List<VarDec> varDecsForSecondClass = new ArrayList<>();
+		varDecsForSecondClass.add(new VarDec(new StringType(), new Variable("name")));
+
+		List<MethodDef> methodDefsForSecondClass = new ArrayList<>();
+		methodDefsForSecondClass.add(new MethodDef(new PublicAccess(), new VoidType(), new MethodName("setId"), vardecc, new VarAssignment(new Variable("id"), new VariableExp("i"))));
+
+		classes.add(new ClassDef(new ClassName("Bran"), new Constructor(emptyyVarDecs, new VarAssignment(new Variable("name"), new VariableExp("bran"))), new ClassName("ClassOne"), varDecsForSecondClass, methodDefsForSecondClass));
+
+
+		List<Exp> parameters = new ArrayList<>();
+		Exp expressions [] = new Exp[1];
+
+		List<Statement> statements = new ArrayList<>();
+		statements.add(new VarDecAssignment(new VarDec(new ClassType("ClassOne"), new Variable("studentOne")), new ClassExp(new ClassName("ClassOne"), parameters)));
+		statements.add(new VarDecAssignment(new VarDec(new ClassType("Bran"), new Variable("student")), new ClassExp(new ClassName("Bran"), parameters)));
+		
+
+		statements.add(new VarDecAssignment(new VarDec(new IntType(), new Variable("resultID")), new VarMethodExp(new Variable("studentOne"), new MethodName("getId"), expressions)));
+		statements.add(new VarDecAssignment(new VarDec(new StringType(), new Variable("studentName")), new VarMethodExp(new Variable("student"), new MethodName("getName"), expressions)));
+
+		statements.add(new VarDecAssignment(new VarDec(new IntType(), new Variable("studentID")), new VarMethodExp(new Variable("student"), new MethodName("getId"), expressions)));
+		
+		Statement st = new Block(statements);
+		Program program = new Program(classes, st);
+		assertResultProgram("var ClassOne_setId = function(self) {	id = 1};var ClassOne_vtable = [ClassOne_setId];var Bran_setId = function(self) {	id = i};var Bran_vtable = [ClassOne_setId];", program);
+
+
+
+	}
+
+	@Test
 	public void testVirtualMethodCallWithoutInheritance() throws IOException {
 		/*class ClassOne {
 			int id;
@@ -1041,7 +1123,7 @@ public class CodeGenTest {
 
 	}
 
-	//@Test
+	@Test
 	public void testFourthGenerationInheritanceVtables() throws IOException {
 		/*
 		Class One{
