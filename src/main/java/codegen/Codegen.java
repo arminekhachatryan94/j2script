@@ -75,7 +75,7 @@ public class Codegen{
             Code.add(method);
             methodMap.put(md.name, md);
             offsets.put(md.name, count);
-            vTable.add(md.name.toString());
+            vTable.add(cls.name.toString() + "_" + md.name.toString());
             vtable += cls.name.toString() + "_" + md.name.toString();
             if (count + 1 < cls.methodDefs.size()){
                 vtable += ", ";
@@ -106,12 +106,18 @@ public class Codegen{
             if (methodMap.get(md.name) != null){
                 if(methodMap.get(md.name).varDecs.equals(md.varDecs)){
                     int j=0;
+                    // System.out.println("I am here for this class" + cls.name.toString());
+                    // System.out.println("I am here for this method" + md.name.toString());
+                    // System.out.println("BY the way the exclass is " + cls.extendedClass.name.toString());
+                    String exclass = cls.extendedClass.name.toString();                  
                     //replace in childs vtable
                     methodMap.replace(md.name, md);
                     for (int i = 0 ; i < vTable.size(); i++) {
-                        String s = vTable.get(i);
-                        if (s.equals(md.name.toString())){
-                            vTable.set(i,md.name.toString());
+                        String s =vTable.get(i);
+                        // System.out.println(s + " and " + exclass + "_"+ md.name.toString());
+                        if (s.equals(exclass + "_"+ md.name.toString())){
+                            // System.out.println("I have reached here for: " + s );
+                            vTable.set(i,cls.name.toString() + "_" +md.name.toString());
                             j=i;
                         }
                     }
@@ -122,31 +128,37 @@ public class Codegen{
             else{
                 methodMap.put(md.name, md);
                 offsets.put(md.name, count);
-                vTable.add(md.name.toString());
+                vTable.add(cls.name.toString() + "_" + md.name.toString());
                 count++;
             }
 
         }
         int k =0;
         for (String s : vTable) {
-            vtable += cls.name.toString() + "_" + s;
-            if (k + 1 < cls.methodDefs.size()){
+            vtable += s;
+            if (k + 1 < vTable.size()){
                 vtable += ", ";
             }
             k++;
         }
         vtable += "];";
+        // System.out.println("Class " + cls.name.toString() + " has this vtable " + vtable.toString());
         Code.add(vtable);    
         VTableClassTable v = new VTableClassTable(vTable,cls, methodMap, offsets);
         compmap.put(cls.name, v);
     }
     public void compileClass(ClassDef cls){
         //If doesnt extend and hasnt been compiled, compile it.
+        // System.out.println("Class " + cls.name.toString() + 
+        // "extended = " + (cls.extendedClass == null) + (compmap.get(cls.name) == null));
         if (cls.extendedClass == null && compmap.get(cls.name) == null){
             compileParentclass(cls);
         }
         else{
             //FIND PARENT AND COMPILE IT IF IT HASNT BEEN SO
+            // System.out.println("This is the result of compmap ");
+            // System.out.println("This is the result of compmap " +
+            compmap.get(cls.extendedClass) == null);
             if (compmap.get(cls.extendedClass) == null){
                 compileClass(classes.get(cls.extendedClass));
             }
