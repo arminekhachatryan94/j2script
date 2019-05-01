@@ -1,6 +1,7 @@
 package j2script;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -88,14 +89,27 @@ public class Codegen{
         compmap.put(cls.name, v);
     }
     public void compileChildClass(ClassDef cls){
-        Map<MethodName, MethodDef> methodMap;
-        Map<MethodName, Integer> offsets;
-        List<String> vTable; 
+        Map<MethodName, MethodDef> methodMap = new HashMap<>();
+        Map<MethodName, Integer> offsets = new HashMap<>();
         //Inherits parents stuff
         VTableClassTable parent = compmap.get(cls.extendedClass);
-        methodMap = parent.methodMap;
-        offsets = parent.offsets;
-        vTable = parent.vTable;
+        List<String> vTable = new ArrayList<>(parent.vTable.size()+1); 
+
+        System.out.println("This classes parent is" + cls.extendedClass);
+        System.out.println("This classes parent is" + parent.theClass.name);
+
+        System.out.println("This class is" + cls.name);
+        methodMap.putAll(parent.methodMap);
+        System.out.println(methodMap.toString());
+        offsets.putAll(parent.offsets);
+        System.out.println(parent.vTable.toString());
+        System.out.println(vTable.toString());
+        for (String s : parent.vTable) {
+            vTable.add(s);
+        }
+        System.out.println(vTable.toString());
+        System.out.println("This classes parents vtable is " + vTable.toString());
+
         int count = parent.vTable.size();
 
         String vtable = "var " + cls.name.toString() + "_" + "vtable = [";
@@ -106,17 +120,17 @@ public class Codegen{
             if (methodMap.get(md.name) != null){
                 if(methodMap.get(md.name).varDecs.equals(md.varDecs)){
                     int j=0;
-                    // System.out.println("I am here for this class" + cls.name.toString());
-                    // System.out.println("I am here for this method" + md.name.toString());
-                    // System.out.println("BY the way the exclass is " + cls.extendedClass.name.toString());
+                    System.out.println("I am here for this class" + cls.name.toString());
+                    System.out.println("I am here for this method" + md.name.toString());
+                    System.out.println("BY the way the exclass is " + cls.extendedClass.name.toString());
                     String exclass = cls.extendedClass.name.toString();                  
                     //replace in childs vtable
                     methodMap.replace(md.name, md);
                     for (int i = 0 ; i < vTable.size(); i++) {
                         String s =vTable.get(i);
-                        // System.out.println(s + " and " + exclass + "_"+ md.name.toString());
+                        System.out.println(s + " and " + exclass + "_"+ md.name.toString());
                         if (s.equals(exclass + "_"+ md.name.toString())){
-                            // System.out.println("I have reached here for: " + s );
+                            System.out.println("I have reached here for: " + s );
                             vTable.set(i,cls.name.toString() + "_" +md.name.toString());
                             j=i;
                         }
@@ -142,23 +156,23 @@ public class Codegen{
             k++;
         }
         vtable += "];";
-        // System.out.println("Class " + cls.name.toString() + " has this vtable " + vtable.toString());
+        System.out.println("Class " + cls.name.toString() + " has this vtable " + vtable.toString());
         Code.add(vtable);    
         VTableClassTable v = new VTableClassTable(vTable,cls, methodMap, offsets);
         compmap.put(cls.name, v);
     }
     public void compileClass(ClassDef cls){
         //If doesnt extend and hasnt been compiled, compile it.
-        // System.out.println("Class " + cls.name.toString() + 
-        // "extended = " + (cls.extendedClass == null) + (compmap.get(cls.name) == null));
+        System.out.println("Class " + cls.name.toString() + 
+        "extended = " + (cls.extendedClass == null) + (compmap.get(cls.name) == null));
         if (cls.extendedClass == null && compmap.get(cls.name) == null){
             compileParentclass(cls);
         }
         else{
             //FIND PARENT AND COMPILE IT IF IT HASNT BEEN SO
-            // System.out.println("This is the result of compmap ");
-            // System.out.println("This is the result of compmap " +
-            //compmap.get(cls.extendedClass) == null);
+            System.out.println("This is the result of compmap ");
+            System.out.println("This is the result of compmap " +
+            compmap.get(cls.extendedClass) == null);
             if (compmap.get(cls.extendedClass) == null){
                 compileClass(classes.get(cls.extendedClass));
             }
