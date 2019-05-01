@@ -123,13 +123,15 @@ public class Codegen{
                     System.out.println("I am here for this class" + cls.name.toString());
                     System.out.println("I am here for this method" + md.name.toString());
                     System.out.println("BY the way the exclass is " + cls.extendedClass.name.toString());
-                    String exclass = cls.extendedClass.name.toString();                  
+                    // String exclass = cls.extendedClass.name.toString();                  
                     //replace in childs vtable
                     methodMap.replace(md.name, md);
                     for (int i = 0 ; i < vTable.size(); i++) {
                         String s =vTable.get(i);
-                        System.out.println(s + " and " + exclass + "_"+ md.name.toString());
-                        if (s.equals(exclass + "_"+ md.name.toString())){
+                        int t = s.indexOf("_") + 1;
+                        String helper = s.substring(t, s.length());
+                        System.out.println(helper + " and " + md.name.toString());
+                        if (helper.equals(md.name.toString())){
                             System.out.println("I have reached here for: " + s );
                             vTable.set(i,cls.name.toString() + "_" +md.name.toString());
                             j=i;
