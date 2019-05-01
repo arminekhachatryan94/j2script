@@ -394,7 +394,7 @@ public class CodeGenTest {
 	}
 
 	@Test
-	public void testClasswithOneMethodCall() throws IOException{
+	public void testClasswithOneMethod() throws IOException{
 		//class Car{
 			//constructor(String bmw) {
 				//String name = bmw;
@@ -430,6 +430,51 @@ public class CodeGenTest {
 
 		Program program = new Program(classes, new Block(statements));
 		assertResultProgram("var Car_getName = function(self) {	return name};var Car_vtable = [Car_getName];", program);
+	}
+
+	@Test
+	public void testClasswithMethodsAndInstanceVar() throws IOException{
+		//class Car{
+			//String name;
+			//constructor(String bmw) {
+				//name = bmw;
+			//}
+			//public String getName(){
+				//return name;
+			//}
+			//public void setName(String bmw){
+				//name = bmw;
+			//}
+		//}
+
+		//Car car = new Car("bmw");
+		//String name = car.getName();
+
+		
+		List<VarDec> emptyVarDecs = new ArrayList<>();
+		Exp expressions [] = new Exp[1];
+
+		List<Exp> parameters = new ArrayList<>();
+		parameters.add(new StringExp("bmw"));
+
+		ArrayList<VarDec> varDecs = new ArrayList<>();
+		varDecs.add(new VarDec(new StringType(), new Variable("bmw")));
+
+		List<MethodDef> methodDefs = new ArrayList<>();
+		methodDefs.add(new MethodDef(new PublicAccess(), new StringType(), new MethodName("getName"), emptyVarDecs, new ReturnExpStatement(new VariableExp("name"))));
+		methodDefs.add(new MethodDef(new PublicAccess(), new VoidType(), new MethodName("setName"), varDecs, new VarAssignment( new Variable("name"),new VariableExp("name"))));
+	
+		List<Statement> statements = new ArrayList<>();
+		statements.add(new VarDecAssignment(new VarDec(new ClassType("Car"), new Variable("car")), new ClassExp(new ClassName("Car"), parameters)));
+		statements.add(new VarDecAssignment(new VarDec(new StringType(), new Variable("name")), new VarMethodExp(new Variable("car"), new MethodName("getName"), expressions)));
+		
+		emptyVarDecs.add(new VarDec(new StringType(), new Variable("name")));
+		List<ClassDef> classes = new ArrayList<>();
+		final ClassDef classOne = new ClassDef(new ClassName("Car"), new Constructor(varDecs, new VarAssignment(new Variable("name"), new VariableExp("bmw"))), emptyVarDecs, methodDefs);
+		classes.add(classOne);
+
+		Program program = new Program(classes, new Block(statements));
+		assertResultProgram("var Car_getName = function(self) {	return name};var Car_setName = function(self) {	name = name};var Car_vtable = [Car_getName, Car_setName];", program);
 	}
 	
 
@@ -682,10 +727,9 @@ public class CodeGenTest {
 		Statement st = new Block(statements);
 		Program program = new Program(classes, st);
 		assertResultProgram("var ClassOne_getId = function(self) {	return id};var ClassOne_vtable = [ClassOne_getId];var Bran_getId = function(self) {	return 5};var Bran_setId = function(self) {	id = i};var Bran_vtable = [Bran_getId, Bran_setId];var Arya_getName = function(self) {	return name};var Arya_vtable = [ClassOne_getId, Arya_getName];", program);
+	}
 
-    }
-
-    //@Test
+    @Test
     public void testInheritanceWithGrandchildren() throws IOException {
     	/*class ClassOne {
 			int id;
@@ -777,14 +821,118 @@ public class CodeGenTest {
 		
 		Statement st = new Block(statements);
 		Program program = new Program(classes, st);
-		assertResultProgram("", program);
+		assertResultProgram("var ClassOne_getId = function(self) {	return id};var ClassOne_vtable = [ClassOne_getId];var Bran_getId = function(self) {	return 5};var Bran_setId = function(self) {	id = i};var Bran_vtable = [Bran_getId, Bran_setId];var Arya_getName = function(self) {	return name};var Arya_vtable = [Bran_getId, Bran_setId, Arya_getName];", program);
+
+    }
+
+    @Test
+    public void testInheritanceWithSameMethodsInChildClassInDifferentOrder() throws IOException {
+    	/*class ClassOne {
+			int id;
+			int gpa;
+			constructor(){
+				id = 50;
+			} 
+			public int getId() {
+				return id;
+			}
+		}
+		class Bran extends ClassOne{
+			String name;
+			constructor(){
+				name = "Bran";
+			}
+			public int getId() {
+				return 5;
+			}
+			public void setId(int i) {
+				id = i;
+			}
+		}
+		class Arya extends Bran{
+			String name;
+			constructor(){
+				name = "Arya";
+			}
+			public String getName(){
+				return name;
+			}
+			public int getId() {
+				return 5;
+			}
+			public void setId(int i) {
+				id = i;
+			}
+		}
+	
+		Bran bran = new Bran();
+		Arya arya = new Arya();
+
+		int iDisFive= arya.getId();
+
+		int iDisFiveHereToo = bran.getId();
+
+    	*/
+
+		List<ClassDef> classes = new ArrayList<>();
+
+		List<VarDec> emptyVarDecs = new ArrayList<>();
+		ArrayList<VarDec> emptyyVarDecs = new ArrayList<>();
+
+		ArrayList<VarDec> varDecs = new ArrayList<>();
+		varDecs.add(new VarDec(new IntType(), new Variable("id")));
+		varDecs.add(new VarDec(new IntType(), new Variable("gpa")));
+
+		List<MethodDef> methodDefs = new ArrayList<>();
+		methodDefs.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getId"), emptyVarDecs, new ReturnExpStatement(new VariableExp("id"))));
+
+		//VarDecAssignment varDecAssgnForConstructor = new VarDecAssignment(new VarDec(new IntType(), new Variable("id")), new NumberExp(50));
+		VarAssignment var = new VarAssignment(new Variable("id"), new NumberExp(50));
+
+		classes.add(new ClassDef(new ClassName("ClassOne"), new Constructor(emptyyVarDecs, var), varDecs, methodDefs));
+
+		List<VarDec> varDecsForSecondClass = new ArrayList<>();
+		varDecsForSecondClass.add(new VarDec(new StringType(), new Variable("name")));
+
+		List<VarDec> param = new ArrayList<>();
+		param.add(new VarDec(new IntType(), new Variable("i")));
+
+		List<MethodDef> methodDefss = new ArrayList<>();
+		methodDefss.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getId"), emptyVarDecs, new ReturnExpStatement(new NumberExp(5))));
+		methodDefss.add(new MethodDef(new PublicAccess(), new VoidType(), new MethodName("setId"), param, new VarAssignment(new Variable("id"), new VariableExp("i"))));
+		
+		classes.add(new ClassDef(new ClassName("Bran"), new Constructor(emptyyVarDecs, new VarAssignment(new Variable("name"), new VariableExp("bran"))), new ClassName("ClassOne"), varDecsForSecondClass, methodDefss));
+
+
+		List<MethodDef> methodDefsForSecondClass = new ArrayList<>();
+		methodDefsForSecondClass.add(new MethodDef(new PublicAccess(), new StringType(), new MethodName("getName"), emptyVarDecs, new ReturnExpStatement(new VariableExp("name"))));
+		methodDefsForSecondClass.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getId"), emptyVarDecs, new ReturnExpStatement(new NumberExp(5))));
+		methodDefsForSecondClass.add(new MethodDef(new PublicAccess(), new VoidType(), new MethodName("setId"), param, new VarAssignment(new Variable("id"), new VariableExp("i"))));
+		
+		classes.add(new ClassDef(new ClassName("Arya"), new Constructor(emptyyVarDecs, new VarAssignment(new Variable("name"), new VariableExp("arya"))), new ClassName("Bran"), varDecsForSecondClass, methodDefsForSecondClass));
+
+
+		List<Exp> parameters = new ArrayList<>();
+		Exp expressions [] = new Exp[1];
+
+		List<Statement> statements = new ArrayList<>();
+		statements.add(new VarDecAssignment(new VarDec(new ClassType("Bran"), new Variable("bran")), new ClassExp(new ClassName("Bran"), parameters)));
+		statements.add(new VarDecAssignment(new VarDec(new ClassType("Arya"), new Variable("arya")), new ClassExp(new ClassName("Arya"), parameters)));
+		
+
+		statements.add(new VarDecAssignment(new VarDec(new IntType(), new Variable("iDisFive")), new VarMethodExp(new Variable("bran"), new MethodName("getId"), expressions)));
+		statements.add(new VarDecAssignment(new VarDec(new IntType(), new Variable("iDisFiveHereToo")), new VarMethodExp(new Variable("arya"), new MethodName("getId"), expressions)));
+		
+		Statement st = new Block(statements);
+		Program program = new Program(classes, st);
+		assertResultProgram("var ClassOne_getId = function(self) {	return id};var ClassOne_vtable = [ClassOne_getId];var Bran_getId = function(self) {	return 5};var Bran_setId = function(self) {	id = i};var Bran_vtable = [Bran_getId, Bran_setId];var Arya_getName = function(self) {	return name};var Arya_getId = function(self) {	return 5};var Arya_setId = function(self) {	id = i};var Arya_vtable = [Arya_getId, Arya_setId, Arya_getName];", program);
 
     }
 
 
 
-    //@Test
-    public void testMultipleClasses() throws IOException {
+    @Test
+    public void testMultipleClasseswithInheritance() throws IOException {
     	/*class ClassOne {
 			int id;
 			int gpa;
@@ -889,10 +1037,147 @@ public class CodeGenTest {
 		
 		Statement st = new Block(statements);
 		Program program = new Program(classes, st);
-		assertResultProgram("", program);
+		assertResultProgram("var ClassOne_getId = function(self) {	return id};var ClassOne_vtable = [ClassOne_getId];var Bran_getId = function(self) {	return 5};var Bran_vtable = [Bran_getId];var ClassTwo_getA = function(self) {	return a};var ClassTwo_vtable = [ClassTwo_getA];var Arya_getName = function(self) {	return name};var Arya_vtable = [ClassTwo_getA, Arya_getName];", program);
 
+	}
+
+	//@Test
+	public void testFourthGenerationInheritanceVtables() throws IOException {
+		/*
+		Class One{
+			int one;
+			constructor(int i) {
+				one = i;
+			}
+			public int getOne() {
+				return one;
+			}
+		}
+
+		Class Two extends One {
+			int two;
+			constructor(int i) {
+				two = i;
+			}
+			public int getTwo() {
+				return two;
+			}
+			public int getOne() {
+				return 1;
+			}
 
 		}
+
+		Class Three extends Two{
+			int three;
+			constructor(int i) {
+				three = i;
+			} 
+			public int getThree() {
+				return three;
+			}
+		}
+
+		Class Four extends Three {
+			int four;
+			constructor(int i) {
+				four = i;
+			}
+			public int getOne() {
+				return 1;
+			}
+			public int getFour() {
+				return four;
+			}
+		}
+
+		
+
+		One o = new One(1);
+		Two t = new Two(2);
+		One t = new Three(3);
+		Four f = new Four(4);
+
+		int one = f.getOne();
+		*/
+		List<VarDec> emptyVarDecs = new ArrayList<>();
+		List<ClassDef> classes = new ArrayList<>();
+
+		List<Statement> statements = new ArrayList<>();
+
+		List<Exp> parametersOne = new ArrayList<>();
+		parametersOne.add(new NumberExp(1));
+			statements.add(new VarDecAssignment(new VarDec(new ClassType("One"), new Variable("o")), new ClassExp(new ClassName("One"), parametersOne)));
+
+		List<Exp> parametersTwo = new ArrayList<>();
+		parametersTwo.add(new NumberExp(2));
+			statements.add(new VarDecAssignment(new VarDec(new ClassType("Two"), new Variable("t")), new ClassExp(new ClassName("Two"), parametersTwo)));
+
+		List<Exp> parametersThree = new ArrayList<>();
+		parametersThree.add(new NumberExp(3));
+			statements.add(new VarDecAssignment(new VarDec(new ClassType("One"), new Variable("th")), new ClassExp(new ClassName("Three"), parametersThree)));
+
+		List<Exp> parametersFour = new ArrayList<>();
+		parametersFour.add(new NumberExp(4));
+			statements.add(new VarDecAssignment(new VarDec(new ClassType("Four"), new Variable("f")), new ClassExp(new ClassName("Four"), parametersFour)));
+
+
+		ArrayList<VarDec> constructorVarDec = new ArrayList<>();
+		constructorVarDec.add(new VarDec(new IntType(), new Variable("i")));
+
+		List<VarDec> varDecsOne = new ArrayList<>();
+		varDecsOne.add(new VarDec(new IntType(), new Variable("one")));
+
+		List<MethodDef> methodDefsOne = new ArrayList<>();
+		methodDefsOne.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getOne"), emptyVarDecs, new ReturnExpStatement(new VariableExp("one")) ));
+
+		ClassDef classOne = new ClassDef(new ClassName("One"), new Constructor(constructorVarDec, new VarAssignment(new Variable("one"), new VariableExp("i"))), varDecsOne, methodDefsOne);
+
+
+		List<VarDec> varDecsTwo = new ArrayList<>();
+		varDecsTwo.add(new VarDec(new IntType(), new Variable("two")));
+
+		List<MethodDef> methodDefsTwo = new ArrayList<>();
+		methodDefsTwo.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getTwo"), emptyVarDecs, new ReturnExpStatement(new VariableExp("two")) ));
+		methodDefsTwo.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getOne"), emptyVarDecs, new ReturnExpStatement(new NumberExp(1)) ));
+
+		ClassDef classTwo = new ClassDef(new ClassName("Two"), new Constructor(constructorVarDec, new VarAssignment(new Variable("two"), new VariableExp("i"))), new ClassName("One"),varDecsTwo, methodDefsTwo);
+		
+		
+		List<VarDec> varDecsThree = new ArrayList<>();
+		varDecsThree.add(new VarDec(new IntType(), new Variable("three")));
+
+		List<MethodDef> methodDefsThree = new ArrayList<>();
+		methodDefsThree.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getThree"), emptyVarDecs, new ReturnExpStatement(new VariableExp("three")) ));
+		
+		ClassDef classThree = new ClassDef(new ClassName("Three"), new Constructor(constructorVarDec, new VarAssignment(new Variable("three"), new VariableExp("i"))), new ClassName("Two"), varDecsThree, methodDefsThree);
+		
+		
+		List<VarDec> varDecsFour = new ArrayList<>();
+		varDecsFour.add(new VarDec(new IntType(), new Variable("four")));
+
+		List<MethodDef> methodDefsFour = new ArrayList<>();
+		methodDefsFour.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getOne"), emptyVarDecs, new ReturnExpStatement(new NumberExp(1))));
+		methodDefsFour.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getFour"), emptyVarDecs, new ReturnExpStatement(new VariableExp("four")) ));
+		
+
+		ClassDef classFour = new ClassDef(new ClassName("Four"), new Constructor(constructorVarDec, new VarAssignment(new Variable("four"), new VariableExp("i"))), new ClassName("Three"), varDecsFour, methodDefsFour);
+
+		classes.add(classOne);
+		classes.add(classTwo);
+		classes.add(classThree);
+		classes.add(classFour);
+
+		Statement block = new Block(statements);
+		Program program = new Program(classes, block);
+		assertResultProgram("var One_getOne = function(self) {	return one};var One_vtable = [One_getOne];var Two_getTwo = function(self) {	return two};var Two_getOne = function(self) {	return 1};var Two_vtable = [Two_getOne, Two_getTwo];var Three_getThree = function(self) {	return three};var Three_vtable = [Two_getOne, Two_getTwo, Three_getThree];var Four_getFour = function(self) {	return four};var Four_getOne = function(self) {	return 1};var Four_vtable = [Four_getOne, Two_getTwo, Three_getThree, Four_getFour];", program);
+
+
+	}
+
+
+
+
 	}
  
 	
