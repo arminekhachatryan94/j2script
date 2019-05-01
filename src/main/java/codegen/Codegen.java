@@ -158,7 +158,7 @@ public class Codegen{
             //FIND PARENT AND COMPILE IT IF IT HASNT BEEN SO
             // System.out.println("This is the result of compmap ");
             // System.out.println("This is the result of compmap " +
-            compmap.get(cls.extendedClass) == null);
+            //compmap.get(cls.extendedClass) == null);
             if (compmap.get(cls.extendedClass) == null){
                 compileClass(classes.get(cls.extendedClass));
             }
