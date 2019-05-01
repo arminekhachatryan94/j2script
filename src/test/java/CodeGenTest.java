@@ -1252,8 +1252,9 @@ public class CodeGenTest {
 
 		Statement block = new Block(statements);
 		Program program = new Program(classes, block);
-		assertResultProgram("var One_getOne = function(self) {	return one};var One_vtable = [One_getOne];var Two_getTwo = function(self) {	return two};var Two_getOne = function(self) {	return 1};var Two_vtable = [Two_getOne, Two_getTwo];var Three_getThree = function(self) {	return three};var Three_vtable = [Two_getOne, Two_getTwo, Three_getThree];var Four_getFour = function(self) {	return four};var Four_getOne = function(self) {	return 1};var Four_vtable = [Four_getOne, Two_getTwo, Three_getThree, Four_getFour];", program);
+		//assertResultProgram("var One_getOne = function(self) {	return one};var One_vtable = [One_getOne];var Two_getTwo = function(self) {	return two};var Two_getOne = function(self) {	return 1};var Two_vtable = [Two_getOne, Two_getTwo];var Three_getThree = function(self) {	return three};var Three_vtable = [Two_getOne, Two_getTwo, Three_getThree];var Four_getFour = function(self) {	return four};var Four_getOne = function(self) {	return 1};var Four_vtable = [Four_getOne, Two_getTwo, Three_getThree, Four_getFour];", program);
 
+		assertResultProgram("var One_getOne = function(self) {	return one};var One_vtable = [One_getOne];var Two_getTwo = function(self) {	return two};var Two_getOne = function(self) {	return 1};var Two_vtable = [Two_getOne, Two_getTwo];var Three_getThree = function(self) {	return three};var Three_vtable = [Two_getOne, Two_getTwo, Three_getThree];var Four_getOne = function(self) {	return 1};var Four_getFour = function(self) {	return four};var Four_vtable = [Four_getOne, Two_getTwo, Three_getThree, Four_getFour];", program);
 
 	}
 
