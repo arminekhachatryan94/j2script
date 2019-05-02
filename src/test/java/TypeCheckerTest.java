@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class TypeCheckerTest {
 
 	//assigning types
-    @Test//(expected = TypeErrorException.class) 
+    @Test(expected = TypeErrorException.class) 
     public void testClassWithWrongVarDecStatementWithIntType() throws TypeErrorException {
     	/*
 	 class Foo{
@@ -58,7 +58,7 @@ public class TypeCheckerTest {
     	
     }
 
-    @Test//(expected = TypeErrorException.class) 
+    @Test(expected = TypeErrorException.class) 
     public void testClassWithWrongVarDecStatementWithStringType() throws TypeErrorException {
     	/*
 	 class Foo{
@@ -98,7 +98,7 @@ public class TypeCheckerTest {
     	
     }
 
-    @Test//(expected = TypeErrorException.class) 
+    @Test(expected = TypeErrorException.class) 
     public void testClassWithWrongVarDecStatementWithBooleanType() throws TypeErrorException{
     	/*
 	 class Foo{
@@ -138,7 +138,7 @@ public class TypeCheckerTest {
     	
     }
 
-    @Test//(expected = TypeErrorException.class) 
+    @Test(expected = TypeErrorException.class) 
     public void testClassWithWrongVarDecStatementWithClassType() throws TypeErrorException{
     	/*
 	 class Foo{
@@ -195,7 +195,7 @@ public class TypeCheckerTest {
     	
     }
 
-    @Test//(expected = TypeErrorException.class) 
+    @Test(expected = TypeErrorException.class) 
     public void testClassWithInstanceVarAssignmentConstructor() throws TypeErrorException{
     /** class foo{
     int x;
@@ -240,7 +240,7 @@ public class TypeCheckerTest {
     //Assigning types tests end
 
 	//return types
-    @Test// (expected = TypeErrorException.class) 
+    @Test(expected = TypeErrorException.class) 
     public void testClassWithWrongVarDecStatementWithVoidTypeReturn() throws TypeErrorException {
     	/*
 	 class Foo{
@@ -284,7 +284,7 @@ public class TypeCheckerTest {
     	
     }
 
-    @Test//(expected = TypeErrorException.class) 
+    @Test(expected = TypeErrorException.class) 
     public void testClassWithWrongVarDecStatementWithIntTypeReturn() throws TypeErrorException {
     	/*
 	 class Foo{
@@ -328,7 +328,7 @@ public class TypeCheckerTest {
     	
     }
 
-    @Test//(expected = TypeErrorException.class) 
+    @Test(expected = TypeErrorException.class) 
     public void testClassWithWrongVarDecStatementWithNoReturn() throws TypeErrorException {
     	/*
 	 class Foo{
@@ -380,7 +380,7 @@ public class TypeCheckerTest {
     // return type tests end
     
 
-	@Test//(expected = TypeErrorException.class) 
+	@Test(expected = TypeErrorException.class) 
 	    public void testClassWithInstanceVarAssignmentNotIncludedInStatement() throws TypeErrorException {
 	    /** class foo{
 	    int x;
