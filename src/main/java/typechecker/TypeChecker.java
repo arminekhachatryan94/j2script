@@ -128,7 +128,7 @@ public class TypeChecker {
   } // instanceVariablesOk
 
   public static boolean containsNoReturns(final List<Statement> statements) {
-    for (int i = 1; i < statements.size(); i++) {
+    for (int i = 0; i < statements.size(); i++) {
       if (statements.get(i) instanceof ReturnVoidStatement ||
           statements.get(i) instanceof ReturnExpStatement) {
         return false;
@@ -154,8 +154,7 @@ public class TypeChecker {
       statements.add(stmt);
     }
 
-    final int numStatements = statements.size();
-    if (numStatements == 0 || containsNoReturns(statements)) {
+    if (statements.size() == 0 || containsNoReturns(statements)) {
       throw new TypeErrorException("Missing return");
     }
     if (!containsNoSupers(statements)) {
@@ -300,9 +299,9 @@ public class TypeChecker {
                                              final Type returnType,      // null if return is not ok
                                              final List<VarDec> superParams, // null if not expecting super
                                              final Block stmt)  throws TypeErrorException {
-    TypeEnvironment loopEnv = env;;
+    TypeEnvironment loopEnv = env;
     for (Statement s : stmt.statements) {
-        loopEnv = typecheckStatement(loopEnv, returnType, superParams, stmt);
+        loopEnv = typecheckStatement(loopEnv, returnType, superParams, s);
     }
     return loopEnv;                                             
   }
@@ -380,13 +379,17 @@ public class TypeChecker {
       typecheckSuperStmt(env, superParams, (SuperStatement)stmt);
       return env;
     } else if (stmt instanceof ReturnExpStatement) {
-      typecheckReturnExpStmt(env, returnType, (ReturnExpStatement)stmt);
+      if(returnType == null) {
+        throw new TypeErrorException("Return in super");
+      }
+      ReturnExpStatement asReturnExp = (ReturnExpStatement)stmt;
+      typesOk(returnType, typeofExp(env, asReturnExp.exp));
       return env;
     } else if (stmt instanceof ReturnVoidStatement) {
-      ensureTypesSame(returnType, new VoidType());
-      if(returnType != null) {
-        throw new TypeErrorException("Return type is not void");
+      if(returnType == null) {
+        throw new TypeErrorException("Return in super");
       }
+      ensureTypesSame(returnType, new VoidType());
       return env;
     } else if (stmt instanceof BreakStatement) {
       if(env.inWhile == false) {
