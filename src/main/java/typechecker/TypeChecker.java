@@ -46,6 +46,11 @@ public class TypeChecker {
     }
   }
 
+  private Constructor getConstructor(final ClassName onClass) throws TypeErrorException{
+    final ClassDef classDef = getClass(onClass);
+    return classDef.constructor;
+  }
+
   // returns null if it couldn't find it
   public MethodDef findMethodDirect(final ClassName onClass,
                                     final MethodName methodName) throws TypeErrorException {
@@ -265,9 +270,14 @@ public class TypeChecker {
       final Type rightType = typeofExp(env, asBinop.right);
       return binopType(leftType, asBinop.op, rightType);
     } else if(exp instanceof ClassExp) {
-      ClassExp classExp = (ClassExp) exp;
-      return new ClassType(classExp.name);
-    } else if(exp instanceof VarMethodExp) {
+      ClassExp asClassExp = (ClassExp) exp;
+      // var has constructor
+      Constructor constructor = getConstructor(asClassExp.name);
+      // Check constructor parameters
+      checkParameters(env, constructor.parameters, asClassExp.parameters);
+      return new ClassType(asClassExp.name);
+    } 
+    else if(exp instanceof VarMethodExp) {
       VarMethodExp asMethodExp = (VarMethodExp)exp;
       // Var is defined
       ClassType classType = (ClassType) env.lookup(asMethodExp.var);

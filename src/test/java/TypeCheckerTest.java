@@ -948,7 +948,7 @@ public class TypeCheckerTest {
         
     }
 
-    @Test(expected = TypeErrorException.class) //stack overflow
+    @Test(expected = TypeErrorException.class)
     public void testUniqueNamesOfVariables() throws TypeErrorException {
         /*
      class Foo{
@@ -1003,13 +1003,12 @@ public class TypeCheckerTest {
 
     @Test(expected = TypeErrorException.class) 
     public void testFunctionCallWithWrongParameters() throws TypeErrorException {
-           /*
-     class Foo{
-            Foo(int x)
-                int z = 0;   
-            
-        }
-        Foo y = Foo(true); 
+    /*
+      class Foo{
+        Foo(int x)
+          int z = 0;   
+      }
+      Foo y = Foo(true); 
     */
     List<ClassDef> classDef = new ArrayList<>();
     List<MethodDef> methodDefs = new ArrayList<>();
@@ -1041,7 +1040,6 @@ public class TypeCheckerTest {
 
     final Program program = new Program(classDef, statement);
     TypeChecker.typecheckProgram(program);
-
     }
 
     @Test
