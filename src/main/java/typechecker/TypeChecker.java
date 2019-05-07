@@ -466,6 +466,10 @@ public class TypeChecker {
     }
   } // typecheckClass 
 
+  // public void typecheckGeneric(final ClassName className) throws TypeErrorException {
+  //   ;
+  // }
+
   public void noCyclicInheritance(final ClassName className) throws TypeErrorException {
     final Set<ClassName> seen = new HashSet<>();
     ClassName current = className;
