@@ -18,14 +18,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.ArrayList;
 
-public class TypeChecker {
-  private final Map<ClassName, ClassDef> classes;
+public final class TypeChecker {
+  private static Map<ClassName, ClassDef> classes;
 
   private TypeChecker(final Map<ClassName, ClassDef> classes) throws TypeErrorException {
     this.classes = classes;
   }
 
-  public ClassDef getClass(final ClassName name) throws TypeErrorException {
+  private static ClassDef getClass(final ClassName name) throws TypeErrorException {
     final ClassDef result = classes.get(name);
     if (result == null) {
       throw new TypeErrorException("No such class defined: " + name);
@@ -34,7 +34,7 @@ public class TypeChecker {
     }
   } // getClass
 
-  public boolean isPrimitive(Type type) {
+  private static boolean isPrimitive(Type type) {
     return type.equals(new IntType()) || 
            type.equals(new BooleanType()) ||
            type.equals(new StringType());
@@ -46,13 +46,13 @@ public class TypeChecker {
     }
   }
 
-  private Constructor getConstructor(final ClassName onClass) throws TypeErrorException{
+  private static Constructor getConstructor(final ClassName onClass) throws TypeErrorException{
     final ClassDef classDef = getClass(onClass);
     return classDef.constructor;
   }
 
   // returns null if it couldn't find it
-  public MethodDef findMethodDirect(final ClassName onClass,
+  private static MethodDef findMethodDirect(final ClassName onClass,
                                     final MethodName methodName) throws TypeErrorException {
     final ClassDef classDef = getClass(onClass);
     for (final MethodDef methodDef : classDef.methodDefs) {
@@ -63,7 +63,7 @@ public class TypeChecker {
     return null;
   } // findMethodDirect
   
-  public MethodDef findMethod(final ClassName onClass,
+  private static MethodDef findMethod(final ClassName onClass,
                               final MethodName methodName) throws TypeErrorException {
     if (onClass == null) {
       throw new TypeErrorException("No such method: " + methodName);
@@ -79,7 +79,7 @@ public class TypeChecker {
     }
   } // findMethod
 
-  private void checkParameters(final TypeEnvironment env, List<VarDec> methodDef, List<Exp> methodExp ) throws TypeErrorException {
+  private static void checkParameters(final TypeEnvironment env, List<VarDec> methodDef, List<Exp> methodExp ) throws TypeErrorException {
     for (int i = 0; i < methodDef.size(); i++) {
       ensureTypesSame(((VarDec)methodDef.get(i)).type, typeofExp(env, methodExp.get(i)));
     }
@@ -98,7 +98,7 @@ public class TypeChecker {
 
   // Checks to see if there is a duplicate method defined
   // Not checking names since overloaded methods are allowed
-  public static void noDuplicateMethodDefs(final List<MethodDef> methods) throws TypeErrorException {
+  private static void noDuplicateMethodDefs(final List<MethodDef> methods) throws TypeErrorException {
     final List<MethodDef> seen = new ArrayList<MethodDef>();
       for (int i = 0; i < methods.size(); i++) {
         for(int j = i+1; j < methods.size(); j++) {
@@ -114,7 +114,7 @@ public class TypeChecker {
   } // noDuplicateMethodDefs
 
   // checks that subclasses don't redefined parent class instance variables
-  public void instanceVariablesOk(final Set<Variable> seen, final ClassName current) throws TypeErrorException {
+  private static void instanceVariablesOk(final Set<Variable> seen, final ClassName current) throws TypeErrorException {
     if (current != null) {
       final ClassDef classDef = getClass(current);
       for (final VarDec param : classDef.instanceVars) {
@@ -128,11 +128,11 @@ public class TypeChecker {
   } // instanceVariablesOk
 
   // checks that subclasses don't redefined parent class instance variables
-  public void instanceVariablesOk(final ClassName current) throws TypeErrorException {
+  private static void instanceVariablesOk(final ClassName current) throws TypeErrorException {
     instanceVariablesOk(new HashSet<Variable>(), current);
   } // instanceVariablesOk
 
-  public static boolean containsNoReturns(final List<Statement> statements) {
+  private static boolean containsNoReturns(final List<Statement> statements) {
     for (int i = 0; i < statements.size(); i++) {
       if (statements.get(i) instanceof ReturnVoidStatement ||
           statements.get(i) instanceof ReturnExpStatement) {
@@ -142,7 +142,7 @@ public class TypeChecker {
     return true;
   } // containsNoReturns
 
-  public static boolean containsNoSupers(final List<Statement> statements) {
+  private static boolean containsNoSupers(final List<Statement> statements) {
     for (final Statement stmt : statements) {
       if (stmt instanceof SuperStatement) {
         return false;
@@ -151,7 +151,7 @@ public class TypeChecker {
     return true;
   } // containsNoSupers
 
-  public static void superReturnOkInMethod(final Statement stmt) throws TypeErrorException {
+  private static void superReturnOkInMethod(final Statement stmt) throws TypeErrorException {
     List<Statement> statements = new ArrayList<>();
     if (stmt instanceof Block) {
       statements = ((Block)stmt).statements;
@@ -168,7 +168,7 @@ public class TypeChecker {
   } // superReturnOkInMethod
   
   //  Checks if super call is OK
-  public static void superReturnOkInConstructor(final boolean isBaseClass,
+  private static void superReturnOkInConstructor(final boolean isBaseClass,
                                                 final Statement stmt) throws TypeErrorException {
     List<Statement> statements = new ArrayList<>();
     if (stmt instanceof Block) {
@@ -193,7 +193,7 @@ public class TypeChecker {
   } // superReturnOkInConstructor
 
   // Checks if class types are comparable
-  public void typesOk(final Type baseType, final Type subType) throws TypeErrorException {
+  private static void typesOk(final Type baseType, final Type subType) throws TypeErrorException {
     if (!baseType.equals(subType)) {
       // see if subType is a subtype of base type
       if (baseType instanceof ClassType && subType instanceof ClassType) {
@@ -249,7 +249,7 @@ public class TypeChecker {
       }
   } // binopType
 
-  public Type typeofExp(final TypeEnvironment env,
+  private static Type typeofExp(final TypeEnvironment env,
                         final Exp exp) throws TypeErrorException {
     if (exp instanceof NumberExp) {
       return new IntType();
@@ -305,7 +305,7 @@ public class TypeChecker {
     }
   } // typeofExp
 
-  private TypeEnvironment typeCheckBlockStmt(final TypeEnvironment env,
+  private static TypeEnvironment typeCheckBlockStmt(final TypeEnvironment env,
                                              final Type returnType,      // null if return is not ok
                                              final List<VarDec> superParams, // null if not expecting super
                                              final Block stmt)  throws TypeErrorException {
@@ -316,14 +316,14 @@ public class TypeChecker {
     return loopEnv;                                             
   }
 
-  public void typecheckSuperStmt(final TypeEnvironment env,
+  private static void typecheckSuperStmt(final TypeEnvironment env,
                                  final List<VarDec> superParams,
                                  final SuperStatement stmt) throws TypeErrorException {
     assert(superParams != null);
     checkParameters(env, superParams, stmt.exp);
   } // typecheckSuperStmt
 
-  public void typecheckPrintStmt(final TypeEnvironment env,
+  private static void typecheckPrintStmt(final TypeEnvironment env,
                                  final PrintStatement stmt) throws TypeErrorException {
     final Type printType = typeofExp(env, stmt.exp);
     if (!isPrimitive(printType)) {
@@ -331,26 +331,26 @@ public class TypeChecker {
     }
   } // typecheckPrintStmt
 
-  public void typecheckReturnExpStmt(TypeEnvironment env, Type returnType, ReturnExpStatement stmt)  throws TypeErrorException {
+  private static void typecheckReturnExpStmt(TypeEnvironment env, Type returnType, ReturnExpStatement stmt)  throws TypeErrorException {
     // check if types are correct
     typesOk(returnType, typeofExp(env, stmt.exp));
   }
 
-  public void typecheckVarDecAssign(final TypeEnvironment env,
+  private static void typecheckVarDecAssign(final TypeEnvironment env,
                                     final VarDecAssignment stmt) throws TypeErrorException {
     final Type lhsType = stmt.varDec.type;
     final Type expType = typeofExp(env, stmt.exp);
     typesOk(lhsType, expType);
   } // typecheckAssignStmt
 
-  public void typecheckVarAssign(final TypeEnvironment env,
+  private static void typecheckVarAssign(final TypeEnvironment env,
                                  final VarAssignment stmt) throws TypeErrorException {
     final Type lhsType = env.lookup(stmt.variable);
     final Type expType = typeofExp(env, stmt.exp);
     typesOk(lhsType, expType);
   } // typecheckAssignStmt
 
-  public TypeEnvironment typeCheckWhileStmt(final TypeEnvironment env,
+  private static TypeEnvironment typeCheckWhileStmt(final TypeEnvironment env,
                                             final Type returnType,      // null if return is not ok
                                             final List<VarDec> superParams, // null if not expecting super
                                             final WhileStatement stmt)  throws TypeErrorException {
@@ -366,7 +366,7 @@ public class TypeChecker {
     return afterStatement;
   }
 
-  public TypeEnvironment typeCheckIfStmt(final TypeEnvironment env,
+  private static TypeEnvironment typeCheckIfStmt(final TypeEnvironment env,
                                                 final Type returnType,      // null if return is not ok
                                                 final List<VarDec> superParams, // null if not expecting super
                                                 final IfStatement stmt)  throws TypeErrorException {
@@ -376,7 +376,7 @@ public class TypeChecker {
     return env;
   }
 
-  public TypeEnvironment typecheckStatement(final TypeEnvironment env,
+  private static TypeEnvironment typecheckStatement(final TypeEnvironment env,
                                           final Type returnType,      // null if return is not ok
                                           final List<VarDec> superParams, // null if not expecting super
                                           final Statement stmt) throws TypeErrorException {
@@ -425,7 +425,7 @@ public class TypeChecker {
     }
   } // typecheckStmt
 
-  public List<VarDec> getSuperParams(final ClassName forClass) throws TypeErrorException {
+  private static List<VarDec> getSuperParams(final ClassName forClass) throws TypeErrorException {
     final ClassDef classDef = getClass(forClass);
     if (classDef.extendedClass != null) {
       return getClass(classDef.extendedClass).constructor.parameters;
@@ -434,7 +434,7 @@ public class TypeChecker {
     }
   } // getSuperParams
 
-  public void typecheckMethod(final ClassName onClass,
+  private static void typecheckMethod(final ClassName onClass,
                               final MethodDef methodDef) throws TypeErrorException {
     noDuplicates(methodDef.varDecs);
     superReturnOkInMethod(methodDef.body);
@@ -444,7 +444,7 @@ public class TypeChecker {
                        methodDef.body);
   } // typecheckMethod
 
-  public void typecheckConstructor(final ClassName onClass,
+  private static void typecheckConstructor(final ClassName onClass,
                                    final Constructor constructor) throws TypeErrorException {
     final ClassDef classDef = getClass(onClass);
     noDuplicates(constructor.parameters);
@@ -455,7 +455,7 @@ public class TypeChecker {
                   constructor.body);
   } // typecheckConstructor
 
-  public void typecheckClass(final ClassName className) throws TypeErrorException {
+  private static void typecheckClass(final ClassName className) throws TypeErrorException {
     final ClassDef classDef = getClass(className);
     noDuplicateMethodDefs(classDef.methodDefs);
     noDuplicates(classDef.instanceVars);
@@ -466,7 +466,7 @@ public class TypeChecker {
     }
   } // typecheckClass 
 
-  public void noCyclicInheritance(final ClassName className) throws TypeErrorException {
+  private static void noCyclicInheritance(final ClassName className) throws TypeErrorException {
     final Set<ClassName> seen = new HashSet<>();
     ClassName current = className;
 
@@ -479,7 +479,7 @@ public class TypeChecker {
     }
   } // noCyclicInheritance
 
-  public void typecheckClasses() throws TypeErrorException {
+  private static void typecheckClasses() throws TypeErrorException {
     // cyclic checks go first, as all downstream code assumes acyclic
     // inheritance
     for (final ClassName className : classes.keySet()) {
@@ -490,7 +490,7 @@ public class TypeChecker {
     }
   } // typecheckClasses
 
-  public static Map<ClassName, ClassDef> classMapping(final List<ClassDef> classes) throws TypeErrorException {
+  private static Map<ClassName, ClassDef> classMapping(final List<ClassDef> classes) throws TypeErrorException {
     final Map<ClassName, ClassDef> mapping = new HashMap<>();
     for (final ClassDef classDef : classes) {
         if (mapping.containsKey(classDef.name)) {
