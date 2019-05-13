@@ -1,6 +1,7 @@
 package j2script.declarations;
 
 import j2script.statements.Statement;
+import j2script.types.Type;
 import j2script.types.TypeVariable;
 import j2script.declarations.VarDec;
 import j2script.names.ClassName;
@@ -9,18 +10,18 @@ import java.util.List;
 
 public class ClassDef {
     public final ClassName name;
-    public final ClassName extendedClass;
+    public final Extends extendedClass;
     public final Constructor constructor;
     public final List<VarDec> instanceVars;
     public final List<MethodDef> methodDefs;
-    public final TypeVariable[] typeVariables;
+    public final List<TypeVariable> typeVariables;
 
-    // extended class
+    // not extended class
     public ClassDef(final ClassName name,
                     final Constructor constructor,
                     final List<VarDec> instanceVars,
                     final List<MethodDef> methodDefs,
-                    final TypeVariable[] typeVariables) {
+                    final List<TypeVariable> typeVariables) {
       this.name = name;
       this.extendedClass = null;
       this.constructor = constructor;
@@ -29,13 +30,13 @@ public class ClassDef {
       this.typeVariables = typeVariables;
     }
 
-    //not extended
+    // extended class
     public ClassDef(final ClassName name,
                     final Constructor constructor,
-                    final ClassName extendedClass,
+                    final Extends extendedClass,
                     final List<VarDec> instanceVars,
                     final List<MethodDef> methodDefs,
-                    final TypeVariable[] typeVariables) {
+                    final List<TypeVariable> typeVariables) {
         this.name = name;
         this.constructor = constructor;
         this.extendedClass = extendedClass;

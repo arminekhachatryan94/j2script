@@ -45,9 +45,6 @@ public class Codegen{
         else if (exp instanceof ClassExp){
             compileClassExp((ClassExp)exp);
         }
-        else if (exp instanceof StringExp){
-            compileStringExp((StringExp)exp);
-        }
         else if (exp instanceof VarMethodExp){
             compileVarMethodExp((VarMethodExp)exp);
         }
@@ -122,7 +119,7 @@ public class Codegen{
                     int j=0;
                     System.out.println("I am here for this class" + cls.name.toString());
                     System.out.println("I am here for this method" + md.name.toString());
-                    System.out.println("BY the way the exclass is " + cls.extendedClass.name.toString());
+                    System.out.println("BY the way the exclass is " + cls.extendedClass.extendsName.toString());
                     // String exclass = cls.extendedClass.name.toString();                  
                     //replace in childs vtable
                     methodMap.replace(md.name, md);
@@ -263,11 +260,6 @@ public class Codegen{
 
     public void compileNumberExp(Exp exp){
         NumberExp e = (NumberExp)exp;
-        Code.add(e.emit());
-    }
-    
-    public void compileStringExp(Exp exp){
-        StringExp e = (StringExp)exp;
         Code.add(e.emit());
     }
 
