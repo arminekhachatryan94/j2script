@@ -112,10 +112,26 @@ public class Codegen{
 
         String vtable = "var " + cls.name.toString() + "_" + "vtable = [";
         for (MethodDef md : cls.methodDefs) {
-            String method = "var " + cls.name.toString() + "_" + md.name.toString() + " = function(self) {\n\t" + md.body.toString() + "};" ;
+            String method = "var " + cls.name.toString() + "_" + md.name.toString() + " = function(" ;
+            if (md.varDecs.size() != 0){
+                String params= "";
+                for (int i = 0; i < md.varDecs.size();i++) {
+                    params += md.varDecs.get(i).toString();
+                    params += ",";
+                }
+                method += params;
+                method +="self) {\n\t" + md.body.toString() + "};";
+
+            }
+            else{
+                method +="self) {\n\t" + md.body.toString() + "};";
+            }
+            // String method = "var " + cls.name.toString() + "_" + md.name.toString() + " = function(self) {\n\t" + md.body.toString() + "};" ;
+            System.out.println("hello the method checked is " + method);
             Code.add(method);
             //check if method is being overridden
             if (methodMap.get(md.name) != null){
+                //Check if it is being overloaded
                 if(methodMap.get(md.name).varDecs.equals(md.varDecs)){
                     int j=0;
                     System.out.println("I am here for this class" + cls.name.toString());
@@ -137,9 +153,17 @@ public class Codegen{
                     }
                     offsets.replace(md.name, j);
                 }
+                else{
+                    System.out.println("Hello i am not being overridden");
+                    methodMap.put(md.name, md);
+                    offsets.put(md.name, count);
+                    vTable.add(cls.name.toString() + "_" + md.name.toString());
+                    count++;
+                }
             }
             //Its not being overridden, add it to the vtable.
             else{
+                System.out.println("Hello i am not being overridden");
                 methodMap.put(md.name, md);
                 offsets.put(md.name, count);
                 vTable.add(cls.name.toString() + "_" + md.name.toString());
