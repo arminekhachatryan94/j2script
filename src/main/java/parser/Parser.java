@@ -245,7 +245,7 @@ public class Parser {
                 
             }
             resultpos++;
-            final ClassExp e = new ClassExp(name,parameters);
+            final ClassExp e = new ClassExp(name, new ArrayList<Type>(), parameters);  //TODO new arraylist should contan specefied types
             return new ParseResult<Exp>(e, resultpos);
         }
         else if((ensureToken(resultpos, new VariableToken()) && ensureToken(resultpos + 1,new LeftParenToken()))){
@@ -283,7 +283,7 @@ public class Parser {
                 
             }
             resultpos++;
-            final Methodcall e = new Methodcall(name,parameters);
+            final MethodExp e = new MethodExp(name, parameters);
             return new ParseResult<Exp>(e, resultpos);
         }
         else{

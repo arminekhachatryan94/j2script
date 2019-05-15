@@ -12,8 +12,8 @@ public class VarMethodExp implements Exp {
     public final List<Exp> parameters;
 
     public VarMethodExp(final Variable var,
-                    final MethodName methodName,
-                    final List<Exp> parameters){
+                        final MethodName methodName,
+                        final List<Exp> parameters){
         this.var=var;
         this.methodName=methodName;
         this.parameters = parameters;

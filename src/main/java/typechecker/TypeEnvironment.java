@@ -27,6 +27,16 @@ public class TypeEnvironment {
         this.thisType = thisType;
         this.inWhile = inWhile;
     }
+
+    public void typeInScope(final Type type) throws TypeErrorException {
+        TypeChecker.typeInScope(inScope, type);
+    }
+
+    public void typesInScope(final List<Type> types) throws TypeErrorException {
+        for (final Type type : types) {
+            typeInScope(type);
+        }
+    }
     
     public Type lookup(final Variable variable) throws TypeErrorException {
         final Type result = variables.get(variable);
