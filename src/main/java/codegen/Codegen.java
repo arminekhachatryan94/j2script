@@ -25,6 +25,13 @@ public class Codegen{
     private List<VTableClassTable> listofVtables;
     private Map<ClassName, VTableClassTable> compmap;
     private HashMap<MethodName, Integer> offsets;
+    private HashMap<Variable, Exp> variables;
+
+
+    //Associate instantiated object names to classes for method calls
+    private HashMap<String, ClassName> objToClass;
+    //
+
     // private final Map<ClassName, List<MethodName>> vtableMethodOffsets;
     public Codegen(){
         Code = new ArrayList<String>();
@@ -32,6 +39,8 @@ public class Codegen{
         listofVtables = new ArrayList<>();
         compmap = new HashMap<ClassName, VTableClassTable>();
         offsets = new HashMap<MethodName, Integer>();
+        variables = new HashMap<Variable,Exp>();
+        objToClass = new HashMap<String,ClassName>();
     }
     public void compileExp(Exp exp){
         if (exp instanceof BinopExp){
@@ -227,6 +236,7 @@ public class Codegen{
             
         }
         else if (stmt instanceof VarAssignment){
+            compilevarassign((VarAssignment)stmt);
             
         }
         else if (stmt instanceof VarDecAssignment){
@@ -234,30 +244,124 @@ public class Codegen{
             
         }
     }
+    // public String vardecHelper(VTableClassTable vt, String actualCode){
+    //     //the class does have parameters, instantiate them
+    //     //Check if its multiple statements
+    //     if (vt.theClass.constructor.body instanceof Block){
+    //         Block b = (Block) vt.theClass.constructor.body;
+    //         for (int i=0; i < b.statements.size();i++){
+    //             Statement s = b.statements.get(i);
+    //             if (s instanceof VarAssignment){
+    //                 VarAssignment va = (VarAssignment) s;
+    //                 //If the child constructor has instantiated a field, dont instantiate parents. Otherwise, instantiate it
+    //                 if (variables.get(va.variable) != null){
+    //                     //Do nothing
+    //                 }
+    //                 else{
+    //                     actualCode += ",\n\t" + va.variable.toString() + ": " + va.exp.emit();
+    //                 }
+    //             }
+    //         }
+    //         // actualCode += "\n}";
+    //     }
+    //     else{
+    //         Statement s = vt.theClass.constructor.body;
+    //         if (s instanceof VarAssignment){
+    //             VarAssignment va = (VarAssignment) s;
+    //                 //If the child constructor has instantiated a field, dont instantiate parents. Otherwise, instantiate it
+    //                 if (variables.get(va.variable) != null){
+    //                     //Do nothing
+    //                 }
+    //                 else{
+    //                     //TODO: Check parameters of constructor and put appropriate parameter value into instantiation
+    //                     actualCode += ",\n\t" + va.variable.toString() + ": " /*+ va.exp.emit()*/;
+    //                 }
+    //             // actualCode += "\n}";
+    //         }
+    //     }
+    //     return actualCode;
+    // }
+    public compilevarassign(Statement s){
+        
+    }
+    public void compileobjHelper(Statement s, VTableClassTable vt, Map<String,String> varstostrings, VarDecAssignment v){
+        if (s instanceof VarAssignment){
+            boolean hasFound = false;
+            VarAssignment va = (VarAssignment) s;
+            VarDecAssignment temp = v;
+            v = new VarDecAssignment(temp.varDec,(ClassExp)temp.exp);
+            //Now check va.exp.emit() compared to parameter, if equal substitute with actual param and write method and save to map from varstostrings
+            for (int i = 0; i < vt.theClass.constructor.parameters.size(); i++){
+                if (vt.theClass.constructor.parameters.get(i).var.toString() == va.exp.emit()){
+                    String actualCode = ",\n\t" + va.variable.toString() + ": " + v.exp.parameters.get(i).emit();
+                    varstostrings.put(va.variable.toString(), actualCode);
+                    i = vt.theClass.constructor.parameters.size();
+                    hasFound = true;
+                }
+            }
+            if (hasFound ==false){
+                String actualCode = ",\n\t" + va.variable.toString() + ": " + va.exp.emit();
+                varstostrings.put(va.variable.toString(), actualCode);
+            }
+            // actualCode += "\n}";
+        }
+        else if (s instanceof SuperStatement){
+            //Compile parent
+            VTableClassTable parent = compmap.get(vt.theClass.extendedClass.name);
+            varstostrings = compileObj(parent, varstostrings, v);
+        }
+    }
+    public Map<String,String> compileObj(VTableClassTable vt, Map<String,String> varstostrings, VarDecAssignment v){
+        //Just run through the constructor
+        if (vt.theClass.constructor.body instanceof Block){
+            Block b = (Block) vt.theClass.constructor.body;
+            for (int i=0; i < b.statements.size();i++){
+                Statement s = b.statements.get(i);
+                compileobjHelper(s, vt, varstostrings, v);
+            }
+            // actualCode += "\n}";
+        }
+        else{
+            Statement s = vt.theClass.constructor.body;
+            compileobjHelper(s, vt, varstostrings, v);
+        }
+
+        
+        return varstostrings;
+    }
     public void compilevarDecAssign(Statement stmt){
         //Assuming this type checks, check if it is a class type and if so then create a json with the appropriate fields.
         VarDecAssignment v = (VarDecAssignment)stmt;
         if (v.varDec.type instanceof ClassType){
+            //Associate a variable to its string value incase you have to replace with child 
+            Map<String, String> varstostrings = new HashMap<String,String>();
+            //
             ClassName cname = new ClassName(v.varDec.type.toString());
+            objToClass.put(v.varDec.var.toString(),cname);
             String actualCode = "var " + v.varDec.var.toString() + " = {\n\tvtable: " + cname.toString() + "_vtable";
             VTableClassTable vt = compmap.get(cname);
-            //if class has no variables, thats about it.
-            if (vt.theClass.instanceVars.isEmpty()){
-                actualCode += "\n}";
-            }
-            //else check the class' constructor and instantiate the fields
-            else{
-                if(v.exp instanceof ClassExp){
-                    ClassExp cexp = (ClassExp) v.exp;
-                    actualCode +=",\n\t";
-                    for(int i=0; i < vt.theClass.constructor.parameters.size(); i++){
-                        actualCode += vt.theClass.instanceVars.get(i).var.toString() + ": " + cexp;
+            varstostrings = compileObj(vt, varstostrings,v);
+            // //Check if it extends, were assuming super has been checked and exists. If it does extend, run parents constructor then do childs
+            // if (vt.theClass.extendedClass != null){
+            //     VTableClassTable parent = compmap.get(vt.theClass.extendedClass.name);
+            //     actualCode += vardecHelper(vt, actualCode);
+            //     actualCode += vardecHelper(parent, actualCode);
+            //     actualCode += "\n}";
+            //     //Clear the variables hashmap once were done
+            //     for (Map.Entry<Variable, Exp> item : variables.entrySet()) {
+            //         variables.remove(item);
+            //     }
 
-                    }
-                }
-
-            }
-
+            // }
+            // //If it doesnt extend, check the parameters
+            // else{
+            //     actualCode +=vardecHelper(vt, actualCode);
+            //     actualCode += "\n}";
+            //     //Clear the variables hashmap once were done
+            //     for (Map.Entry<Variable, Exp> item : variables.entrySet()) {
+            //         variables.remove(item);
+            //     }
+            // }
         }
     }
     public void compileIfStmt(Statement ifstmt){
