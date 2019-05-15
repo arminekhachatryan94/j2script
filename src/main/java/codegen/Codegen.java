@@ -285,45 +285,94 @@ public class Codegen{
         
     }
     public void compileobjHelper(Statement s, VTableClassTable vt, Map<String,String> varstostrings, VarDecAssignment v){
-        if (s instanceof VarAssignment){
-            boolean hasFound = false;
-            VarAssignment va = (VarAssignment) s;
-            VarDecAssignment temp = v;
-            v = new VarDecAssignment(temp.varDec,(ClassExp)temp.exp);
-            //Now check va.exp.emit() compared to parameter, if equal substitute with actual param and write method and save to map from varstostrings
-            for (int i = 0; i < vt.theClass.constructor.parameters.size(); i++){
-                if (vt.theClass.constructor.parameters.get(i).var.toString() == va.exp.emit()){
-                    String actualCode = ",\n\t" + va.variable.toString() + ": " + v.exp.parameters.get(i).emit();
-                    varstostrings.put(va.variable.toString(), actualCode);
-                    i = vt.theClass.constructor.parameters.size();
-                    hasFound = true;
-                }
-            }
-            if (hasFound ==false){
-                String actualCode = ",\n\t" + va.variable.toString() + ": " + va.exp.emit();
-                varstostrings.put(va.variable.toString(), actualCode);
-            }
-            // actualCode += "\n}";
-        }
-        else if (s instanceof SuperStatement){
-            //Compile parent
-            VTableClassTable parent = compmap.get(vt.theClass.extendedClass.name);
-            varstostrings = compileObj(parent, varstostrings, v);
-        }
+        // if (s instanceof VarAssignment){
+        //     boolean hasFound = false;
+        //     VarAssignment va = (VarAssignment) s;
+        //     VarDecAssignment temp = v;
+        //     v = new VarDecAssignment(temp.varDec,(ClassExp)temp.exp);
+        //     //Now check va.exp.emit() compared to parameter, if equal substitute with actual param and write method and save to map from varstostrings
+        //     for (int i = 0; i < vt.theClass.constructor.parameters.size(); i++){
+        //         if (vt.theClass.constructor.parameters.get(i).var.toString() == va.exp.emit()){
+        //             String actualCode = ",\n\t" + va.variable.toString() + ": " + v.exp.parameters.get(i).emit();
+        //             varstostrings.put(va.variable.toString(), actualCode);
+        //             i = vt.theClass.constructor.parameters.size();
+        //             hasFound = true;
+        //         }
+        //     }
+        //     if (hasFound ==false){
+        //         String actualCode = ",\n\t" + va.variable.toString() + ": " + va.exp.emit();
+        //         varstostrings.put(va.variable.toString(), actualCode);
+        //     }
+        //     // actualCode += "\n}";
+        // }
+        // else if (s instanceof SuperStatement){
+        //     //Compile parent
+        //     VTableClassTable parent = compmap.get(vt.theClass.extendedClass.name);
+        //     varstostrings = compileObj(parent, varstostrings, v);
+        // }
     }
-    public Map<String,String> compileObj(VTableClassTable vt, Map<String,String> varstostrings, VarDecAssignment v){
+    public Map<String,String> compileObj(VTableClassTable vt, Map<String,String> varstostrings, List<Exp> actualparams){
         //Just run through the constructor
         if (vt.theClass.constructor.body instanceof Block){
             Block b = (Block) vt.theClass.constructor.body;
             for (int i=0; i < b.statements.size();i++){
                 Statement s = b.statements.get(i);
-                compileobjHelper(s, vt, varstostrings, v);
+                if (s instanceof SuperStatement){
+                    SuperStatement ss = (SuperStatement) s;
+                    List<Exp> superparams = ss.exp;
+                    VTableClassTable parent = compmap.get(vt.theClass.extendedClass.name);
+                    varstostrings=compileObj(parent, varstostrings, superparams);
+                }
+                else if (s instanceof VarAssignment){
+                    boolean hasFound = false;
+                    VarAssignment va = (VarAssignment) s;
+                    //Now check va.exp.emit() compared to parameter, if equal substitute with actual param and write method and save to map from varstostrings
+                    for (int i = 0; i < vt.theClass.constructor.parameters.size(); i++){
+                        if (vt.theClass.constructor.parameters.get(i).var.toString() == va.exp.emit()){
+                            String actualCode = ",\n\t" + va.variable.toString() + ": " + actualparams.get(i).emit();
+                            varstostrings.put(va.variable.toString(), actualCode);
+                            i = vt.theClass.constructor.parameters.size();
+                            hasFound = true;
+                        }
+                    }
+                    if (hasFound ==false){
+                        String actualCode = ",\n\t" + va.variable.toString() + ": " + va.exp.emit();
+                        varstostrings.put(va.variable.toString(), actualCode);
+                    }
+                    // actualCode += "\n}";
+                }
+    
+                // compileobjHelper(s, vt, varstostrings, v);
             }
             // actualCode += "\n}";
         }
         else{
             Statement s = vt.theClass.constructor.body;
-            compileobjHelper(s, vt, varstostrings, v);
+            if (s instanceof SuperStatement){
+                SuperStatement ss = (SuperStatement) s;
+                List<Exp> superparams = ss.exp;
+                VTableClassTable parent = compmap.get(vt.theClass.extendedClass.name);
+                varstostrings=compileObj(parent, varstostrings, superparams);
+            }
+            else if (s instanceof VarAssignment){
+                boolean hasFound = false;
+                VarAssignment va = (VarAssignment) s;
+                //Now check va.exp.emit() compared to parameter, if equal substitute with actual param and write method and save to map from varstostrings
+                for (int i = 0; i < vt.theClass.constructor.parameters.size(); i++){
+                    if (vt.theClass.constructor.parameters.get(i).var.toString() == va.exp.emit()){
+                        String actualCode = ",\n\t" + va.variable.toString() + ": " + actualparams.get(i).emit();
+                        varstostrings.put(va.variable.toString(), actualCode);
+                        i = vt.theClass.constructor.parameters.size();
+                        hasFound = true;
+                    }
+                }
+                if (hasFound ==false){
+                    String actualCode = ",\n\t" + va.variable.toString() + ": " + va.exp.emit();
+                    varstostrings.put(va.variable.toString(), actualCode);
+                }
+                // actualCode += "\n}";
+            }
+            // compileobjHelper(s, vt, varstostrings, v);
         }
 
         
@@ -332,15 +381,18 @@ public class Codegen{
     public void compilevarDecAssign(Statement stmt){
         //Assuming this type checks, check if it is a class type and if so then create a json with the appropriate fields.
         VarDecAssignment v = (VarDecAssignment)stmt;
-        if (v.varDec.type instanceof ClassType){
+        if (v.varDec.type instanceof ClassType && v.exp instanceof ClassExp){
             //Associate a variable to its string value incase you have to replace with child 
             Map<String, String> varstostrings = new HashMap<String,String>();
             //
+            ClassExp c = (ClassExp)v.exp;
+            List<Exp> params = c.parameters;
             ClassName cname = new ClassName(v.varDec.type.toString());
             objToClass.put(v.varDec.var.toString(),cname);
             String actualCode = "var " + v.varDec.var.toString() + " = {\n\tvtable: " + cname.toString() + "_vtable";
             VTableClassTable vt = compmap.get(cname);
-            varstostrings = compileObj(vt, varstostrings,v);
+            
+            varstostrings = compileObj(vt, varstostrings, params);
             for (Map.Entry<String, String> item : varstostrings.entrySet()) {
                 actualCode += item.getValue();
             }
@@ -368,6 +420,11 @@ public class Codegen{
             //         variables.remove(item);
             //     }
             // }
+        }
+        else{
+            //Anything else int bool whatever
+            String actualCode = "var " + v.varDec.variable.toString() + " = " + v.varDec.exp.emit(); 
+            Code.add(actualCode);
         }
     }
     public void compileIfStmt(Statement ifstmt){
