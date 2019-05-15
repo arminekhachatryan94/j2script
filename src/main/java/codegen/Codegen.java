@@ -341,6 +341,12 @@ public class Codegen{
             String actualCode = "var " + v.varDec.var.toString() + " = {\n\tvtable: " + cname.toString() + "_vtable";
             VTableClassTable vt = compmap.get(cname);
             varstostrings = compileObj(vt, varstostrings,v);
+            for (Map.Entry<String, String> item : varstostrings.entrySet()) {
+                actualCode += item.getValue();
+            }
+            actualCode += "\n}";
+            //Object has been instantiated, vtable first, then parent instantiated stuff then child instantiated stuff
+            Code.add(actualCode);
             // //Check if it extends, were assuming super has been checked and exists. If it does extend, run parents constructor then do childs
             // if (vt.theClass.extendedClass != null){
             //     VTableClassTable parent = compmap.get(vt.theClass.extendedClass.name);
