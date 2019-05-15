@@ -209,14 +209,14 @@ public class CodeGenTest {
 		List<Exp> expressions = new ArrayList<>();
 		 expressions.add(new NumberExp(4));
 		 expressions.add(new StringExp(new StringName("hello")));
-	        assertResult("Foo(4, \"hello\")", new ClassExp(new ClassName("Foo"), expressions));
+	        assertResult("Foo(4, \"hello\")", new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), expressions));
 	}
 
 	/* Class Expression */
 	@Test // new Foo()
 	public void testClassObjectsWithNoParameters() throws IOException {
 		List<Exp> expressions = new ArrayList<>();
-	        assertResult("Foo()", new ClassExp(new ClassName("Foo"), expressions));
+	        assertResult("Foo()", new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), expressions));
 	}
 
 	@Test
@@ -391,9 +391,9 @@ public class CodeGenTest {
 		varDecs.add(new VarDec(new StringType(), new Variable("bmw")));
 		List<MethodDef> methodDefs = new ArrayList<>();
 		List<ClassDef> classes = new ArrayList<>();
-		final ClassDef classOne = new ClassDef(new ClassName("Car"), new Constructor(varDecs, new VarDecAssignment(new VarDec(new StringType(), new Variable("name")), new VariableExp(new Variable("bmw")))), emptyVarDecs, methodDefs);
+		final ClassDef classOne = new ClassDef(new ClassName("Car"), new Constructor(varDecs, new VarDecAssignment(new VarDec(new StringType(), new Variable("name")), new VariableExp(new Variable("bmw")))), emptyVarDecs, methodDefs, new ArrayList<TypeVariable>());
 		classes.add(classOne);
-		Program program = new Program(classes, new VarDecAssignment(new VarDec(new ClassType(new ClassName("Car")), new Variable("car")), new ClassExp(new ClassName("Car"), parameters)));
+		Program program = new Program(classes, new VarDecAssignment(new VarDec(new ClassType(new ClassName("Car"), new ArrayList<Type>()), new Variable("car")), new ClassExp(new ClassName("Car"), new ArrayList<Type>(), parameters)));
 		assertResultProgram("var Car_vtable = [];", program);
 	
 	
@@ -428,11 +428,11 @@ public class CodeGenTest {
 		methodDefs.add(new MethodDef(new PublicAccess(), new StringType(), new MethodName("getName"), emptyVarDecs, new ReturnExpStatement(new VariableExp(new Variable("name")))));
 	
 		List<Statement> statements = new ArrayList<>();
-		statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("Car")), new Variable("car")), new ClassExp(new ClassName("Car"), parameters)));
+		statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("Car"), new ArrayList<Type>()), new Variable("car")), new ClassExp(new ClassName("Car"), new ArrayList<Type>(), parameters)));
 		statements.add(new VarDecAssignment(new VarDec(new StringType(), new Variable("name")), new VarMethodExp(new Variable("car"), new MethodName("getName"), expressions)));
 		
 		List<ClassDef> classes = new ArrayList<>();
-		final ClassDef classOne = new ClassDef(new ClassName("Car"), new Constructor(varDecs, new VarDecAssignment(new VarDec(new StringType(), new Variable("name")), new VariableExp(new Variable("bmw")))), emptyVarDecs, methodDefs);
+		final ClassDef classOne = new ClassDef(new ClassName("Car"), new Constructor(varDecs, new VarDecAssignment(new VarDec(new StringType(), new Variable("name")), new VariableExp(new Variable("bmw")))), emptyVarDecs, methodDefs, new ArrayList<TypeVariable>());
 		classes.add(classOne);
 
 		Program program = new Program(classes, new Block(statements));
@@ -472,12 +472,12 @@ public class CodeGenTest {
 		methodDefs.add(new MethodDef(new PublicAccess(), new VoidType(), new MethodName("setName"), varDecs, new VarAssignment( new Variable("name"),new VariableExp(new Variable("name")))));
 	
 		List<Statement> statements = new ArrayList<>();
-		statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("Car")), new Variable("car")), new ClassExp(new ClassName("Car"), parameters)));
+		statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("Car"), new ArrayList<Type>()), new Variable("car")), new ClassExp(new ClassName("Car"), new ArrayList<Type>(), parameters)));
 		statements.add(new VarDecAssignment(new VarDec(new StringType(), new Variable("name")), new VarMethodExp(new Variable("car"), new MethodName("getName"), expressions)));
 		
 		emptyVarDecs.add(new VarDec(new StringType(), new Variable("name")));
 		List<ClassDef> classes = new ArrayList<>();
-		final ClassDef classOne = new ClassDef(new ClassName("Car"), new Constructor(varDecs, new VarAssignment(new Variable("name"), new VariableExp(new Variable("bmw")))), emptyVarDecs, methodDefs);
+		final ClassDef classOne = new ClassDef(new ClassName("Car"), new Constructor(varDecs, new VarAssignment(new Variable("name"), new VariableExp(new Variable("bmw")))), emptyVarDecs, methodDefs, new ArrayList<TypeVariable>());
 		classes.add(classOne);
 
 		Program program = new Program(classes, new Block(statements));
@@ -532,7 +532,7 @@ public class CodeGenTest {
 		VarAssignment var = new VarAssignment(new Variable("id"), new NumberExp(50));
 		//VarDecAssignment varDecAssgnForConstructor = new VarDecAssignment(new VarDec(new IntType(), new Variable("number")), new NumberExp(50));
 
-		classes.add(new ClassDef(new ClassName("ClassOne"), new Constructor(emptyyVarDecs, var), varDecs, methodDefs));
+		classes.add(new ClassDef(new ClassName("ClassOne"), new Constructor(emptyyVarDecs, var), varDecs, methodDefs, new ArrayList<TypeVariable>()));
 		
 
 
@@ -542,15 +542,15 @@ public class CodeGenTest {
 		List<MethodDef> methodDefsForSecondClass = new ArrayList<>();
 		methodDefsForSecondClass.add(new MethodDef(new PublicAccess(), new StringType(), new MethodName("getName"), emptyVarDecs, new ReturnExpStatement(new VariableExp(new Variable("name")))));
 
-		classes.add(new ClassDef(new ClassName("Bran"), new Constructor(emptyyVarDecs, new VarAssignment(new Variable("name"), new VariableExp(new Variable("bran")))), new ClassName("ClassOne"), varDecsForSecondClass, methodDefsForSecondClass));
+		classes.add(new ClassDef(new ClassName("Bran"), new Constructor(emptyyVarDecs, new VarAssignment(new Variable("name"), new VariableExp(new Variable("bran")))), new Extends(new ClassName("ClassOne"), new ArrayList<Type>()), varDecsForSecondClass, methodDefsForSecondClass, new ArrayList<TypeVariable>()));
 
 
 		List<Exp> parameters = new ArrayList<>();
 		List<Exp> expressions = new ArrayList<>();
 
 		List<Statement> statements = new ArrayList<>();
-		statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("ClassOne")), new Variable("studentOne")), new ClassExp(new ClassName("ClassOne"), parameters)));
-		statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("Bran")), new Variable("student")), new ClassExp(new ClassName("Bran"), parameters)));
+		statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("ClassOne"), new ArrayList<Type>()), new Variable("studentOne")), new ClassExp(new ClassName("ClassOne"), new ArrayList<Type>(), parameters)));
+		statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("Bran"), new ArrayList<Type>()), new Variable("student")), new ClassExp(new ClassName("Bran"), new ArrayList<Type>(), parameters)));
 		
 
 		statements.add(new VarDecAssignment(new VarDec(new IntType(), new Variable("resultID")), new VarMethodExp(new Variable("studentOne"), new MethodName("getId"), expressions)));
@@ -614,7 +614,7 @@ public class CodeGenTest {
 		VarAssignment var = new VarAssignment(new Variable("id"), new NumberExp(50));
 		//VarDecAssignment varDecAssgnForConstructor = new VarDecAssignment(new VarDec(new IntType(), new Variable("number")), new NumberExp(50));
 
-		classes.add(new ClassDef(new ClassName("ClassOne"), new Constructor(emptyyVarDecs, var), varDecs, methodDefs));
+		classes.add(new ClassDef(new ClassName("ClassOne"), new Constructor(emptyyVarDecs, var), varDecs, methodDefs, new ArrayList<TypeVariable>()));
 		
 		List<VarDec> vardecc = new ArrayList<>();
 		vardecc.add(new VarDec(new IntType(), new Variable("i")));
@@ -625,15 +625,15 @@ public class CodeGenTest {
 		List<MethodDef> methodDefsForSecondClass = new ArrayList<>();
 		methodDefsForSecondClass.add(new MethodDef(new PublicAccess(), new VoidType(), new MethodName("setId"), vardecc, new VarAssignment(new Variable("id"), new VariableExp(new Variable("i")))));
 
-		classes.add(new ClassDef(new ClassName("Bran"), new Constructor(emptyyVarDecs, new VarAssignment(new Variable("name"), new VariableExp(new Variable("bran")))), new ClassName("ClassOne"), varDecsForSecondClass, methodDefsForSecondClass));
+		classes.add(new ClassDef(new ClassName("Bran"), new Constructor(emptyyVarDecs, new VarAssignment(new Variable("name"), new VariableExp(new Variable("bran")))), new Extends(new ClassName("ClassOne"), new ArrayList<Type>()), varDecsForSecondClass, methodDefsForSecondClass, new ArrayList<TypeVariable>()));
 
 
 		List<Exp> parameters = new ArrayList<>();
 		List<Exp> expressions = new ArrayList<>();
 
 		List<Statement> statements = new ArrayList<>();
-		statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("ClassOne")), new Variable("studentOne")), new ClassExp(new ClassName("ClassOne"), parameters)));
-		statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("Bran")), new Variable("student")), new ClassExp(new ClassName("Bran"), parameters)));
+		statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("ClassOne"), new ArrayList<Type>()), new Variable("studentOne")), new ClassExp(new ClassName("ClassOne"), new ArrayList<Type>(), parameters)));
+		statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("Bran"), new ArrayList<Type>()), new Variable("student")), new ClassExp(new ClassName("Bran"), new ArrayList<Type>(), parameters)));
 		
 
 		statements.add(new VarDecAssignment(new VarDec(new IntType(), new Variable("resultID")), new VarMethodExp(new Variable("studentOne"), new MethodName("getId"), expressions)));
@@ -692,7 +692,7 @@ public class CodeGenTest {
 		//VarDecAssignment varDecAssgnForConstructor = new VarDecAssignment(new VarDec(new IntType(), new Variable("number")), new NumberExp(50));
 		VarAssignment var = new VarAssignment(new Variable("id"), new NumberExp(50));
 
-		classes.add(new ClassDef(new ClassName("ClassOne"), new Constructor(emptyyVarDecs, var), varDecs, methodDefs));
+		classes.add(new ClassDef(new ClassName("ClassOne"), new Constructor(emptyyVarDecs, var), varDecs, methodDefs, new ArrayList<TypeVariable>()));
 		
 
 
@@ -701,14 +701,14 @@ public class CodeGenTest {
 		List<MethodDef> methodDefss = new ArrayList<>();
 		methodDefss.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getId"), emptyVarDecs, new ReturnExpStatement(new NumberExp(5))));
 		
-		classes.add(new ClassDef(new ClassName("Bran"), new Constructor(emptyyVarDecs, new VarAssignment(new Variable("name"), new VariableExp(new Variable("bran")))), new ClassName("ClassOne"), varDecsForSecondClass, methodDefss));
+		classes.add(new ClassDef(new ClassName("Bran"), new Constructor(emptyyVarDecs, new VarAssignment(new Variable("name"), new VariableExp(new Variable("bran")))), new Extends(new ClassName("ClassOne"), new ArrayList<Type>()), varDecsForSecondClass, methodDefss, new ArrayList<TypeVariable>()));
 
 
 		List<Exp> parameters = new ArrayList<>();
 		List<Exp> expressions = new ArrayList<>();
 
 		List<Statement> statements = new ArrayList<>();
-		statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("Bran")), new Variable("student")), new ClassExp(new ClassName("Bran"), parameters)));
+		statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("Bran"), new ArrayList<Type>()), new Variable("student")), new ClassExp(new ClassName("Bran"), new ArrayList<Type>(), parameters)));
 		
 
 		statements.add(new VarDecAssignment(new VarDec(new IntType(), new Variable("resultID")), new VarMethodExp(new Variable("student"), new MethodName("getId"), expressions)));
@@ -781,7 +781,7 @@ public class CodeGenTest {
 		//VarDecAssignment varDecAssgnForConstructor = new VarDecAssignment(new VarDec(new IntType(), new Variable("id")), new NumberExp(50));
 		VarAssignment var = new VarAssignment(new Variable("id"), new NumberExp(50));
 
-		classes.add(new ClassDef(new ClassName("ClassOne"), new Constructor(emptyyVarDecs, var), varDecs, methodDefs));
+		classes.add(new ClassDef(new ClassName("ClassOne"), new Constructor(emptyyVarDecs, var), varDecs, methodDefs, new ArrayList<TypeVariable>()));
 		
 		List<VarDec> param = new ArrayList<>();
 		param.add(new VarDec(new IntType(), new Variable("i")));
@@ -793,21 +793,21 @@ public class CodeGenTest {
 		methodDefss.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getId"), emptyVarDecs, new ReturnExpStatement(new NumberExp(5))));
 		methodDefss.add(new MethodDef(new PublicAccess(), new VoidType(), new MethodName("setId"), param, new VarAssignment(new Variable("id"), new VariableExp(new Variable("i")))));
 		
-		classes.add(new ClassDef(new ClassName("Bran"), new Constructor(emptyyVarDecs, new VarAssignment(new Variable("name"), new VariableExp(new Variable("bran")))), new ClassName("ClassOne"), varDecsForSecondClass, methodDefss));
+		classes.add(new ClassDef(new ClassName("Bran"), new Constructor(emptyyVarDecs, new VarAssignment(new Variable("name"), new VariableExp(new Variable("bran")))), new Extends(new ClassName("ClassOne"), new ArrayList<Type>()), varDecsForSecondClass, methodDefss, new ArrayList<TypeVariable>()));
 
 
 		List<MethodDef> methodDefsForSecondClass = new ArrayList<>();
 		methodDefsForSecondClass.add(new MethodDef(new PublicAccess(), new StringType(), new MethodName("getName"), emptyVarDecs, new ReturnExpStatement(new VariableExp(new Variable("name")))));
 
-		classes.add(new ClassDef(new ClassName("Arya"), new Constructor(emptyyVarDecs, new VarAssignment(new Variable("name"), new VariableExp(new Variable("arya")))), new ClassName("ClassOne"), varDecsForSecondClass, methodDefsForSecondClass));
+		classes.add(new ClassDef(new ClassName("Arya"), new Constructor(emptyyVarDecs, new VarAssignment(new Variable("name"), new VariableExp(new Variable("arya")))), new Extends(new ClassName("ClassOne"), new ArrayList<Type>()), varDecsForSecondClass, methodDefsForSecondClass, new ArrayList<TypeVariable>()));
 
 
 		List<Exp> parameters = new ArrayList<>();
 		List<Exp> expressions = new ArrayList<>();
 
 		List<Statement> statements = new ArrayList<>();
-		statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("Bran")), new Variable("bran")), new ClassExp(new ClassName("Bran"), parameters)));
-		statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("Arya")), new Variable("arya")), new ClassExp(new ClassName("Arya"), parameters)));
+		statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("Bran"), new ArrayList<Type>()), new Variable("bran")), new ClassExp(new ClassName("Bran"), new ArrayList<Type>(), parameters)));
+		statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("Arya"), new ArrayList<Type>()), new Variable("arya")), new ClassExp(new ClassName("Arya"), new ArrayList<Type>(), parameters)));
 		
 
 		statements.add(new VarDecAssignment(new VarDec(new IntType(), new Variable("iDisFive")), new VarMethodExp(new Variable("bran"), new MethodName("getId"), expressions)));
@@ -876,7 +876,7 @@ public class CodeGenTest {
 		//VarDecAssignment varDecAssgnForConstructor = new VarDecAssignment(new VarDec(new IntType(), new Variable("id")), new NumberExp(50));
 		VarAssignment var = new VarAssignment(new Variable("id"), new NumberExp(50));
 
-		classes.add(new ClassDef(new ClassName("ClassOne"), new Constructor(emptyyVarDecs, var), varDecs, methodDefs));
+		classes.add(new ClassDef(new ClassName("ClassOne"), new Constructor(emptyyVarDecs, var), varDecs, methodDefs, new ArrayList<TypeVariable>()));
 
 		List<VarDec> varDecsForSecondClass = new ArrayList<>();
 		varDecsForSecondClass.add(new VarDec(new StringType(), new Variable("name")));
@@ -888,21 +888,21 @@ public class CodeGenTest {
 		methodDefss.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getId"), emptyVarDecs, new ReturnExpStatement(new NumberExp(5))));
 		methodDefss.add(new MethodDef(new PublicAccess(), new VoidType(), new MethodName("setId"), param, new VarAssignment(new Variable("id"), new VariableExp(new Variable("i")))));
 		
-		classes.add(new ClassDef(new ClassName("Bran"), new Constructor(emptyyVarDecs, new VarAssignment(new Variable("name"), new VariableExp(new Variable("bran")))), new ClassName("ClassOne"), varDecsForSecondClass, methodDefss));
+		classes.add(new ClassDef(new ClassName("Bran"), new Constructor(emptyyVarDecs, new VarAssignment(new Variable("name"), new VariableExp(new Variable("bran")))), new Extends(new ClassName("ClassOne"), new ArrayList<Type>()), varDecsForSecondClass, methodDefss, new ArrayList<TypeVariable>()));
 
 
 		List<MethodDef> methodDefsForSecondClass = new ArrayList<>();
 		methodDefsForSecondClass.add(new MethodDef(new PublicAccess(), new StringType(), new MethodName("getName"), emptyVarDecs, new ReturnExpStatement(new VariableExp(new Variable("name")))));
 
-		classes.add(new ClassDef(new ClassName("Arya"), new Constructor(emptyyVarDecs, new VarAssignment(new Variable("name"), new VariableExp(new Variable("arya")))), new ClassName("Bran"), varDecsForSecondClass, methodDefsForSecondClass));
+		classes.add(new ClassDef(new ClassName("Arya"), new Constructor(emptyyVarDecs, new VarAssignment(new Variable("name"), new VariableExp(new Variable("arya")))), new Extends(new ClassName("Bran"), new ArrayList<Type>()), varDecsForSecondClass, methodDefsForSecondClass, new ArrayList<TypeVariable>()));
 
 
 		List<Exp> parameters = new ArrayList<>();
 		List<Exp> expressions = new ArrayList<>();
 
 		List<Statement> statements = new ArrayList<>();
-		statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("Bran")), new Variable("bran")), new ClassExp(new ClassName("Bran"), parameters)));
-		statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("Arya")), new Variable("arya")), new ClassExp(new ClassName("Arya"), parameters)));
+		statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("Bran"), new ArrayList<Type>()), new Variable("bran")), new ClassExp(new ClassName("Bran"), new ArrayList<Type>(), parameters)));
+		statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("Arya"), new ArrayList<Type>()), new Variable("arya")), new ClassExp(new ClassName("Arya"), new ArrayList<Type>(), parameters)));
 		
 
 		statements.add(new VarDecAssignment(new VarDec(new IntType(), new Variable("iDisFive")), new VarMethodExp(new Variable("bran"), new MethodName("getId"), expressions)));
@@ -978,7 +978,7 @@ public class CodeGenTest {
 		//VarDecAssignment varDecAssgnForConstructor = new VarDecAssignment(new VarDec(new IntType(), new Variable("id")), new NumberExp(50));
 		VarAssignment var = new VarAssignment(new Variable("id"), new NumberExp(50));
 
-		classes.add(new ClassDef(new ClassName("ClassOne"), new Constructor(emptyyVarDecs, var), varDecs, methodDefs));
+		classes.add(new ClassDef(new ClassName("ClassOne"), new Constructor(emptyyVarDecs, var), varDecs, methodDefs, new ArrayList<TypeVariable>()));
 
 		List<VarDec> varDecsForSecondClass = new ArrayList<>();
 		varDecsForSecondClass.add(new VarDec(new StringType(), new Variable("name")));
@@ -990,7 +990,7 @@ public class CodeGenTest {
 		methodDefss.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getId"), emptyVarDecs, new ReturnExpStatement(new NumberExp(5))));
 		methodDefss.add(new MethodDef(new PublicAccess(), new VoidType(), new MethodName("setId"), param, new VarAssignment(new Variable("id"), new VariableExp(new Variable("i")))));
 		
-		classes.add(new ClassDef(new ClassName("Bran"), new Constructor(emptyyVarDecs, new VarAssignment(new Variable("name"), new VariableExp(new Variable("bran")))), new ClassName("ClassOne"), varDecsForSecondClass, methodDefss));
+		classes.add(new ClassDef(new ClassName("Bran"), new Constructor(emptyyVarDecs, new VarAssignment(new Variable("name"), new VariableExp(new Variable("bran")))), new Extends(new ClassName("ClassOne"), new ArrayList<Type>()), varDecsForSecondClass, methodDefss, new ArrayList<TypeVariable>()));
 
 
 		List<MethodDef> methodDefsForSecondClass = new ArrayList<>();
@@ -998,15 +998,15 @@ public class CodeGenTest {
 		methodDefsForSecondClass.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getId"), emptyVarDecs, new ReturnExpStatement(new NumberExp(5))));
 		methodDefsForSecondClass.add(new MethodDef(new PublicAccess(), new VoidType(), new MethodName("setId"), param, new VarAssignment(new Variable("id"), new VariableExp(new Variable("i")))));
 		
-		classes.add(new ClassDef(new ClassName("Arya"), new Constructor(emptyyVarDecs, new VarAssignment(new Variable("name"), new VariableExp(new Variable("arya")))), new ClassName("Bran"), varDecsForSecondClass, methodDefsForSecondClass));
+		classes.add(new ClassDef(new ClassName("Arya"), new Constructor(emptyyVarDecs, new VarAssignment(new Variable("name"), new VariableExp(new Variable("arya")))), new Extends(new ClassName("Bran"), new ArrayList<Type>()), varDecsForSecondClass, methodDefsForSecondClass, new ArrayList<TypeVariable>()));
 
 
 		List<Exp> parameters = new ArrayList<>();
 		List<Exp> expressions = new ArrayList<>();
 
 		List<Statement> statements = new ArrayList<>();
-		statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("Bran")), new Variable("bran")), new ClassExp(new ClassName("Bran"), parameters)));
-		statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("Arya")), new Variable("arya")), new ClassExp(new ClassName("Arya"), parameters)));
+		statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("Bran"), new ArrayList<Type>()), new Variable("bran")), new ClassExp(new ClassName("Bran"), new ArrayList<Type>(), parameters)));
+		statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("Arya"), new ArrayList<Type>()), new Variable("arya")), new ClassExp(new ClassName("Arya"), new ArrayList<Type>(), parameters)));
 		
 
 		statements.add(new VarDecAssignment(new VarDec(new IntType(), new Variable("iDisFive")), new VarMethodExp(new Variable("bran"), new MethodName("getId"), expressions)));
@@ -1085,7 +1085,7 @@ public class CodeGenTest {
 		//VarDecAssignment varDecAssgnForConstructor = new VarDecAssignment(new VarDec(new IntType(), new Variable("number")), new NumberExp(50));
 		VarAssignment var = new VarAssignment(new Variable("id"), new NumberExp(50));
 
-		classes.add(new ClassDef(new ClassName("ClassOne"), new Constructor(emptyyVarDecs, var), varDecs, methodDefs));
+		classes.add(new ClassDef(new ClassName("ClassOne"), new Constructor(emptyyVarDecs, var), varDecs, methodDefs, new ArrayList<TypeVariable>()));
 		
 
 
@@ -1094,7 +1094,7 @@ public class CodeGenTest {
 		List<MethodDef> methodDefss = new ArrayList<>();
 		methodDefss.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getId"), emptyVarDecs, new ReturnExpStatement(new NumberExp(5))));
 		
-		classes.add(new ClassDef(new ClassName("Bran"), new Constructor(emptyyVarDecs, new VarAssignment(new Variable("name"), new VariableExp(new Variable("bran")))), new ClassName("ClassOne"), varDecsForSecondClass, methodDefss));
+		classes.add(new ClassDef(new ClassName("Bran"), new Constructor(emptyyVarDecs, new VarAssignment(new Variable("name"), new VariableExp(new Variable("bran")))), new Extends(new ClassName("ClassOne"), new ArrayList<Type>()), varDecsForSecondClass, methodDefss, new ArrayList<TypeVariable>()));
 
 		ArrayList<VarDec> varDecss = new ArrayList<>();
 		varDecss.add(new VarDec(new IntType(), new Variable("a")));
@@ -1104,21 +1104,21 @@ public class CodeGenTest {
 		methodDeff.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getA"), emptyVarDecs, new ReturnExpStatement(new VariableExp(new Variable("a")))));
 		VarAssignment varr = new VarAssignment(new Variable("a"), new NumberExp(50));
 
-		classes.add(new ClassDef(new ClassName("ClassTwo"), new Constructor(emptyyVarDecs, varr ), varDecss, methodDeff));
+		classes.add(new ClassDef(new ClassName("ClassTwo"), new Constructor(emptyyVarDecs, varr ), varDecss, methodDeff, new ArrayList<TypeVariable>()));
 
 
 		List<MethodDef> methodDefsForSecondClass = new ArrayList<>();
 		methodDefsForSecondClass.add(new MethodDef(new PublicAccess(), new StringType(), new MethodName("getName"), emptyVarDecs, new ReturnExpStatement(new VariableExp(new Variable("name")))));
 
-		classes.add(new ClassDef(new ClassName("Arya"), new Constructor(emptyyVarDecs, new VarAssignment(new Variable("name"), new VariableExp(new Variable("arya")))), new ClassName("ClassTwo"), varDecsForSecondClass, methodDefsForSecondClass));
+		classes.add(new ClassDef(new ClassName("Arya"), new Constructor(emptyyVarDecs, new VarAssignment(new Variable("name"), new VariableExp(new Variable("arya")))), new Extends(new ClassName("ClassTwo"), new ArrayList<Type>()), varDecsForSecondClass, methodDefsForSecondClass, new ArrayList<TypeVariable>()));
 
 
 		List<Exp> parameters = new ArrayList<>();
 		List<Exp> expressions = new ArrayList<>();
 
 		List<Statement> statements = new ArrayList<>();
-		statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("Bran")), new Variable("b")), new ClassExp(new ClassName("Bran"), parameters)));
-		statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("Arya")), new Variable("a")), new ClassExp(new ClassName("Arya"), parameters)));
+		statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("Bran"), new ArrayList<Type>()), new Variable("b")), new ClassExp(new ClassName("Bran"), new ArrayList<Type>(), parameters)));
+		statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("Arya"), new ArrayList<Type>()), new Variable("a")), new ClassExp(new ClassName("Arya"), new ArrayList<Type>(), parameters)));
 				
 
 		statements.add(new VarDecAssignment(new VarDec(new IntType(), new Variable("iDisFive")), new VarMethodExp(new Variable("b"), new MethodName("getId"), expressions)));
@@ -1196,19 +1196,19 @@ public class CodeGenTest {
 
 		List<Exp> parametersOne = new ArrayList<>();
 		parametersOne.add(new NumberExp(1));
-			statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("One")), new Variable("o")), new ClassExp(new ClassName("One"), parametersOne)));
+			statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("One"), new ArrayList<Type>()), new Variable("o")), new ClassExp(new ClassName("One"), new ArrayList<Type>(), parametersOne)));
 
 		List<Exp> parametersTwo = new ArrayList<>();
 		parametersTwo.add(new NumberExp(2));
-			statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("Two")), new Variable("t")), new ClassExp(new ClassName("Two"), parametersTwo)));
+			statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("Two"), new ArrayList<Type>()), new Variable("t")), new ClassExp(new ClassName("Two"), new ArrayList<Type>(), parametersTwo)));
 
 		List<Exp> parametersThree = new ArrayList<>();
 		parametersThree.add(new NumberExp(3));
-			statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("One")), new Variable("th")), new ClassExp(new ClassName("Three"), parametersThree)));
+			statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("One"), new ArrayList<Type>()), new Variable("th")), new ClassExp(new ClassName("Three"), new ArrayList<Type>(), parametersThree)));
 
 		List<Exp> parametersFour = new ArrayList<>();
 		parametersFour.add(new NumberExp(4));
-			statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("Four")), new Variable("f")), new ClassExp(new ClassName("Four"), parametersFour)));
+			statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("Four"), new ArrayList<Type>()), new Variable("f")), new ClassExp(new ClassName("Four"), new ArrayList<Type>(), parametersFour)));
 
 
 		ArrayList<VarDec> constructorVarDec = new ArrayList<>();
@@ -1220,7 +1220,7 @@ public class CodeGenTest {
 		List<MethodDef> methodDefsOne = new ArrayList<>();
 		methodDefsOne.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getOne"), emptyVarDecs, new ReturnExpStatement(new VariableExp(new Variable("one")))));
 
-		ClassDef classOne = new ClassDef(new ClassName("One"), new Constructor(constructorVarDec, new VarAssignment(new Variable("one"), new VariableExp(new Variable("i")))), varDecsOne, methodDefsOne);
+		ClassDef classOne = new ClassDef(new ClassName("One"), new Constructor(constructorVarDec, new VarAssignment(new Variable("one"), new VariableExp(new Variable("i")))), varDecsOne, methodDefsOne, new ArrayList<TypeVariable>());
 
 
 		List<VarDec> varDecsTwo = new ArrayList<>();
@@ -1230,7 +1230,7 @@ public class CodeGenTest {
 		methodDefsTwo.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getTwo"), emptyVarDecs, new ReturnExpStatement(new VariableExp(new Variable("two")))));
 		methodDefsTwo.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getOne"), emptyVarDecs, new ReturnExpStatement(new NumberExp(1)) ));
 
-		ClassDef classTwo = new ClassDef(new ClassName("Two"), new Constructor(constructorVarDec, new VarAssignment(new Variable("two"), new VariableExp(new Variable("i")))), new ClassName("One"),varDecsTwo, methodDefsTwo);
+		ClassDef classTwo = new ClassDef(new ClassName("Two"), new Constructor(constructorVarDec, new VarAssignment(new Variable("two"), new VariableExp(new Variable("i")))), new Extends(new ClassName("One"), new ArrayList<Type>()), varDecsTwo, methodDefsTwo, new ArrayList<TypeVariable>());
 		
 		
 		List<VarDec> varDecsThree = new ArrayList<>();
@@ -1239,7 +1239,7 @@ public class CodeGenTest {
 		List<MethodDef> methodDefsThree = new ArrayList<>();
 		methodDefsThree.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getThree"), emptyVarDecs, new ReturnExpStatement(new VariableExp(new Variable("three")))));
 		
-		ClassDef classThree = new ClassDef(new ClassName("Three"), new Constructor(constructorVarDec, new VarAssignment(new Variable("three"), new VariableExp(new Variable("i")))), new ClassName("Two"), varDecsThree, methodDefsThree);
+		ClassDef classThree = new ClassDef(new ClassName("Three"), new Constructor(constructorVarDec, new VarAssignment(new Variable("three"), new VariableExp(new Variable("i")))), new Extends(new ClassName("Two"), new ArrayList<Type>()), varDecsThree, methodDefsThree, new ArrayList<TypeVariable>());
 		
 		
 		List<VarDec> varDecsFour = new ArrayList<>();
@@ -1250,7 +1250,7 @@ public class CodeGenTest {
 		methodDefsFour.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getFour"), emptyVarDecs, new ReturnExpStatement(new VariableExp(new Variable("four")))));
 		
 
-		ClassDef classFour = new ClassDef(new ClassName("Four"), new Constructor(constructorVarDec, new VarAssignment(new Variable("four"), new VariableExp(new Variable("i")))), new ClassName("Three"), varDecsFour, methodDefsFour);
+		ClassDef classFour = new ClassDef(new ClassName("Four"), new Constructor(constructorVarDec, new VarAssignment(new Variable("four"), new VariableExp(new Variable("i")))), new Extends(new ClassName("Three"), new ArrayList<Type>()), varDecsFour, methodDefsFour, new ArrayList<TypeVariable>());
 
 		classes.add(classOne);
 		classes.add(classTwo);
