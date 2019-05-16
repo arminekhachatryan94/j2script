@@ -87,12 +87,24 @@ public class Codegen{
                     params += ",";
                 }
                 method += params;
-                method +="self) {\n\t" + md.body.toString() + "};";
 
+                method +="self) {";
+                Code.add(method);
             }
             else{
-                method +="self) {\n\t" + md.body.toString() + "};";
+                method +="self) {";
+                Code.add(method);
             }
+            if ( md.body instanceof Block){
+                Block b = (Block) md.body;
+                for (int i =0 ; i < b.statements.size();i++){
+                    compileStatement(md.body);
+                }
+            }
+            else{
+                compileStatement(md.body);
+            }
+            method += "};";
             Code.add(method);
             methodMap.put(md.name, md);
             offsets.put(md.name, count);
@@ -234,19 +246,25 @@ public class Codegen{
             compileWhileStmt((WhileStatement)stmt);
         }
         else if (stmt instanceof Block){
-
+            Block b = (Block) stmt;
+            for (int i=0; i < b.statements.size(); i++){
+                compileStatement(b.statements.get(i));
+            }
         }
         else if (stmt instanceof BreakStatement){
-            
+            BreakStatement bs = (BreakStatement) stmt;
+            Code.add(bs.toString() + ";");
         }
         else if (stmt instanceof PrintStatement){
-            
+            PrintStatement ps = (PrintStatement) stmt;
+            Code.add("console.log(" + ps.exp.emit() + ");");
         }
         else if (stmt instanceof ReturnExpStatement){
-            
+            ReturnExpStatement re= (ReturnExpStatement) stmt;
+            Code.add("return " + re.exp.emit() + ";");
         }
         else if (stmt instanceof ReturnVoidStatement){
-            compile 
+            Code.add("return;");
         }
         else if (stmt instanceof VarAssignment){
             compilevarassign((VarAssignment)stmt);
@@ -254,7 +272,10 @@ public class Codegen{
         }
         else if (stmt instanceof VarDecAssignment){
             compilevarDecAssign((VarDecAssignment)stmt);
-            
+        }
+        else{
+            Exp e = (Exp)stmt;
+            compileExp(e);
         }
     }
     // public String vardecHelper(VTableClassTable vt, String actualCode){
@@ -294,7 +315,7 @@ public class Codegen{
     //     }
     //     return actualCode;
     // }
-    public compilevarassign(Statement s){
+    public void compilevarassign(Statement s){
         VarAssignment va = (VarAssignment) s;
         String ActualCode = va.variable.toString() + " = " +va.exp.emit();
         Code.add(ActualCode);
@@ -330,8 +351,8 @@ public class Codegen{
         //Just run through the constructor
         if (vt.theClass.constructor.body instanceof Block){
             Block b = (Block) vt.theClass.constructor.body;
-            for (int i=0; i < b.statements.size();i++){
-                Statement s = b.statements.get(i);
+            for (int j=0; j < b.statements.size();j++){
+                Statement s = b.statements.get(j);
                 if (s instanceof SuperStatement){
                     SuperStatement ss = (SuperStatement) s;
                     List<Exp> superparams = ss.exp;
@@ -438,7 +459,7 @@ public class Codegen{
         }
         else{
             //Anything else int bool whatever
-            String actualCode = "var " + v.varDec.variable.toString() + " = " + v.varDec.exp.emit(); 
+            String actualCode = "var " + v.varDec.var.toString() + " = " + v.varDec.exp.emit(); 
             Code.add(actualCode);
         }
     }
