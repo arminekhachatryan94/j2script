@@ -472,6 +472,11 @@ public class Codegen{
             }
     
             actualCode += var + "." + "vtable[" + offs + "](" + params + var + ");";
+            Code.add(actualCode);
+        }
+        else if (v.exp instanceof VariableExp){
+
+            String actualCode = "var " + v.varDec.var.toString() + " = " + v.exp.emit();
         }
         else{
             //Anything else int bool whatever
