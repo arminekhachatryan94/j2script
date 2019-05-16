@@ -318,8 +318,8 @@ public class Codegen{
     public void compilevarassign(Statement s){
         VarAssignment va = (VarAssignment) s;
         if ( va.exp instanceof VarMethodExp){
-            String actualCode = "var " + v.varDec.var.toString() + " = ";
-            VarMethodExp e = (VarMethodExp)v.exp;
+            String actualCode = "var " + va.variable.toString() + " = ";
+            VarMethodExp e = (VarMethodExp)va.exp;
             //get the index of the offset in the vtable
             String var = e.var.toString();
             ClassName cn = objToClass.get(var);
