@@ -498,7 +498,13 @@ public class Codegen{
 
     public void compileVarMethodExp(Exp exp){
         VarMethodExp e = (VarMethodExp)exp;
-        Code.add(e.emit());
+        //get the index of the offset in the vtable
+        String var = e.var.toString();
+        ClassName cn = objToClass.get(var);
+        VTableClassTable vt = compmap.get(cn);
+        int offs = vt.offsets.get(e.methodName);
+        String actualCode = var + "." + "vtable[" + offs + "](" + var + ");";
+        Code.add(actualCode);
     }
     public void writeExptoFile(final Exp exp, final File file) throws IOException{
         final Codegen gen = new Codegen();
