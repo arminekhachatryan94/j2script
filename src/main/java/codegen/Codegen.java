@@ -459,7 +459,7 @@ public class Codegen{
         }
         else{
             //Anything else int bool whatever
-            String actualCode = "var " + v.varDec.var.toString() + " = " + v.varDec.exp.emit(); 
+            String actualCode = "var " + v.varDec.var.toString() + " = " + v.exp.emit(); 
             Code.add(actualCode);
         }
     }

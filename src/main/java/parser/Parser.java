@@ -285,7 +285,7 @@ public class Parser {
                 
             }
             resultpos++;
-            final Methodcall e = new Methodcall(name,parameters);
+            final MethodExp e = new MethodExp(name,parameters);
             return new ParseResult<Exp>(e, resultpos);
         }
         else{
