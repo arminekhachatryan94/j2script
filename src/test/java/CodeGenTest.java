@@ -388,7 +388,7 @@ public class CodeGenTest {
 		final ClassDef classOne = new ClassDef(new ClassName("Car"), new Constructor(varDecs, new VarDecAssignment(new VarDec(new BooleanType(), new Variable("name")), new VariableExp(new Variable("bmw")))), emptyVarDecs, methodDefs);
 		classes.add(classOne);
 		Program program = new Program(classes, new VarDecAssignment(new VarDec(new ClassType(new ClassName("Car")), new Variable("car")), new ClassExp(new ClassName("Car"), parameters)));
-		assertResultProgram("var Car_vtable = [];", program);
+		assertResultProgram("var Car_vtable = [];var car = {	vtable: Car_vtable}", program);
 	
 	
 
@@ -409,10 +409,11 @@ public class CodeGenTest {
 		//Car car = new Car();
 		//Boolean name = car.getName();
 
+
 		//var Car_getName = function(self) {return name;};
 		//var Car_vtable = [Car_getName];
-		//var car = {vtable: Car_vtable};
-		//car.vtable[0](car);
+		//var car = {	vtable: Car_vtable,	name: true}
+		//var name = car.vtable[0](car);
 
 		
 		List<VarDec> emptyVarDecs = new ArrayList<>();
@@ -439,12 +440,12 @@ public class CodeGenTest {
 		classes.add(classOne);
 
 		Program program = new Program(classes, new Block(statements));
-		assertResultProgram("", program);
+		assertResultProgram("var Car_getName = function(self) {return name;};var Car_vtable = [Car_getName];var car = {	vtable: Car_vtable,	name: true}var name = car.vtable[0](car);", program);
 		}
 
 
 
-	//@Test
+	@Test
 	public void testClasswithMethodsAndInstanceVar() throws IOException{
 		//class Car{
 			//Boolean name;
@@ -462,10 +463,12 @@ public class CodeGenTest {
 		//Car car = new Car(true);
 		//Boolean n = car.getName();
 
-
+		//OUTPUT
 		//var Car_getName = function(self) {return name;};
 		//var Car_setName = function(BooleanType bmw,self) {name = bmw};
 		//var Car_vtable = [Car_getName, Car_setName];
+		//var car = {	vtable: Car_vtable,	name: true}
+		//var n = car.vtable[0](car);
 		
 		List<VarDec> emptyVarDecs = new ArrayList<>();
 		List<VarDec> emptyyVarDecs = new ArrayList<>();
@@ -491,16 +494,14 @@ public class CodeGenTest {
 		classes.add(classOne);
 
 		Program program = new Program(classes, new Block(statements));
-		assertResultProgram("", program);
-		//assertResultProgram("var Car_getName = function(self) {	return name};var Car_setName = function(self) {	name = name};var Car_vtable = [Car_getName, Car_setName];", program);
-	}
+		assertResultProgram("var Car_getName = function(self) {return name;};var Car_setName = function(BooleanType bmw,self) {name = bmw};var Car_vtable = [Car_getName, Car_setName];var car = {	vtable: Car_vtable,	name: true}var n = car.vtable[0](car);", program);
+		}
 	
 
-	//@Test
+	@Test
 	public void testVirtualMethodCallWithInheritance() throws IOException {
 		/*class ClassOne {
 			int id;
-			int gpa;
 			constructor(){
 				id = 50;
 			} 
@@ -522,7 +523,6 @@ public class CodeGenTest {
 		Bran student = new Bran();
 
 		int resultID = studentOne.getId();
-		Boolean studentName = student.getName();
 		int studentId = student.getId();
 		*/
 
@@ -534,6 +534,7 @@ public class CodeGenTest {
 		//var ClassOne_vtable = [ClassOne_getId];
 		//var Bran_getName = function(self) {	return name};
 		//var Bran_vtable = [ClassOne_getId, Bran_getName];
+		//var 
 
 
 		List<ClassDef> classes = new ArrayList<>();
@@ -543,7 +544,7 @@ public class CodeGenTest {
 
 		ArrayList<VarDec> varDecs = new ArrayList<>();
 		varDecs.add(new VarDec(new IntType(), new Variable("id")));
-		varDecs.add(new VarDec(new IntType(), new Variable("gpa")));
+		//varDecs.add(new VarDec(new IntType(), new Variable("gpa")));
 
 		List<MethodDef> methodDefs = new ArrayList<>();
 		methodDefs.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getId"), emptyVarDecs, new ReturnExpStatement(new VariableExp(new Variable("id")))));
@@ -577,19 +578,17 @@ public class CodeGenTest {
 		
 
 		statements.add(new VarDecAssignment(new VarDec(new IntType(), new Variable("resultID")), new VarMethodExp(new Variable("studentOne"), new MethodName("getId"), expressions)));
-		statements.add(new VarDecAssignment(new VarDec(new BooleanType(), new Variable("studentName")), new VarMethodExp(new Variable("student"), new MethodName("getName"), expressions)));
-
 		statements.add(new VarDecAssignment(new VarDec(new IntType(), new Variable("studentID")), new VarMethodExp(new Variable("student"), new MethodName("getId"), expressions)));
 		
 		Statement st = new Block(statements);
 		Program program = new Program(classes, st);
-		assertResultProgram("", program);
+		assertResultProgram("ygfe", program);
 
 
 
 	}
 
-	//@Test
+	@Test
 	public void testOverloading() throws IOException {
 		/*class ClassOne {
 			int id;
@@ -666,7 +665,8 @@ public class CodeGenTest {
 		
 		Statement st = new Block(statements);
 		Program program = new Program(classes, st);
-		assertResultProgram("var ClassOne_setId = function(self) {	id = 1};var ClassOne_vtable = [ClassOne_setId];var Bran_setId = function(self) {	id = i};var Bran_vtable = [ClassOne_setId];", program);
+		assertResultProgram("", program);
+		//assertResultProgram("var ClassOne_setId = function(self) {	id = 1};var ClassOne_vtable = [ClassOne_setId];var Bran_setId = function(self) {	id = i};var Bran_vtable = [ClassOne_setId];", program);
 
 
 
