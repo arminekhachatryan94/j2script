@@ -375,7 +375,7 @@ public class TypeCheckerTest {
             Foo()
                 int x = 0;   
             private int methodA() {
-				return "what"; <-- return int 
+				return true; <-- return int 
             }
         }
         Foo y = Foo(); 
@@ -392,7 +392,16 @@ public class TypeCheckerTest {
     	);
 
     List<VarDec> varDec = new ArrayList<>(); //empty
-    methodDefs.add(new MethodDef(new PrivateAccess(), new IntType(), new MethodName("methodA"), varDec, new ReturnExpStatement(new StringExp(new StringName("what")))));
+    methodDefs.add(new MethodDef(
+        new PrivateAccess(), 
+        new IntType(), 
+        new MethodName("methodA"), 
+        varDec, 
+        new ReturnExpStatement(
+            new BoolExp(true)
+            )
+        )
+    );
    	classDef.add(new ClassDef(
     	new ClassName("Foo"), 
     	new Constructor(
@@ -918,7 +927,7 @@ public class TypeCheckerTest {
             Foo()
                 int x = 0;
         }
-        String y = "str"; <-- same variable name
+        Boolean y = true; <-- same variable name
         int y = 0;
     */
 
@@ -928,8 +937,8 @@ public class TypeCheckerTest {
     List<Exp> classExp = new ArrayList<>();
 
     Statement statementOne = new VarDecAssignment(
-        new VarDec(new StringType(), new Variable("y")), 
-        new StringExp(new StringName("str"))
+        new VarDec(new BooleanType(), new Variable("y")), 
+        new BoolExp(true)
         );
     Statement statementTwo = new VarDecAssignment(new VarDec(new IntType(), new Variable("y")), new NumberExp(0));
 
@@ -1739,7 +1748,7 @@ public class TypeCheckerTest {
 
     List<VarDec> varDec = new ArrayList<>(); //empty
     methodDefs.add(new MethodDef(new PrivateAccess(), new IntType(), new MethodName("methodA"), varDec, new ReturnExpStatement(new NumberExp(1))));
-    methodDefs.add(new MethodDef(new PrivateAccess(), new StringType(), new MethodName("methodA"), varDec, new ReturnExpStatement(new NumberExp(1))));
+    methodDefs.add(new MethodDef(new PrivateAccess(), new BooleanType(), new MethodName("methodA"), varDec, new ReturnExpStatement(new NumberExp(1))));
     
     classDef.add(new ClassDef(
         new ClassName("Foo"), 
@@ -1931,7 +1940,7 @@ public class TypeCheckerTest {
         /*
      class Boo {
         Boo()
-            PrintStatement("what");
+            PrintStatement(true);
         }
      class Foo extends Boo{
             Foo()
@@ -1958,7 +1967,7 @@ public class TypeCheckerTest {
         new ClassName("Boo"), 
         new Constructor(
             varDec, 
-            new PrintStatement(new StringExp(new StringName("what")))), 
+            new PrintStatement(new BoolExp(true))), 
         varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     classDef.add(new ClassDef(
@@ -2022,7 +2031,7 @@ public class TypeCheckerTest {
         /** class foo{
         int x;
         foo() 
-           print("what");
+           print(false);
         }
 
         Foo y = Foo();
@@ -2043,7 +2052,7 @@ public class TypeCheckerTest {
             new ClassName("Foo"), 
             new Constructor(
                 varDecEmpty, 
-                new PrintStatement(new StringExp(new StringName("what")))
+                new PrintStatement(new BoolExp(false))
                 ), 
             varDec, methodDefs, new ArrayList<TypeVariable>()));
 
@@ -2057,7 +2066,7 @@ public class TypeCheckerTest {
      class Foo{
             Foo()
                 if(true)
-                    printStatment("what");
+                    printStatment(true);
                 else
                     break; <-- only allowed in while loops
         }
@@ -2079,7 +2088,7 @@ public class TypeCheckerTest {
             varDec, 
             new IfStatement(new BoolExp(true), 
                 new BreakStatement(),
-                new PrintStatement(new StringExp(new StringName("what"))))
+                new PrintStatement(new BoolExp(true)))
             ), 
         varDec, methodDefs, new ArrayList<TypeVariable>()));
 

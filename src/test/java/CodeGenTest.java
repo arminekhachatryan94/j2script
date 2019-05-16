@@ -184,32 +184,27 @@ public class CodeGenTest {
 			new NumberExp(3)));
 	}
 
-	/* StringExp */
-	@Test 
-	public void testString() throws IOException {
-	        assertResult("\"Food\"", new StringExp(new StringName("Food")));
-	}
-
+	
 	@Test 
 	public void testbool() throws IOException {
 	        assertResult("false", new BoolExp(false));
 	}
 
 	/* Method Expression */
-	@Test // methodOne(4, stringName)
+	@Test // methodOne(4, intName)
 	public void testFucntionCall() throws IOException {
     List<Exp> expressions = new ArrayList<>();
-    Collections.addAll(expressions, new NumberExp(4), new VariableExp(new Variable("stringName")));
-	  assertResult("methodOne(4, stringName)", new VarMethodExp(new Variable("var"), new MethodName("methodOne"), expressions));
+    Collections.addAll(expressions, new NumberExp(4), new VariableExp(new Variable("intName")));
+	  assertResult("methodOne(4, intName)", new VarMethodExp(new Variable("var"), new MethodName("methodOne"), expressions));
 	}
 
 	/* Class Expression */
-	@Test // new Foo(4, "hello")
+	@Test // new Foo(4, true)
 	public void testClassObjects() throws IOException {
 		List<Exp> expressions = new ArrayList<>();
 		 expressions.add(new NumberExp(4));
-		 expressions.add(new StringExp(new StringName("hello")));
-	        assertResult("Foo(4, \"hello\")", new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), expressions));
+		 expressions.add(new BoolExp(true));
+	        assertResult("Foo(4, true)", new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), expressions));
 	}
 
 	/* Class Expression */
@@ -377,21 +372,21 @@ public class CodeGenTest {
 	@Test
 	public void testClass() throws IOException{
 		//class Car{
-			//constructor(String bmw) {
-				//String name = bmw;
+			//constructor(int bmw) {
+				//int name = bmw;
 			//}
 		//}
 
-		//Car car = new Car("bmw");
+		//Car car = new Car(4);
 
 		List<Exp> parameters = new ArrayList<>();
-		parameters.add(new StringExp(new StringName("bmw")));
+		parameters.add(new NumberExp(4));
 		List<VarDec> emptyVarDecs = new ArrayList<>();
 		ArrayList<VarDec> varDecs = new ArrayList<>();
-		varDecs.add(new VarDec(new StringType(), new Variable("bmw")));
+		varDecs.add(new VarDec(new IntType(), new Variable("bmw")));
 		List<MethodDef> methodDefs = new ArrayList<>();
 		List<ClassDef> classes = new ArrayList<>();
-		final ClassDef classOne = new ClassDef(new ClassName("Car"), new Constructor(varDecs, new VarDecAssignment(new VarDec(new StringType(), new Variable("name")), new VariableExp(new Variable("bmw")))), emptyVarDecs, methodDefs, new ArrayList<TypeVariable>());
+		final ClassDef classOne = new ClassDef(new ClassName("Car"), new Constructor(varDecs, new VarDecAssignment(new VarDec(new IntType(), new Variable("name")), new VariableExp(new Variable("bmw")))), emptyVarDecs, methodDefs, new ArrayList<TypeVariable>());
 		classes.add(classOne);
 		Program program = new Program(classes, new VarDecAssignment(new VarDec(new ClassType(new ClassName("Car"), new ArrayList<Type>()), new Variable("car")), new ClassExp(new ClassName("Car"), new ArrayList<Type>(), parameters)));
 		assertResultProgram("var Car_vtable = [];", program);
@@ -403,36 +398,36 @@ public class CodeGenTest {
 	@Test
 	public void testClasswithOneMethod() throws IOException{
 		//class Car{
-			//constructor(String bmw) {
-				//String name = bmw;
+			//constructor(int bmw) {
+				//int name = bmw;
 			//}
-			//public String getName(){
+			//public int getName(){
 				//return name;
 			//}
 		//}
 
-		//Car car = new Car("bmw");
-		//String name = car.getName();
+		//Car car = new Car(4);
+		//int name = car.getName();
 
 		
 		List<VarDec> emptyVarDecs = new ArrayList<>();
 		List<Exp> expressions = new ArrayList<>();
 
 		List<Exp> parameters = new ArrayList<>();
-		parameters.add(new StringExp(new StringName("bmw")));
+		parameters.add(new NumberExp(4));
 
 		ArrayList<VarDec> varDecs = new ArrayList<>();
-		varDecs.add(new VarDec(new StringType(), new Variable("bmw")));
+		varDecs.add(new VarDec(new IntType(), new Variable("bmw")));
 
 		List<MethodDef> methodDefs = new ArrayList<>();
-		methodDefs.add(new MethodDef(new PublicAccess(), new StringType(), new MethodName("getName"), emptyVarDecs, new ReturnExpStatement(new VariableExp(new Variable("name")))));
+		methodDefs.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getName"), emptyVarDecs, new ReturnExpStatement(new VariableExp(new Variable("name")))));
 	
 		List<Statement> statements = new ArrayList<>();
 		statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("Car"), new ArrayList<Type>()), new Variable("car")), new ClassExp(new ClassName("Car"), new ArrayList<Type>(), parameters)));
-		statements.add(new VarDecAssignment(new VarDec(new StringType(), new Variable("name")), new VarMethodExp(new Variable("car"), new MethodName("getName"), expressions)));
+		statements.add(new VarDecAssignment(new VarDec(new IntType(), new Variable("name")), new VarMethodExp(new Variable("car"), new MethodName("getName"), expressions)));
 		
 		List<ClassDef> classes = new ArrayList<>();
-		final ClassDef classOne = new ClassDef(new ClassName("Car"), new Constructor(varDecs, new VarDecAssignment(new VarDec(new StringType(), new Variable("name")), new VariableExp(new Variable("bmw")))), emptyVarDecs, methodDefs, new ArrayList<TypeVariable>());
+		final ClassDef classOne = new ClassDef(new ClassName("Car"), new Constructor(varDecs, new VarDecAssignment(new VarDec(new IntType(), new Variable("name")), new VariableExp(new Variable("bmw")))), emptyVarDecs, methodDefs, new ArrayList<TypeVariable>());
 		classes.add(classOne);
 
 		Program program = new Program(classes, new Block(statements));
@@ -442,40 +437,40 @@ public class CodeGenTest {
 	@Test
 	public void testClasswithMethodsAndInstanceVar() throws IOException{
 		//class Car{
-			//String name;
-			//constructor(String bmw) {
+			//int name;
+			//constructor(int bmw) {
 				//name = bmw;
 			//}
-			//public String getName(){
+			//public int getName(){
 				//return name;
 			//}
-			//public void setName(String bmw){
+			//public void setName(int bmw){
 				//name = bmw;
 			//}
 		//}
 
 		//Car car = new Car("bmw");
-		//String name = car.getName();
+		//int name = car.getName();
 
 		
 		List<VarDec> emptyVarDecs = new ArrayList<>();
 		List<Exp> expressions = new ArrayList<>();
 
 		List<Exp> parameters = new ArrayList<>();
-		parameters.add(new StringExp(new StringName("bmw")));
+		parameters.add(new NumberExp(4));
 
 		ArrayList<VarDec> varDecs = new ArrayList<>();
-		varDecs.add(new VarDec(new StringType(), new Variable("bmw")));
+		varDecs.add(new VarDec(new IntType(), new Variable("bmw")));
 
 		List<MethodDef> methodDefs = new ArrayList<>();
-		methodDefs.add(new MethodDef(new PublicAccess(), new StringType(), new MethodName("getName"), emptyVarDecs, new ReturnExpStatement(new VariableExp(new Variable("name")))));
+		methodDefs.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getName"), emptyVarDecs, new ReturnExpStatement(new VariableExp(new Variable("name")))));
 		methodDefs.add(new MethodDef(new PublicAccess(), new VoidType(), new MethodName("setName"), varDecs, new VarAssignment( new Variable("name"),new VariableExp(new Variable("name")))));
 	
 		List<Statement> statements = new ArrayList<>();
 		statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("Car"), new ArrayList<Type>()), new Variable("car")), new ClassExp(new ClassName("Car"), new ArrayList<Type>(), parameters)));
-		statements.add(new VarDecAssignment(new VarDec(new StringType(), new Variable("name")), new VarMethodExp(new Variable("car"), new MethodName("getName"), expressions)));
+		statements.add(new VarDecAssignment(new VarDec(new IntType(), new Variable("name")), new VarMethodExp(new Variable("car"), new MethodName("getName"), expressions)));
 		
-		emptyVarDecs.add(new VarDec(new StringType(), new Variable("name")));
+		emptyVarDecs.add(new VarDec(new IntType(), new Variable("name")));
 		List<ClassDef> classes = new ArrayList<>();
 		final ClassDef classOne = new ClassDef(new ClassName("Car"), new Constructor(varDecs, new VarAssignment(new Variable("name"), new VariableExp(new Variable("bmw")))), emptyVarDecs, methodDefs, new ArrayList<TypeVariable>());
 		classes.add(classOne);
@@ -498,11 +493,11 @@ public class CodeGenTest {
 			}
 		}
 		class Bran extends ClassOne{
-			String name;
+			int name;
 			constructor(){
 				name = "bran";
 			}
-			public String getName(){
+			public int getName(){
 				return name;
 			}
 		}
@@ -511,7 +506,7 @@ public class CodeGenTest {
 		Bran student = new Bran();
 
 		int resultID = studentOne.getId();
-		String studentName = student.getName();
+		int studentName = student.getName();
 		int studentId = student.getId();
 		*/
 
@@ -537,10 +532,10 @@ public class CodeGenTest {
 
 
 		List<VarDec> varDecsForSecondClass = new ArrayList<>();
-		varDecsForSecondClass.add(new VarDec(new StringType(), new Variable("name")));
+		varDecsForSecondClass.add(new VarDec(new IntType(), new Variable("name")));
 
 		List<MethodDef> methodDefsForSecondClass = new ArrayList<>();
-		methodDefsForSecondClass.add(new MethodDef(new PublicAccess(), new StringType(), new MethodName("getName"), emptyVarDecs, new ReturnExpStatement(new VariableExp(new Variable("name")))));
+		methodDefsForSecondClass.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getName"), emptyVarDecs, new ReturnExpStatement(new VariableExp(new Variable("name")))));
 
 		classes.add(new ClassDef(new ClassName("Bran"), new Constructor(emptyyVarDecs, new VarAssignment(new Variable("name"), new VariableExp(new Variable("bran")))), new Extends(new ClassName("ClassOne"), new ArrayList<Type>()), varDecsForSecondClass, methodDefsForSecondClass, new ArrayList<TypeVariable>()));
 
@@ -554,7 +549,7 @@ public class CodeGenTest {
 		
 
 		statements.add(new VarDecAssignment(new VarDec(new IntType(), new Variable("resultID")), new VarMethodExp(new Variable("studentOne"), new MethodName("getId"), expressions)));
-		statements.add(new VarDecAssignment(new VarDec(new StringType(), new Variable("studentName")), new VarMethodExp(new Variable("student"), new MethodName("getName"), expressions)));
+		statements.add(new VarDecAssignment(new VarDec(new IntType(), new Variable("studentName")), new VarMethodExp(new Variable("student"), new MethodName("getName"), expressions)));
 
 		statements.add(new VarDecAssignment(new VarDec(new IntType(), new Variable("studentID")), new VarMethodExp(new Variable("student"), new MethodName("getId"), expressions)));
 		
@@ -580,7 +575,7 @@ public class CodeGenTest {
 			}
 		}
 		class Bran extends ClassOne{
-			String name;
+			int name;
 			constructor(){
 				name = "bran";
 			}
@@ -593,7 +588,7 @@ public class CodeGenTest {
 		Bran student = new Bran();
 
 		int resultID = studentOne.getId();
-		String studentName = student.getName();
+		int studentName = student.getName();
 		int studentId = student.getId();
 		*/
 
@@ -620,7 +615,7 @@ public class CodeGenTest {
 		vardecc.add(new VarDec(new IntType(), new Variable("i")));
 
 		List<VarDec> varDecsForSecondClass = new ArrayList<>();
-		varDecsForSecondClass.add(new VarDec(new StringType(), new Variable("name")));
+		varDecsForSecondClass.add(new VarDec(new IntType(), new Variable("name")));
 
 		List<MethodDef> methodDefsForSecondClass = new ArrayList<>();
 		methodDefsForSecondClass.add(new MethodDef(new PublicAccess(), new VoidType(), new MethodName("setId"), vardecc, new VarAssignment(new Variable("id"), new VariableExp(new Variable("i")))));
@@ -637,7 +632,7 @@ public class CodeGenTest {
 		
 
 		statements.add(new VarDecAssignment(new VarDec(new IntType(), new Variable("resultID")), new VarMethodExp(new Variable("studentOne"), new MethodName("getId"), expressions)));
-		statements.add(new VarDecAssignment(new VarDec(new StringType(), new Variable("studentName")), new VarMethodExp(new Variable("student"), new MethodName("getName"), expressions)));
+		statements.add(new VarDecAssignment(new VarDec(new IntType(), new Variable("studentName")), new VarMethodExp(new Variable("student"), new MethodName("getName"), expressions)));
 
 		statements.add(new VarDecAssignment(new VarDec(new IntType(), new Variable("studentID")), new VarMethodExp(new Variable("student"), new MethodName("getId"), expressions)));
 		
@@ -662,7 +657,7 @@ public class CodeGenTest {
 			}
 		}
 		class Bran extends ClassOne{
-			String name;
+			int name;
 			constructor(){
 				name = "Bran";
 			}
@@ -697,7 +692,7 @@ public class CodeGenTest {
 
 
 		List<VarDec> varDecsForSecondClass = new ArrayList<>();
-		varDecsForSecondClass.add(new VarDec(new StringType(), new Variable("name")));
+		varDecsForSecondClass.add(new VarDec(new IntType(), new Variable("name")));
 		List<MethodDef> methodDefss = new ArrayList<>();
 		methodDefss.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getId"), emptyVarDecs, new ReturnExpStatement(new NumberExp(5))));
 		
@@ -732,7 +727,7 @@ public class CodeGenTest {
 			}
 		}
 		class Bran extends ClassOne{
-			String name;
+			int name;
 			constructor(){
 				name = "Bran";
 			}
@@ -744,11 +739,11 @@ public class CodeGenTest {
 			}
 		}
 		class Arya extends ClassOne{
-			String name;
+			int name;
 			constructor(){
 				name = "Arya"
 			}
-			public String getName(){
+			public int getName(){
 				return name;
 			}
 		}
@@ -788,7 +783,7 @@ public class CodeGenTest {
 
 
 		List<VarDec> varDecsForSecondClass = new ArrayList<>();
-		varDecsForSecondClass.add(new VarDec(new StringType(), new Variable("name")));
+		varDecsForSecondClass.add(new VarDec(new IntType(), new Variable("name")));
 		List<MethodDef> methodDefss = new ArrayList<>();
 		methodDefss.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getId"), emptyVarDecs, new ReturnExpStatement(new NumberExp(5))));
 		methodDefss.add(new MethodDef(new PublicAccess(), new VoidType(), new MethodName("setId"), param, new VarAssignment(new Variable("id"), new VariableExp(new Variable("i")))));
@@ -797,7 +792,7 @@ public class CodeGenTest {
 
 
 		List<MethodDef> methodDefsForSecondClass = new ArrayList<>();
-		methodDefsForSecondClass.add(new MethodDef(new PublicAccess(), new StringType(), new MethodName("getName"), emptyVarDecs, new ReturnExpStatement(new VariableExp(new Variable("name")))));
+		methodDefsForSecondClass.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getName"), emptyVarDecs, new ReturnExpStatement(new VariableExp(new Variable("name")))));
 
 		classes.add(new ClassDef(new ClassName("Arya"), new Constructor(emptyyVarDecs, new VarAssignment(new Variable("name"), new VariableExp(new Variable("arya")))), new Extends(new ClassName("ClassOne"), new ArrayList<Type>()), varDecsForSecondClass, methodDefsForSecondClass, new ArrayList<TypeVariable>()));
 
@@ -831,7 +826,7 @@ public class CodeGenTest {
 			}
 		}
 		class Bran extends ClassOne{
-			String name;
+			int name;
 			constructor(){
 				name = "Bran";
 			}
@@ -843,11 +838,11 @@ public class CodeGenTest {
 			}
 		}
 		class Arya extends Bran{
-			String name;
+			int name;
 			constructor(){
 				name = "Arya";
 			}
-			public String getName(){
+			public int getName(){
 				return name;
 			}
 		}
@@ -879,7 +874,7 @@ public class CodeGenTest {
 		classes.add(new ClassDef(new ClassName("ClassOne"), new Constructor(emptyyVarDecs, var), varDecs, methodDefs, new ArrayList<TypeVariable>()));
 
 		List<VarDec> varDecsForSecondClass = new ArrayList<>();
-		varDecsForSecondClass.add(new VarDec(new StringType(), new Variable("name")));
+		varDecsForSecondClass.add(new VarDec(new IntType(), new Variable("name")));
 
 		List<VarDec> param = new ArrayList<>();
 		param.add(new VarDec(new IntType(), new Variable("i")));
@@ -892,7 +887,7 @@ public class CodeGenTest {
 
 
 		List<MethodDef> methodDefsForSecondClass = new ArrayList<>();
-		methodDefsForSecondClass.add(new MethodDef(new PublicAccess(), new StringType(), new MethodName("getName"), emptyVarDecs, new ReturnExpStatement(new VariableExp(new Variable("name")))));
+		methodDefsForSecondClass.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getName"), emptyVarDecs, new ReturnExpStatement(new VariableExp(new Variable("name")))));
 
 		classes.add(new ClassDef(new ClassName("Arya"), new Constructor(emptyyVarDecs, new VarAssignment(new Variable("name"), new VariableExp(new Variable("arya")))), new Extends(new ClassName("Bran"), new ArrayList<Type>()), varDecsForSecondClass, methodDefsForSecondClass, new ArrayList<TypeVariable>()));
 
@@ -927,7 +922,7 @@ public class CodeGenTest {
 			}
 		}
 		class Bran extends ClassOne{
-			String name;
+			int name;
 			constructor(){
 				name = "Bran";
 			}
@@ -939,11 +934,11 @@ public class CodeGenTest {
 			}
 		}
 		class Arya extends Bran{
-			String name;
+			int name;
 			constructor(){
 				name = "Arya";
 			}
-			public String getName(){
+			public int getName(){
 				return name;
 			}
 			public int getId() {
@@ -981,7 +976,7 @@ public class CodeGenTest {
 		classes.add(new ClassDef(new ClassName("ClassOne"), new Constructor(emptyyVarDecs, var), varDecs, methodDefs, new ArrayList<TypeVariable>()));
 
 		List<VarDec> varDecsForSecondClass = new ArrayList<>();
-		varDecsForSecondClass.add(new VarDec(new StringType(), new Variable("name")));
+		varDecsForSecondClass.add(new VarDec(new IntType(), new Variable("name")));
 
 		List<VarDec> param = new ArrayList<>();
 		param.add(new VarDec(new IntType(), new Variable("i")));
@@ -994,7 +989,7 @@ public class CodeGenTest {
 
 
 		List<MethodDef> methodDefsForSecondClass = new ArrayList<>();
-		methodDefsForSecondClass.add(new MethodDef(new PublicAccess(), new StringType(), new MethodName("getName"), emptyVarDecs, new ReturnExpStatement(new VariableExp(new Variable("name")))));
+		methodDefsForSecondClass.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getName"), emptyVarDecs, new ReturnExpStatement(new VariableExp(new Variable("name")))));
 		methodDefsForSecondClass.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getId"), emptyVarDecs, new ReturnExpStatement(new NumberExp(5))));
 		methodDefsForSecondClass.add(new MethodDef(new PublicAccess(), new VoidType(), new MethodName("setId"), param, new VarAssignment(new Variable("id"), new VariableExp(new Variable("i")))));
 		
@@ -1033,7 +1028,7 @@ public class CodeGenTest {
 			}
 		}
 		class Bran extends ClassOne{
-			String name;
+			int name;
 			constructor(){
 				name = "Bran";
 			}
@@ -1053,7 +1048,7 @@ public class CodeGenTest {
 			}
 		}
 		class Arya extends ClassTwo{
-			String name;
+			int name;
 			constructor(){
 				name = "Arya";
 			}
@@ -1090,7 +1085,7 @@ public class CodeGenTest {
 
 
 		List<VarDec> varDecsForSecondClass = new ArrayList<>();
-		varDecsForSecondClass.add(new VarDec(new StringType(), new Variable("name")));
+		varDecsForSecondClass.add(new VarDec(new IntType(), new Variable("name")));
 		List<MethodDef> methodDefss = new ArrayList<>();
 		methodDefss.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getId"), emptyVarDecs, new ReturnExpStatement(new NumberExp(5))));
 		
@@ -1108,7 +1103,7 @@ public class CodeGenTest {
 
 
 		List<MethodDef> methodDefsForSecondClass = new ArrayList<>();
-		methodDefsForSecondClass.add(new MethodDef(new PublicAccess(), new StringType(), new MethodName("getName"), emptyVarDecs, new ReturnExpStatement(new VariableExp(new Variable("name")))));
+		methodDefsForSecondClass.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getName"), emptyVarDecs, new ReturnExpStatement(new VariableExp(new Variable("name")))));
 
 		classes.add(new ClassDef(new ClassName("Arya"), new Constructor(emptyyVarDecs, new VarAssignment(new Variable("name"), new VariableExp(new Variable("arya")))), new Extends(new ClassName("ClassTwo"), new ArrayList<Type>()), varDecsForSecondClass, methodDefsForSecondClass, new ArrayList<TypeVariable>()));
 
