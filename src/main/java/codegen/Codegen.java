@@ -457,6 +457,22 @@ public class Codegen{
             //     }
             // }
         }
+        else if ( v.exp instanceof VarMethodExp){
+            String actualCode = "var " + v.varDec.var.toString() + " = ";
+            VarMethodExp e = (VarMethodExp)v.exp;
+            //get the index of the offset in the vtable
+            String var = e.var.toString();
+            ClassName cn = objToClass.get(var);
+            VTableClassTable vt = compmap.get(cn);
+            int offs = vt.offsets.get(e.methodName);
+            String params = "";
+            for (int i = 0; i < e.parameters.size(); i++){
+                params += e.parameters.get(i).emit();
+                params += ", ";
+            }
+    
+            actualCode += var + "." + "vtable[" + offs + "](" + params + var + ");";
+        }
         else{
             //Anything else int bool whatever
             String actualCode = "var " + v.varDec.var.toString() + " = " + v.exp.emit(); 
