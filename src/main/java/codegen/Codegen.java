@@ -432,7 +432,9 @@ public class Codegen{
 
                 SuperStatement ss = (SuperStatement) s;
                 List<Exp> superparams = ss.exp;
-                VTableClassTable parent = compmap.get(vt.theClass.extendedClass.name);
+                VTableClassTable parent = compmap.get(vt.theClass.extendedClass);
+                System.out.println("The parents name is " + vt.theClass.extendedClass.name.toString());
+                System.out.println(parent != null);
                 varstostrings=compileObj(parent, varstostrings, superparams);
             }
             else if (s instanceof VarAssignment){
