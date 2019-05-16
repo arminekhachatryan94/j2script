@@ -98,7 +98,7 @@ public class Codegen{
             if ( md.body instanceof Block){
                 Block b = (Block) md.body;
                 for (int i =0 ; i < b.statements.size();i++){
-                    compileStatement(md.body);
+                    compileStatement(b.statements.get(i));
                 }
             }
             else{
