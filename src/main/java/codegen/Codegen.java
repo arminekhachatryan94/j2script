@@ -69,6 +69,19 @@ public class Codegen{
         for (ClassDef cls : prog.classDefs) {
             compileClass(cls);
         }
+        if (prog.statement instanceof Block){
+            Block b = (Block) prog.statement;
+            for(Statement stmt: b.statements){
+                compileStatement(stmt);
+            }
+        }
+        else{
+            compileStatement(prog.statement);
+        }
+        System.out.println("this is the endo  f the program");
+        for(String item : Code){
+            System.out.println(item);
+        }
         
     }
     public void compileParentclass(ClassDef cls){
