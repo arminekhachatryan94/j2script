@@ -70,15 +70,19 @@ public class Codegen{
             compileClass(cls);
         }
         if (prog.statement instanceof Block){
+            System.out.println("Working it is");
             Block b = (Block) prog.statement;
             for(Statement stmt: b.statements){
                 compileStatement(stmt);
             }
+            System.out.println("Working it");
         }
         else{
+            System.out.println("Working");
+
             compileStatement(prog.statement);
         }
-        System.out.println("this is the endo  f the program");
+        System.out.println("this is the endof the program");
         for(String item : Code){
             System.out.println(item);
         }
@@ -252,6 +256,7 @@ public class Codegen{
         }
     }
     public void compileStatement(Statement stmt){
+        System.out.println("in compile statement");
         if (stmt instanceof IfStatement){
             compileIfStmt((IfStatement)stmt);
         }
@@ -284,6 +289,7 @@ public class Codegen{
             
         }
         else if (stmt instanceof VarDecAssignment){
+            System.out.println("in vardec assignment");
             compilevarDecAssign((VarDecAssignment)stmt);
         }
         else{
@@ -382,7 +388,10 @@ public class Codegen{
     }
     public Map<String,String> compileObj(VTableClassTable vt, Map<String,String> varstostrings, List<Exp> actualparams){
         //Just run through the constructor
+        System.out.println("start of compileobj");
+        System.out.println(vt.theClass);
         if (vt.theClass.constructor.body instanceof Block){
+            System.out.println("start of compileobj if");
             Block b = (Block) vt.theClass.constructor.body;
             for (int j=0; j < b.statements.size();j++){
                 Statement s = b.statements.get(j);
@@ -417,7 +426,10 @@ public class Codegen{
         }
         else{
             Statement s = vt.theClass.constructor.body;
+            System.out.println("start of compileobj else");
             if (s instanceof SuperStatement){
+                System.out.println("start of seccompileobj else");
+
                 SuperStatement ss = (SuperStatement) s;
                 List<Exp> superparams = ss.exp;
                 VTableClassTable parent = compmap.get(vt.theClass.extendedClass.name);
@@ -426,6 +438,7 @@ public class Codegen{
             else if (s instanceof VarAssignment){
                 boolean hasFound = false;
                 VarAssignment va = (VarAssignment) s;
+                System.out.println("this worked");
                 //Now check va.exp.emit() compared to parameter, if equal substitute with actual param and write method and save to map from varstostrings
                 for (int i = 0; i < vt.theClass.constructor.parameters.size(); i++){
                     if (vt.theClass.constructor.parameters.get(i).var.toString() == va.exp.emit()){
@@ -435,6 +448,7 @@ public class Codegen{
                         hasFound = true;
                     }
                 }
+                System.out.println("this worked after for loop");
                 if (hasFound ==false){
                     String actualCode = ",\n\t" + va.variable.toString() + ": " + va.exp.emit();
                     varstostrings.put(va.variable.toString(), actualCode);
@@ -443,25 +457,34 @@ public class Codegen{
             }
             // compileobjHelper(s, vt, varstostrings, v);
         }
-
+        System.out.println("this worked");
         
         return varstostrings;
     }
     public void compilevarDecAssign(Statement stmt){
         //Assuming this type checks, check if it is a class type and if so then create a json with the appropriate fields.
         VarDecAssignment v = (VarDecAssignment)stmt;
+        System.out.println("in vardecassign");
         if (v.varDec.type instanceof ClassType && v.exp instanceof ClassExp){
+            System.out.println("in vardecassign for " + v.varDec.type.toString() + v.varDec.var.toString() );
             //Associate a variable to its string value incase you have to replace with child 
             Map<String, String> varstostrings = new HashMap<String,String>();
             //
             ClassExp c = (ClassExp)v.exp;
             List<Exp> params = c.parameters;
             ClassName cname = new ClassName(v.varDec.type.toString());
+            System.out.println("name of class is " + cname.toString());
+            for (Map.Entry<ClassName, VTableClassTable> item : compmap.entrySet()) {
+                System.out.println(item.getKey().toString());
+            }
             objToClass.put(v.varDec.var.toString(),cname);
             String actualCode = "var " + v.varDec.var.toString() + " = {\n\tvtable: " + cname.toString() + "_vtable";
             VTableClassTable vt = compmap.get(cname);
+            System.out.println(vt);
             
             varstostrings = compileObj(vt, varstostrings, params);
+            System.out.println("this worked" );
+
             for (Map.Entry<String, String> item : varstostrings.entrySet()) {
                 actualCode += item.getValue();
             }
@@ -579,6 +602,10 @@ public class Codegen{
     public void writeProgramtoFile(final Program program, final File file) throws IOException{
         final Codegen gen = new Codegen();
         gen.compileProgram(program);
+        System.out.println("this is the endof the program");
+        for(String item : Code){
+            System.out.println(item);
+        }
         gen.writeCompleteFile(file);
     }
     public void writeCompleteFile(final File file) throws IOException{

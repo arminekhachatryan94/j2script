@@ -24,6 +24,6 @@ public class ClassType implements Type {
     }
 
     public String toString() {
-        return "ClassType";
+        return name.toString();
     }
 }
