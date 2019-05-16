@@ -432,7 +432,7 @@ public class Codegen{
             for (Map.Entry<String, String> item : varstostrings.entrySet()) {
                 actualCode += item.getValue();
             }
-            actualCode += "}";
+            actualCode += "\n}";
             //Object has been instantiated, vtable first, then parent instantiated stuff then child instantiated stuff
             Code.add(actualCode);
             // //Check if it extends, were assuming super has been checked and exists. If it does extend, run parents constructor then do childs
