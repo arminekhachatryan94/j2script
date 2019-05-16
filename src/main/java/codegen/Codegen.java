@@ -79,7 +79,20 @@ public class Codegen{
         List<String> vTable = new ArrayList<>(); 
         String vtable = "var " + cls.name.toString() + "_" + "vtable = [";
         for (MethodDef md : cls.methodDefs) {
-            String method = "var " + cls.name.toString() + "_" + md.name.toString() + " = function(self) {\n\t" + md.body.toString() + "};" ;
+            String method = "var " + cls.name.toString() + "_" + md.name.toString() + " = function(" ;
+            if (md.varDecs.size() != 0){
+                String params= "";
+                for (int i = 0; i < md.varDecs.size();i++) {
+                    params += md.varDecs.get(i).toString();
+                    params += ",";
+                }
+                method += params;
+                method +="self) {\n\t" + md.body.toString() + "};";
+
+            }
+            else{
+                method +="self) {\n\t" + md.body.toString() + "};";
+            }
             Code.add(method);
             methodMap.put(md.name, md);
             offsets.put(md.name, count);
@@ -233,7 +246,7 @@ public class Codegen{
             
         }
         else if (stmt instanceof ReturnVoidStatement){
-            
+            compile 
         }
         else if (stmt instanceof VarAssignment){
             compilevarassign((VarAssignment)stmt);
@@ -282,7 +295,9 @@ public class Codegen{
     //     return actualCode;
     // }
     public compilevarassign(Statement s){
-        
+        VarAssignment va = (VarAssignment) s;
+        String ActualCode = va.variable.toString() + " = " +va.exp.emit();
+        Code.add(ActualCode);
     }
     public void compileobjHelper(Statement s, VTableClassTable vt, Map<String,String> varstostrings, VarDecAssignment v){
         // if (s instanceof VarAssignment){
