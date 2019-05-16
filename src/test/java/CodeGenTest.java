@@ -397,15 +397,16 @@ public class CodeGenTest {
 	@Test
 	public void testClasswithOneMethod() throws IOException{
 		//class Car{
-			//constructor(Boolean bmw) {
-				//Boolean name = bmw;
+			//boolean name;
+			//constructor() {
+				//name = true;
 			//}
 			//public Boolean getName(){
 				//return name;
 			//}
 		//}
 
-		//Car car = new Car("bmw");
+		//Car car = new Car();
 		//Boolean name = car.getName();
 
 		//var Car_getName = function(self) {return name;};
@@ -415,13 +416,14 @@ public class CodeGenTest {
 
 		
 		List<VarDec> emptyVarDecs = new ArrayList<>();
+		emptyVarDecs.add(new VarDec(new BooleanType(), new Variable("name")));
 		List<Exp> expressions = new ArrayList<>();
 
 		List<Exp> parameters = new ArrayList<>();
-		parameters.add(new BoolExp(true));
+		//parameters.add(new BoolExp(true));
 
 		ArrayList<VarDec> varDecs = new ArrayList<>();
-		varDecs.add(new VarDec(new BooleanType(), new Variable("bmw")));
+		//varDecs.add(new VarDec(new BooleanType(), new Variable("bmw")));
 
 		List<MethodDef> methodDefs = new ArrayList<>();
 		methodDefs.add(new MethodDef(new PublicAccess(), new BooleanType(), new MethodName("getName"), emptyVarDecs, new ReturnExpStatement(new VariableExp(new Variable("name")))));
@@ -431,11 +433,13 @@ public class CodeGenTest {
 		statements.add(new VarDecAssignment(new VarDec(new BooleanType(), new Variable("name")), new VarMethodExp(new Variable("car"), new MethodName("getName"), expressions)));
 		
 		List<ClassDef> classes = new ArrayList<>();
-		final ClassDef classOne = new ClassDef(new ClassName("Car"), new Constructor(varDecs, new VarDecAssignment(new VarDec(new BooleanType(), new Variable("name")), new VariableExp(new Variable("bmw")))), emptyVarDecs, methodDefs);
+		final ClassDef classOne = new ClassDef(new ClassName("Car"), 
+			new Constructor(varDecs, new VarAssignment(new Variable("name"), new BoolExp(true)))
+				, emptyVarDecs, methodDefs);
 		classes.add(classOne);
 
 		Program program = new Program(classes, new Block(statements));
-		assertResultProgram("var Car_getName = function(self) {return name;};var Car_vtable = [Car_getName];var car = {vtable: Car_vtable};car.vtable[0](car);", program);
+		assertResultProgram("", program);
 		}
 
 
