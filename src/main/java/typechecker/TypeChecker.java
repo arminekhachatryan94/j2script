@@ -47,7 +47,8 @@ public class TypeChecker {
 
     public static boolean isPrimitive(Type type) {
         return type.equals(new IntType()) || 
-               type.equals(new BooleanType());
+               type.equals(new BooleanType()) ||
+               type.equals(new VoidType());
     }
 
     private Constructor getConstructor(final ClassName onClass) throws TypeErrorException{

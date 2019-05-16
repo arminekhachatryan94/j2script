@@ -47,7 +47,7 @@ public class TypeRewriter {
     public List<VarDec> rewriteVarDecs(final List<VarDec> vardecs) {
         final List<VarDec> result = new ArrayList<VarDec>(vardecs.size());
         for (int index = 0; index < vardecs.size(); index++) {
-            result.set(index, rewriteVarDec(vardecs.get(index)));
+            result.add(rewriteVarDec(vardecs.get(index)));
         }
         return result;
     } // rewriteVarDecs
