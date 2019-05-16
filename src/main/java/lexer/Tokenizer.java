@@ -52,6 +52,10 @@ public class Tokenizer {
         inputPos = 0;
     }
 
+    public static boolean isTokenString(final String input) {
+        return TOKEN_MAPPING.containsKey(input);
+    }
+
     private void skipWhitespace() {
         //Advances input position past whitespace
         while (inputPos < input.length &&
@@ -114,14 +118,12 @@ public class Tokenizer {
     private VariableToken tryTokenizeVariable() {
         final int initialInputPos = inputPos;
         String name = "";
-        
-        //The first character must be a letter.
+
         if (Character.isLetter(input[inputPos])) {
             name += input[inputPos];
-            inputPos++;
-            //The rest of the characters are letters or digits. No underscores allowed.
+            inputPos++;            
             while (inputPos < input.length &&
-                    Character.isLetterOrDigit(input[inputPos])) {
+                   Character.isLetterOrDigit(input[inputPos])) {
                 name += input[inputPos];
                 inputPos++;
             }
@@ -130,7 +132,14 @@ public class Tokenizer {
             inputPos = initialInputPos;
             return null;
         }
-        return new VariableToken(name);
+
+        if (isTokenString(name)) {
+            // reset position
+            inputPos = initialInputPos;
+            return null;
+        } else {
+            return new VariableToken(name);
+}
     }    
     
     // returns null if there are no more tokens

@@ -199,11 +199,10 @@ public class TokenizerTest {
     // Lazy plz ignore
     @Test
     public void testRestOfTokens() {
-        assertTokenizes("println return new this class;", new Token[]{
+        assertTokenizes("println return new class;", new Token[]{
             new PrintToken(),
             new ReturnToken(),
             new NewToken(),
-            new ThisToken(),
             new ClassToken(),
             new SemiToken()
         });
