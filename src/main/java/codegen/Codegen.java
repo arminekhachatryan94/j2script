@@ -503,7 +503,13 @@ public class Codegen{
         ClassName cn = objToClass.get(var);
         VTableClassTable vt = compmap.get(cn);
         int offs = vt.offsets.get(e.methodName);
-        String actualCode = var + "." + "vtable[" + offs + "](" + var + ");";
+        String params = "";
+        for (int i = 0; i < e.parameters.size(); i++){
+            params += e.parameters.get(i).emit();
+            params += ", ";
+        }
+
+        String actualCode = var + "." + "vtable[" + offs + "](" + params + var + ");";
         Code.add(actualCode);
     }
     public void writeExptoFile(final Exp exp, final File file) throws IOException{
