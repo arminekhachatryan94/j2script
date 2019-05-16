@@ -10,8 +10,8 @@ import java.util.List;
 
 public class ClassDef {
     public final ClassName name;
-    public final Extends extendedClass;
     public final Constructor constructor;
+    public final Extends extendedClass;
     public final List<VarDec> instanceVars;
     public final List<MethodDef> methodDefs;
     public final List<TypeVariable> typeVariables;

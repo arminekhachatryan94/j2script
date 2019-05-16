@@ -183,7 +183,7 @@ public class Parser {
     }
     private boolean ensureToken(final int position, final Token expected) throws ParserException {
         final Token tokenHere = tokens.get(position);
-        System.out.println("We are in ensure token");
+        // System.out.println("We are in ensure token");
         if (!expected.equals(tokenHere)) {
             return false;
         }
@@ -538,7 +538,7 @@ public class Parser {
         Program resultProgram = null;
         List<ClassDef> classdefs = new ArrayList<ClassDef>();
         int resultpos=startPos;
-        System.out.println("We are in parse program");
+        // System.out.println("We are in parse program");
         //If it is a variable token and that token is Class, this is a class def
         while (ensureToken(resultpos, new ClassToken())){
             if (ensureToken(resultpos + 1, new VariableToken()) ){
@@ -556,7 +556,7 @@ public class Parser {
         || ensureToken(resultpos, new BreakToken()) || ensureToken(resultpos, new PrintToken()) 
         || ensureToken(resultpos, new IntToken()) || ensureToken(resultpos, new BooleanToken())
         || ensureToken(resultpos, new StringToken()) || ensureToken(resultpos, new LeftCurlyToken())){
-            System.out.println("We are in statement part of program");
+            // System.out.println("We are in statement part of program");
             final ParseResult Statemnt = parseStatement(resultpos);
             resultProgram = new Program(classdefs, (Statement)Statemnt.result);
             resultpos = Statemnt.tokenPos;
@@ -569,14 +569,14 @@ public class Parser {
         return new ParseResult<Program>(resultProgram, resultpos);
     }
     public Program parseMe() throws ParserException {
-        System.out.println("Hello");
+        // System.out.println("Hello");
         final ParseResult<Program> result = parseProgram(0);
 
-        if(result.tokenPos == tokens.size() +1){
+        if(result.tokenPos >= tokens.size()){
             return result.result;
         }
         else{
-            throw new ParserException("Extra tokens at " + result.tokenPos);
+            throw new ParserException("Extra token " + tokens.get(result.tokenPos) + " token at " + result.tokenPos);
         }
     }
 }
