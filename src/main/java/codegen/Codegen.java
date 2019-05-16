@@ -104,7 +104,7 @@ public class Codegen{
             else{
                 compileStatement(md.body);
             }
-            method += "};";
+            method = "};";
             Code.add(method);
             methodMap.put(md.name, md);
             offsets.put(md.name, count);
