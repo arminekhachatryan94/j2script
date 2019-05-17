@@ -714,4 +714,647 @@ public class ParserTest {
 		Program program = new Program(classDef, null);
 		assertParses(tokens, program);
 	}
+
+    @Test
+    public void testExtendedClassWithInstanceVars() {
+        /*
+            class Foo<> {
+                int key;
+                boolean value;
+
+                constructor(int initKey, boolean initValue) {
+                    key = initKey;
+                    value = initValue;
+                }
+            }
+
+            class Bar<> extends Foo<> {
+                constructor(){super(5, true)}
+            }
+        */
+
+        final ArrayList<Token> tokens = new ArrayList<>();
+        tokens.add(new ClassToken());
+        tokens.add(new VariableToken("Foo"));
+        tokens.add(new LessThanToken());
+        tokens.add(new GreaterThanToken());
+        tokens.add(new LeftCurlyToken());
+        tokens.add(new IntToken());
+        tokens.add(new VariableToken("key"));
+        tokens.add(new SemiToken());
+        tokens.add(new BooleanToken());
+        tokens.add(new VariableToken("value"));
+        tokens.add(new SemiToken());
+        tokens.add(new ConstructorToken());
+        tokens.add(new LeftParenToken());
+        tokens.add(new IntToken());
+        tokens.add(new VariableToken("initKey"));
+        tokens.add(new CommaToken());
+        tokens.add(new BooleanToken());
+        tokens.add(new VariableToken("initValue"));
+        tokens.add(new RightParenToken());
+        tokens.add(new LeftCurlyToken());
+        tokens.add(new VariableToken("key"));
+        tokens.add(new EqualToken());
+        tokens.add(new VariableToken("initKey"));
+        tokens.add(new SemiToken());
+        tokens.add(new VariableToken("value"));
+        tokens.add(new EqualToken());
+        tokens.add(new VariableToken("initValue"));
+        tokens.add(new SemiToken());
+        tokens.add(new RightCurlyToken());
+
+        tokens.add(new ClassToken());
+        tokens.add(new VariableToken("Bar"));
+        tokens.add(new LessThanToken());
+        tokens.add(new GreaterThanToken());
+        tokens.add(new ExtendsToken());
+        tokens.add(new VariableToken("Foo"));
+        tokens.add(new LessThanToken());
+        tokens.add(new GreaterThanToken());
+        tokens.add(new LeftCurlyToken());
+        tokens.add(new ConstructorToken());
+        tokens.add(new LeftParenToken());
+        tokens.add(new RightParenToken());
+        tokens.add(new LeftCurlyToken());
+        tokens.add(new SuperToken());
+        tokens.add(new NumberToken(5));
+        tokens.add(new CommaToken());
+        tokens.add(new TrueToken());
+        tokens.add(new RightParenToken());
+        tokens.add(new RightCurlyToken());
+        tokens.add(new RightCurlyToken());
+
+        final List<VarDec> insDec = new ArrayList<>();
+		insDec.add(new VarDec(new TypeVariable(), new Variable("key")));
+        insDec.add(new VarDec(new TypeVariable(), new Variable("value")));
+
+		final List<VarDec> constructVarDec = new ArrayList<>();
+        constructVarDec.add(new VarDec(new IntType(), new Variable("initKey")));
+        constructVarDec.add(new VarDec(new BooleanType(), new Variable("initValue")));
+
+        final ArrayList<Statement> contructStatements = new ArrayList<>();
+        contructStatements.add(new VarAssignment(new Variable("key"), new VariableExp(new Variable("initKey"))));
+        contructStatements.add(new VarAssignment(new Variable("value"), new VariableExp(new Variable("initValue"))));
+
+        final Block contructStatement = new Block(contructStatements);
+
+        Constructor constructor = new Constructor(constructVarDec, contructStatement);
+
+		final List<MethodDef> methodDef = new ArrayList<>();
+
+        List<TypeVariable> typeVars =  new ArrayList<>();
+
+		final List<ClassDef> classDef = new ArrayList<>();
+        classDef.add(new ClassDef(
+            new ClassName("Foo"),
+            constructor,
+            null,
+            insDec,
+            methodDef,
+            typeVars
+        ));
+
+        final List<Exp> superVars = new ArrayList<>();
+        superVars.add(new NumberExp(5));
+        superVars.add(new BoolExp(true));
+
+        final List<Type> types = new ArrayList<>();
+
+        classDef.add(new ClassDef(
+            new ClassName("Bar"),
+            new Constructor(new ArrayList<>(), new SuperStatement(superVars)),
+            new Extends(new ClassName("Foo"), types),
+            new ArrayList<>(),
+            new ArrayList<>(),
+            new ArrayList<>()
+        ));
+
+		Program program = new Program(classDef, null);
+		assertParses(tokens, program);
+    }
+
+    @Test
+    public void testGenericClassWithInstanceVars() {
+        /*
+            class Foo<T, V> {
+                T key;
+                V value;
+
+                constructor(T initKey, V initValue) {
+                    key = initKey;
+                    value = initValue;
+                }
+            }
+        */
+
+        final ArrayList<Token> tokens = new ArrayList<>();
+        tokens.add(new ClassToken());
+        tokens.add(new VariableToken("Foo"));
+        tokens.add(new LessThanToken());
+        tokens.add(new VariableToken("T"));
+        tokens.add(new CommaToken());
+        tokens.add(new VariableToken("V"));
+        tokens.add(new GreaterThanToken());
+        tokens.add(new LeftCurlyToken());
+        tokens.add(new VariableToken("T"));
+        tokens.add(new VariableToken("key"));
+        tokens.add(new SemiToken());
+        tokens.add(new VariableToken("V"));
+        tokens.add(new VariableToken("value"));
+        tokens.add(new SemiToken());
+        tokens.add(new ConstructorToken());
+        tokens.add(new LeftParenToken());
+        tokens.add(new VariableToken("T"));
+        tokens.add(new VariableToken("initKey"));
+        tokens.add(new CommaToken());
+        tokens.add(new VariableToken("V"));
+        tokens.add(new VariableToken("initValue"));
+        tokens.add(new RightParenToken());
+        tokens.add(new LeftCurlyToken());
+        tokens.add(new VariableToken("key"));
+        tokens.add(new EqualToken());
+        tokens.add(new VariableToken("initKey"));
+        tokens.add(new SemiToken());
+        tokens.add(new VariableToken("value"));
+        tokens.add(new EqualToken());
+        tokens.add(new VariableToken("initValue"));
+        tokens.add(new SemiToken());
+        tokens.add(new RightCurlyToken());
+        tokens.add(new RightCurlyToken());
+
+        final List<VarDec> insDec = new ArrayList<>();
+		insDec.add(new VarDec(new TypeVariable(), new Variable("key")));
+        insDec.add(new VarDec(new TypeVariable(), new Variable("value")));
+
+		final List<VarDec> constructVarDec = new ArrayList<>();
+        constructVarDec.add(new VarDec(new TypeVariable(), new Variable("initKey")));
+        constructVarDec.add(new VarDec(new TypeVariable(), new Variable("initValue")));
+
+        final Statement contructStatement = new VarAssignment(new Variable("x"), new NumberExp(0));
+
+        Constructor constructor = new Constructor(constructVarDec, contructStatement);
+
+		final List<VarDec> method1VarDec = new ArrayList<>();
+
+        final List<VarDec> method2VarDec = new ArrayList<>();
+
+		final List<MethodDef> methodDef = new ArrayList<>();
+
+        List<TypeVariable> typeVars =  new ArrayList<>();
+        typeVars.add(new TypeVariable());
+        typeVars.add(new TypeVariable());
+
+		final List<ClassDef> classDef = new ArrayList<>();
+        classDef.add(new ClassDef(
+            new ClassName("Foo"),
+            constructor,
+            null,
+            insDec,
+            methodDef,
+            typeVars
+        ));
+
+		Program program = new Program(classDef, null);
+		assertParses(tokens, program);
+    }
+
+    @Test
+    public void testGenericClassWithInstanceVarsandMethods() {
+        /*
+            class Foo<T, V> {
+                T key;
+                V value;
+
+                constructor(T initKey, V initValue) {
+                    key = initKey;
+                    value = initValue;
+                }
+
+                public T getKey() {
+                    return key;
+                }
+
+                public V getValue() {
+                    return value;
+                }
+            }
+        */
+
+        final ArrayList<Token> tokens = new ArrayList<>();
+        tokens.add(new ClassToken());
+        tokens.add(new VariableToken("Foo"));
+        tokens.add(new LessThanToken());
+        tokens.add(new VariableToken("T"));
+        tokens.add(new CommaToken());
+        tokens.add(new VariableToken("V"));
+        tokens.add(new GreaterThanToken());
+        tokens.add(new LeftCurlyToken());
+        tokens.add(new VariableToken("T"));
+        tokens.add(new VariableToken("key"));
+        tokens.add(new SemiToken());
+        tokens.add(new VariableToken("V"));
+        tokens.add(new VariableToken("value"));
+        tokens.add(new SemiToken());
+        tokens.add(new ConstructorToken());
+        tokens.add(new LeftParenToken());
+        tokens.add(new VariableToken("T"));
+        tokens.add(new VariableToken("initKey"));
+        tokens.add(new CommaToken());
+        tokens.add(new VariableToken("V"));
+        tokens.add(new VariableToken("initValue"));
+        tokens.add(new RightParenToken());
+        tokens.add(new LeftCurlyToken());
+        tokens.add(new VariableToken("key"));
+        tokens.add(new EqualToken());
+        tokens.add(new VariableToken("initKey"));
+        tokens.add(new SemiToken());
+        tokens.add(new VariableToken("value"));
+        tokens.add(new EqualToken());
+        tokens.add(new VariableToken("initValue"));
+        tokens.add(new SemiToken());
+        tokens.add(new RightCurlyToken());
+
+        tokens.add(new PublicToken());
+        tokens.add(new VariableToken("T"));
+        tokens.add(new VariableToken("getKey"));
+        tokens.add(new LeftParenToken());
+        tokens.add(new RightParenToken());
+        tokens.add(new LeftCurlyToken());
+        tokens.add(new ReturnToken());
+        tokens.add(new VariableToken("key"));
+        tokens.add(new SemiToken());
+        tokens.add(new RightCurlyToken());
+
+        tokens.add(new PublicToken());
+        tokens.add(new VariableToken("K"));
+        tokens.add(new VariableToken("getValue"));
+        tokens.add(new LeftParenToken());
+        tokens.add(new RightParenToken());
+        tokens.add(new LeftCurlyToken());
+        tokens.add(new ReturnToken());
+        tokens.add(new VariableToken("value"));
+        tokens.add(new SemiToken());
+        tokens.add(new RightCurlyToken());
+
+        tokens.add(new RightCurlyToken());
+
+    	final List<VarDec> insDec = new ArrayList<>();
+		insDec.add(new VarDec(new TypeVariable(), new Variable("key")));
+        insDec.add(new VarDec(new TypeVariable(), new Variable("value")));
+
+		final List<VarDec> constructVarDec = new ArrayList<>();
+        constructVarDec.add(new VarDec(new TypeVariable(), new Variable("initKey")));
+        constructVarDec.add(new VarDec(new TypeVariable(), new Variable("initValue")));
+
+        final Statement contructStatement = new VarAssignment(new Variable("x"), new NumberExp(0));
+
+        Constructor constructor = new Constructor(constructVarDec, contructStatement);
+
+		final List<VarDec> method1VarDec = new ArrayList<>();
+
+        final List<VarDec> method2VarDec = new ArrayList<>();
+
+		final List<MethodDef> methodDef = new ArrayList<>();
+		methodDef.add(new MethodDef(
+            new PublicAccess(),
+            new TypeVariable(),
+            new MethodName("getKey"),
+            method1VarDec,
+            new ReturnExpStatement(new VariableExp(new Variable("key"))))
+        );
+        methodDef.add(new MethodDef(
+            new PublicAccess(),
+            new TypeVariable(),
+            new MethodName("getValue"),
+            method2VarDec,
+            new ReturnExpStatement(new VariableExp(new Variable("value"))))
+        );
+
+        List<TypeVariable> typeVars =  new ArrayList<>();
+        typeVars.add(new TypeVariable());
+        typeVars.add(new TypeVariable());
+
+		final List<ClassDef> classDef = new ArrayList<>();
+        classDef.add(new ClassDef(
+            new ClassName("Foo"),
+            constructor,
+            null,
+            insDec,
+            methodDef,
+            typeVars
+        ));
+
+		Program program = new Program(classDef, null);
+		assertParses(tokens, program);
+    }
+
+    @Test
+    public void testGenericClassWithInstanceVarsMethodsandStatements() {
+        /*
+            class Foo<T, V> {
+                T key;
+                V value;
+
+                constructor(T initKey, V initValue) {
+                    key = initKey;
+                    value = initValue;
+                }
+
+                public T getKey() {
+                    return key;
+                }
+
+                public V getValue() {
+                    return value;
+                }
+            }
+
+            Foo f = new Foo<int, boolean>(5, true);
+            println(f.getKey());
+        */
+
+        final ArrayList<Token> tokens = new ArrayList<>();
+        tokens.add(new ClassToken());
+        tokens.add(new VariableToken("Foo"));
+        tokens.add(new LessThanToken());
+        tokens.add(new VariableToken("T"));
+        tokens.add(new CommaToken());
+        tokens.add(new VariableToken("V"));
+        tokens.add(new GreaterThanToken());
+        tokens.add(new LeftCurlyToken());
+        tokens.add(new VariableToken("T"));
+        tokens.add(new VariableToken("key"));
+        tokens.add(new SemiToken());
+        tokens.add(new VariableToken("V"));
+        tokens.add(new VariableToken("value"));
+        tokens.add(new SemiToken());
+        tokens.add(new ConstructorToken());
+        tokens.add(new LeftParenToken());
+        tokens.add(new VariableToken("T"));
+        tokens.add(new VariableToken("initKey"));
+        tokens.add(new CommaToken());
+        tokens.add(new VariableToken("V"));
+        tokens.add(new VariableToken("initValue"));
+        tokens.add(new RightParenToken());
+        tokens.add(new LeftCurlyToken());
+        tokens.add(new VariableToken("key"));
+        tokens.add(new EqualToken());
+        tokens.add(new VariableToken("initKey"));
+        tokens.add(new SemiToken());
+        tokens.add(new VariableToken("value"));
+        tokens.add(new EqualToken());
+        tokens.add(new VariableToken("initValue"));
+        tokens.add(new SemiToken());
+        tokens.add(new RightCurlyToken());
+
+        tokens.add(new PublicToken());
+        tokens.add(new VariableToken("T"));
+        tokens.add(new VariableToken("getKey"));
+        tokens.add(new LeftParenToken());
+        tokens.add(new RightParenToken());
+        tokens.add(new LeftCurlyToken());
+        tokens.add(new ReturnToken());
+        tokens.add(new VariableToken("key"));
+        tokens.add(new SemiToken());
+        tokens.add(new RightCurlyToken());
+
+        tokens.add(new PublicToken());
+        tokens.add(new VariableToken("K"));
+        tokens.add(new VariableToken("getValue"));
+        tokens.add(new LeftParenToken());
+        tokens.add(new RightParenToken());
+        tokens.add(new LeftCurlyToken());
+        tokens.add(new ReturnToken());
+        tokens.add(new VariableToken("value"));
+        tokens.add(new SemiToken());
+        tokens.add(new RightCurlyToken());
+
+        tokens.add(new RightCurlyToken());
+
+        tokens.add(new VariableToken("Foo"));
+        tokens.add(new VariableToken("f"));
+        tokens.add(new EqualToken());
+        tokens.add(new VariableToken("Foo"));
+        tokens.add(new LessThanToken());
+        tokens.add(new IntToken());
+        tokens.add(new CommaToken());
+        tokens.add(new BooleanToken());
+        tokens.add(new GreaterThanToken());
+        tokens.add(new LeftParenToken());
+        tokens.add(new NumberToken(5));
+        tokens.add(new CommaToken());
+        tokens.add(new TrueToken());
+        tokens.add(new RightParenToken());
+        tokens.add(new SemiToken());
+        tokens.add(new PrintToken());
+        tokens.add(new LeftParenToken());
+        tokens.add(new VariableToken("f"));
+        tokens.add(new VariableToken("getKey"));
+        tokens.add(new LeftParenToken());
+        tokens.add(new RightParenToken());
+        tokens.add(new RightParenToken());
+        tokens.add(new SemiToken());
+
+    	final List<VarDec> insDec = new ArrayList<>();
+		insDec.add(new VarDec(new TypeVariable(), new Variable("key")));
+        insDec.add(new VarDec(new TypeVariable(), new Variable("value")));
+
+		final List<VarDec> constructVarDec = new ArrayList<>();
+        constructVarDec.add(new VarDec(new TypeVariable(), new Variable("initKey")));
+        constructVarDec.add(new VarDec(new TypeVariable(), new Variable("initValue")));
+
+        final Statement contructStatement = new VarAssignment(new Variable("x"), new NumberExp(0));
+
+        Constructor constructor = new Constructor(constructVarDec, contructStatement);
+
+		final List<VarDec> method1VarDec = new ArrayList<>();
+
+        final List<VarDec> method2VarDec = new ArrayList<>();
+
+		final List<MethodDef> methodDef = new ArrayList<>();
+		methodDef.add(new MethodDef(
+            new PublicAccess(),
+            new TypeVariable(),
+            new MethodName("getKey"),
+            method1VarDec,
+            new ReturnExpStatement(new VariableExp(new Variable("key"))))
+        );
+        methodDef.add(new MethodDef(
+            new PublicAccess(),
+            new TypeVariable(),
+            new MethodName("getValue"),
+            method2VarDec,
+            new ReturnExpStatement(new VariableExp(new Variable("value"))))
+        );
+
+        List<TypeVariable> typeVars =  new ArrayList<>();
+        typeVars.add(new TypeVariable());
+        typeVars.add(new TypeVariable());
+
+		final List<ClassDef> classDef = new ArrayList<>();
+        classDef.add(new ClassDef(
+            new ClassName("Foo"),
+            constructor,
+            null,
+            insDec,
+            methodDef,
+            typeVars
+        ));
+
+        List<Statement> statementsList = new ArrayList<>();
+        List<Type> types = new ArrayList<Type>();
+        types.add(new IntType());
+        types.add(new BooleanType());
+        List<Exp> expressions = new ArrayList<Exp>();
+        expressions.add(new NumberExp(5));
+        expressions.add(new BoolExp(true));
+        statementsList.add(new VarDecAssignment(
+            new VarDec(new ClassType(new ClassName("Foo"), null), new Variable("f")), 
+            new ClassExp(
+                new ClassName("Foo"), 
+                types, 
+                expressions
+            )
+        ));
+        
+        Block statements = new Block(statementsList);
+
+		Program program = new Program(classDef, statements);
+		assertParses(tokens, program);
+    }
+
+    @Test
+    public void testExtendedGenericClassWithInstanceVars() {
+        /*
+            class Foo<T, V> {
+                T key;
+                V value;
+
+                constructor(T initKey, V initValue) {
+                    key = initKey;
+                    value = initValue;
+                }
+            }
+
+            class Bar<> extends Foo<int, boolean> {
+                constructor(){super(5, true)}
+            }
+        */
+
+        final ArrayList<Token> tokens = new ArrayList<>();
+        tokens.add(new ClassToken());
+        tokens.add(new VariableToken("Foo"));
+        tokens.add(new LessThanToken());
+        tokens.add(new VariableToken("T"));
+        tokens.add(new CommaToken());
+        tokens.add(new VariableToken("V"));
+        tokens.add(new GreaterThanToken());
+        tokens.add(new LeftCurlyToken());
+        tokens.add(new VariableToken("T"));
+        tokens.add(new VariableToken("key"));
+        tokens.add(new SemiToken());
+        tokens.add(new VariableToken("V"));
+        tokens.add(new VariableToken("value"));
+        tokens.add(new SemiToken());
+        tokens.add(new ConstructorToken());
+        tokens.add(new LeftParenToken());
+        tokens.add(new VariableToken("T"));
+        tokens.add(new VariableToken("initKey"));
+        tokens.add(new CommaToken());
+        tokens.add(new VariableToken("V"));
+        tokens.add(new VariableToken("initValue"));
+        tokens.add(new RightParenToken());
+        tokens.add(new LeftCurlyToken());
+        tokens.add(new VariableToken("key"));
+        tokens.add(new EqualToken());
+        tokens.add(new VariableToken("initKey"));
+        tokens.add(new SemiToken());
+        tokens.add(new VariableToken("value"));
+        tokens.add(new EqualToken());
+        tokens.add(new VariableToken("initValue"));
+        tokens.add(new SemiToken());
+        tokens.add(new RightCurlyToken());
+
+        tokens.add(new ClassToken());
+        tokens.add(new VariableToken("Bar"));
+        tokens.add(new LessThanToken());
+        tokens.add(new GreaterThanToken());
+        tokens.add(new ExtendsToken());
+        tokens.add(new VariableToken("Foo"));
+        tokens.add(new LessThanToken());
+        tokens.add(new IntToken());
+        tokens.add(new CommaToken());
+        tokens.add(new BooleanToken());
+        tokens.add(new GreaterThanToken());
+        tokens.add(new LeftCurlyToken());
+        tokens.add(new ConstructorToken());
+        tokens.add(new LeftParenToken());
+        tokens.add(new RightParenToken());
+        tokens.add(new LeftCurlyToken());
+        tokens.add(new SuperToken());
+        tokens.add(new NumberToken(5));
+        tokens.add(new CommaToken());
+        tokens.add(new TrueToken());
+        tokens.add(new LeftParenToken());
+        tokens.add(new RightParenToken());
+        tokens.add(new RightCurlyToken());
+        tokens.add(new RightCurlyToken());
+
+        final List<VarDec> insDec = new ArrayList<>();
+		insDec.add(new VarDec(new TypeVariable(), new Variable("key")));
+        insDec.add(new VarDec(new TypeVariable(), new Variable("value")));
+
+		final List<VarDec> constructVarDec = new ArrayList<>();
+        constructVarDec.add(new VarDec(new TypeVariable(), new Variable("initKey")));
+        constructVarDec.add(new VarDec(new TypeVariable(), new Variable("initValue")));
+
+        final ArrayList<Statement> contructStatements = new ArrayList<>();
+        contructStatements.add(new VarAssignment(new Variable("key"), new VariableExp(new Variable("initKey"))));
+        contructStatements.add(new VarAssignment(new Variable("value"), new VariableExp(new Variable("initValue"))));
+
+        final Block contructStatement = new Block(contructStatements);
+
+        Constructor constructor = new Constructor(constructVarDec, contructStatement);
+
+		final List<VarDec> method1VarDec = new ArrayList<>();
+
+        final List<VarDec> method2VarDec = new ArrayList<>();
+
+		final List<MethodDef> methodDef = new ArrayList<>();
+
+        List<TypeVariable> typeVars =  new ArrayList<>();
+        typeVars.add(new TypeVariable());
+        typeVars.add(new TypeVariable());
+
+		final List<ClassDef> classDef = new ArrayList<>();
+        classDef.add(new ClassDef(
+            new ClassName("Foo"),
+            constructor,
+            null,
+            insDec,
+            methodDef,
+            typeVars
+        ));
+
+        final List<Exp> superVars = new ArrayList<>();
+        superVars.add(new NumberExp(5));
+        superVars.add(new BoolExp(true));
+
+        final List<Type> types = new ArrayList<>();
+        types.add(new IntType());
+        types.add(new BooleanType());
+
+        classDef.add(new ClassDef(
+            new ClassName("Bar"),
+            new Constructor(new ArrayList<>(), new SuperStatement(superVars)),
+            new Extends(new ClassName("Foo"), types),
+            new ArrayList<>(),
+            new ArrayList<>(),
+            new ArrayList<>()
+        ));
+
+		Program program = new Program(classDef, null);
+		assertParses(tokens, program);
+    }
 }
