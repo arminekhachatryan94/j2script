@@ -1,12 +1,17 @@
 package j2script.types;
 
 import j2script.names.ClassName;
+import j2script.types.Type;
+
+import java.util.List;
 
 public class ClassType implements Type {
     public final ClassName name;
+    public final List<Type> types;
 
-    public ClassType(ClassName name) {
+    public ClassType(final ClassName name, final List<Type> types) {
         this.name = name;
+        this.types = types;
     }
 
     public int hashCode() {
@@ -24,6 +29,6 @@ public class ClassType implements Type {
     }
 
     public String toString() {
-        return name.toString();
+        return "ClassType";
     }
 }

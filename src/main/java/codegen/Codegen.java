@@ -70,21 +70,21 @@ public class Codegen{
             compileClass(cls);
         }
         if (prog.statement instanceof Block){
-            System.out.println("Working it is");
+            // System.out.println("Working it is");
             Block b = (Block) prog.statement;
             for(Statement stmt: b.statements){
                 compileStatement(stmt);
             }
-            System.out.println("Working it");
+            // System.out.println("Working it");
         }
         else{
-            System.out.println("Working");
+            // System.out.println("Working");
 
             compileStatement(prog.statement);
         }
-        System.out.println("this is the endof the program");
+        // System.out.println("this is the endof the program");
         for(String item : Code){
-            System.out.println(item);
+            // System.out.println(item);
         }
         
     }
@@ -141,23 +141,23 @@ public class Codegen{
         Map<MethodName, MethodDef> methodMap = new HashMap<>();
         Map<MethodName, Integer> offsets = new HashMap<>();
         //Inherits parents stuff
-        VTableClassTable parent = compmap.get(cls.extendedClass);
+        VTableClassTable parent = compmap.get(cls.extendedClass.extendsName);
         List<String> vTable = new ArrayList<>(parent.vTable.size()+1); 
 
-        System.out.println("This classes parent is" + cls.extendedClass);
-        System.out.println("This classes parent is" + parent.theClass.name);
+        // System.out.println("This classes parent is" + cls.extendedClass.extendsName);
+        // System.out.println("This classes parent is" + parent.theClass.name);
 
-        System.out.println("This class is" + cls.name);
+        // System.out.println("This class is" + cls.name);
         methodMap.putAll(parent.methodMap);
-        System.out.println(methodMap.toString());
+        // System.out.println(methodMap.toString());
         offsets.putAll(parent.offsets);
-        System.out.println(parent.vTable.toString());
-        System.out.println(vTable.toString());
+        // System.out.println(parent.vTable.toString());
+        // System.out.println(vTable.toString());
         for (String s : parent.vTable) {
             vTable.add(s);
         }
-        System.out.println(vTable.toString());
-        System.out.println("This classes parents vtable is " + vTable.toString());
+        // System.out.println(vTable.toString());
+        // System.out.println("This classes parents vtable is " + vTable.toString());
 
         int count = parent.vTable.size();
 
@@ -178,16 +178,16 @@ public class Codegen{
                 method +="self) {\n\t" + md.body.toString() + "};";
             }
             // String method = "var " + cls.name.toString() + "_" + md.name.toString() + " = function(self) {\n\t" + md.body.toString() + "};" ;
-            System.out.println("hello the method checked is " + method);
+            // System.out.println("hello the method checked is " + method);
             Code.add(method);
             //check if method is being overridden
             if (methodMap.get(md.name) != null){
                 //Check if it is being overloaded
                 if(methodMap.get(md.name).varDecs.equals(md.varDecs)){
                     int j=0;
-                    System.out.println("I am here for this class" + cls.name.toString());
-                    System.out.println("I am here for this method" + md.name.toString());
-                    System.out.println("BY the way the exclass is " + cls.extendedClass.name.toString());
+                    // System.out.println("I am here for this class" + cls.name.toString());
+                    // System.out.println("I am here for this method" + md.name.toString());
+                    // System.out.println("BY the way the exclass is " + cls.extendedClass.extendsName.toString());
                     // String exclass = cls.extendedClass.name.toString();                  
                     //replace in childs vtable
                     methodMap.replace(md.name, md);
@@ -195,9 +195,9 @@ public class Codegen{
                         String s =vTable.get(i);
                         int t = s.indexOf("_") + 1;
                         String helper = s.substring(t, s.length());
-                        System.out.println(helper + " and " + md.name.toString());
+                        // System.out.println(helper + " and " + md.name.toString());
                         if (helper.equals(md.name.toString())){
-                            System.out.println("I have reached here for: " + s );
+                            // System.out.println("I have reached here for: " + s );
                             vTable.set(i,cls.name.toString() + "_" +md.name.toString());
                             j=i;
                         }
@@ -205,7 +205,7 @@ public class Codegen{
                     offsets.replace(md.name, j);
                 }
                 else{
-                    System.out.println("Hello i am not being overridden");
+                    // System.out.println("Hello i am not being overridden");
                     methodMap.put(md.name, md);
                     offsets.put(md.name, count);
                     vTable.add(cls.name.toString() + "_" + md.name.toString());
@@ -214,7 +214,7 @@ public class Codegen{
             }
             //Its not being overridden, add it to the vtable.
             else{
-                System.out.println("Hello i am not being overridden");
+                // System.out.println("Hello i am not being overridden");
                 methodMap.put(md.name, md);
                 offsets.put(md.name, count);
                 vTable.add(cls.name.toString() + "_" + md.name.toString());
@@ -231,32 +231,32 @@ public class Codegen{
             k++;
         }
         vtable += "];";
-        System.out.println("Class " + cls.name.toString() + " has this vtable " + vtable.toString());
+        // System.out.println("Class " + cls.name.toString() + " has this vtable " + vtable.toString());
         Code.add(vtable);    
         VTableClassTable v = new VTableClassTable(vTable,cls, methodMap, offsets);
         compmap.put(cls.name, v);
     }
     public void compileClass(ClassDef cls){
         //If doesnt extend and hasnt been compiled, compile it.
-        System.out.println("Class " + cls.name.toString() + 
-        "extended = " + (cls.extendedClass == null) + (compmap.get(cls.name) == null));
+        // System.out.println("Class " + cls.name.toString() + 
+        // "extended = " + (cls.extendedClass == null) + (compmap.get(cls.name) == null));
         if (cls.extendedClass == null && compmap.get(cls.name) == null){
             compileParentclass(cls);
         }
         else{
             //FIND PARENT AND COMPILE IT IF IT HASNT BEEN SO
-            System.out.println("This is the result of compmap ");
-            System.out.println("This is the result of compmap " +
-            compmap.get(cls.extendedClass) == null);
-            if (compmap.get(cls.extendedClass) == null){
-                compileClass(classes.get(cls.extendedClass));
+            // System.out.println("This is the result of compmap ");
+            // System.out.println("This is the result of compmap " +
+            // compmap.get(cls.extendedClass.extendsName) == null);
+            if (compmap.get(cls.extendedClass.extendsName) == null){
+                compileClass(classes.get(cls.extendedClass.extendsName));
             }
             //Now compile the extended class itself
             compileChildClass(cls);
         }
     }
     public void compileStatement(Statement stmt){
-        System.out.println("in compile statement");
+        // System.out.println("in compile statement");
         if (stmt instanceof IfStatement){
             compileIfStmt((IfStatement)stmt);
         }
@@ -289,7 +289,7 @@ public class Codegen{
             
         }
         else if (stmt instanceof VarDecAssignment){
-            System.out.println("in vardec assignment");
+            // System.out.println("in vardec assignment");
             compilevarDecAssign((VarDecAssignment)stmt);
         }
         else{
@@ -388,17 +388,17 @@ public class Codegen{
     }
     public Map<String,String> compileObj(VTableClassTable vt, Map<String,String> varstostrings, List<Exp> actualparams){
         //Just run through the constructor
-        System.out.println("start of compileobj");
-        System.out.println(vt.theClass);
+        // System.out.println("start of compileobj");
+        // System.out.println(vt.theClass);
         if (vt.theClass.constructor.body instanceof Block){
-            System.out.println("start of compileobj if");
+            // System.out.println("start of compileobj if");
             Block b = (Block) vt.theClass.constructor.body;
             for (int j=0; j < b.statements.size();j++){
                 Statement s = b.statements.get(j);
                 if (s instanceof SuperStatement){
                     SuperStatement ss = (SuperStatement) s;
                     // List<Exp> superparams = ss.exp;
-                    VTableClassTable parent = compmap.get(vt.theClass.extendedClass.name);
+                    VTableClassTable parent = compmap.get(vt.theClass.extendedClass.extendsName);
                     varstostrings=compileObj(parent, varstostrings, actualparams);
                 }
                 else if (s instanceof VarAssignment){
@@ -426,21 +426,21 @@ public class Codegen{
         }
         else{
             Statement s = vt.theClass.constructor.body;
-            System.out.println("start of compileobj else");
+            // System.out.println("start of compileobj else");
             if (s instanceof SuperStatement){
-                System.out.println("start of seccompileobj else");
+                // System.out.println("start of seccompileobj else");
 
                 SuperStatement ss = (SuperStatement) s;
                 // List<Exp> superparams = ss.exp;
-                VTableClassTable parent = compmap.get(vt.theClass.extendedClass);
-                System.out.println("The parents name is " + vt.theClass.extendedClass.name.toString());
-                System.out.println(parent != null);
+                VTableClassTable parent = compmap.get(vt.theClass.extendedClass.extendsName);
+                // System.out.println("The parents name is " + vt.theClass.extendedClass.extendsName.toString());
+                // System.out.println(parent != null);
                 varstostrings=compileObj(parent, varstostrings, actualparams);
             }
             else if (s instanceof VarAssignment){
                 boolean hasFound = false;
                 VarAssignment va = (VarAssignment) s;
-                System.out.println("this worked");
+                // System.out.println("this worked");
                 //Now check va.exp.emit() compared to parameter, if equal substitute with actual param and write method and save to map from varstostrings
                 for (int i = 0; i < vt.theClass.constructor.parameters.size(); i++){
                     if (vt.theClass.constructor.parameters.get(i).var.toString() == va.exp.emit()){
@@ -450,7 +450,7 @@ public class Codegen{
                         hasFound = true;
                     }
                 }
-                System.out.println("this worked after for loop");
+                // System.out.println("this worked after for loop");
                 if (hasFound ==false){
                     String actualCode = ",\n\t" + va.variable.toString() + ": " + va.exp.emit();
                     varstostrings.put(va.variable.toString(), actualCode);
@@ -459,33 +459,33 @@ public class Codegen{
             }
             // compileobjHelper(s, vt, varstostrings, v);
         }
-        System.out.println("this worked");
+        // System.out.println("this worked");
         
         return varstostrings;
     }
     public void compilevarDecAssign(Statement stmt){
         //Assuming this type checks, check if it is a class type and if so then create a json with the appropriate fields.
         VarDecAssignment v = (VarDecAssignment)stmt;
-        System.out.println("in vardecassign");
+        // System.out.println("in vardecassign");
         if (v.varDec.type instanceof ClassType && v.exp instanceof ClassExp){
-            System.out.println("in vardecassign for " + v.varDec.type.toString() + v.varDec.var.toString() );
+            // System.out.println("in vardecassign for " + v.varDec.type.toString() + v.varDec.var.toString() );
             //Associate a variable to its string value incase you have to replace with child 
             Map<String, String> varstostrings = new HashMap<String,String>();
             //
             ClassExp c = (ClassExp)v.exp;
             List<Exp> params = c.parameters;
             ClassName cname = new ClassName(v.varDec.type.toString());
-            System.out.println("name of class is " + cname.toString());
+            // System.out.println("name of class is " + cname.toString());
             for (Map.Entry<ClassName, VTableClassTable> item : compmap.entrySet()) {
-                System.out.println(item.getKey().toString());
+                // System.out.println(item.getKey().toString());
             }
             objToClass.put(v.varDec.var.toString(),cname);
             String actualCode = "var " + v.varDec.var.toString() + " = {\n\tvtable: " + cname.toString() + "_vtable";
             VTableClassTable vt = compmap.get(cname);
-            System.out.println(vt);
+            // System.out.println(vt);
             
             varstostrings = compileObj(vt, varstostrings, params);
-            System.out.println("this worked" );
+            // System.out.println("this worked" );
 
             for (Map.Entry<String, String> item : varstostrings.entrySet()) {
                 actualCode += item.getValue();
@@ -604,9 +604,9 @@ public class Codegen{
     public void writeProgramtoFile(final Program program, final File file) throws IOException{
         final Codegen gen = new Codegen();
         gen.compileProgram(program);
-        System.out.println("this is the endof the program");
+        // System.out.println("this is the endof the program");
         for(String item : Code){
-            System.out.println(item);
+            // System.out.println(item);
         }
         gen.writeCompleteFile(file);
     }

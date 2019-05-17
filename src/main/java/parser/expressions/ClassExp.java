@@ -6,21 +6,26 @@ import j2script.names.ClassName;
 import j2script.names.Variable;
 import j2script.statements.Statement;
 import j2script.statements.Block;
+import j2script.types.Type;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class ClassExp implements Exp {
     public final ClassName name;
+    public final List<Type> types;
     public final List<Exp> parameters;
 
     public ClassExp(final ClassName name,
+                    final List<Type> types,
                     final List<Exp> parameters){
         this.name=name;
+        this.types = types;
         this.parameters = parameters;
     }
     public int hashCode() {
-        return name.hashCode() + Arrays.deepHashCode(parameters.toArray());
+        return name.hashCode() + Arrays.deepHashCode(types.toArray()) + 
+               Arrays.deepHashCode(parameters.toArray());
     }
 
     public boolean equals(final Object other) {
@@ -38,6 +43,7 @@ public class ClassExp implements Exp {
         return (name.toString() + "(" +
                 String.join(", ", parameters.toString()) + ")");
     }
+    
     public String emit() {
         String exp = name.toString() + "(";
         for(int i = 0; i < parameters.size(); i++) {

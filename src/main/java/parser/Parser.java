@@ -247,7 +247,7 @@ public class Parser {
                 
             }
             resultpos++;
-            final ClassExp e = new ClassExp(name,parameters);
+            final ClassExp e = new ClassExp(name,new ArrayList<>(),parameters);  // NOT RIGHT
             return new ParseResult<Exp>(e, resultpos);
         }
         else if((ensureToken(resultpos, new VariableToken()) && ensureToken(resultpos + 1,new LeftParenToken()))){
@@ -528,7 +528,7 @@ public class Parser {
                 throw new ParserException("This is not a valid class because it doesnt have a matching curly brace");
             }
         }
-        resultClassDef = new ClassDef(name,constructor,extendedClass, vardecs,methodDefs);
+        resultClassDef = new ClassDef(name, constructor, new Extends(extendedClass, null), vardecs, methodDefs, new ArrayList<>());  //NOT RIGHT
         if (constructor == null){
             throw new ParserException("This class Does not have a constructor");
         }

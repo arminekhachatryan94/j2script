@@ -33,8 +33,8 @@ public class TypeCheckerTest {
     List<Exp> classExp = new ArrayList<>();
 
     Statement statement = new VarDecAssignment(
-    	new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-    	new ClassExp(new ClassName("Foo"), classExp)
+    	new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+    	new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
     	);
 
     List<VarDec> varDec = new ArrayList<>(); //empty
@@ -51,7 +51,7 @@ public class TypeCheckerTest {
     			new VariableExp(new Variable("test"))
     			)
     		), 
-    	varDec, methodDefs));
+    	varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     final Program program = new Program(classDef, statement);
     TypeChecker.typecheckProgram(program);
@@ -73,8 +73,8 @@ public class TypeCheckerTest {
     List<Exp> classExp = new ArrayList<>();
 
     Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), classExp)
+        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
         );
 
     List<VarDec> varDec = new ArrayList<>(); //empty
@@ -91,88 +91,7 @@ public class TypeCheckerTest {
                 new NumberExp(0)
                 )
             ), 
-        varDec, methodDefs));
-
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
-        
-    }
-
-    @Test(expected = TypeErrorException.class) 
-    public void testClassWithWrongVarDecStatementWithStringType() throws TypeErrorException {
-    	/*
-	 class Foo{
-            Foo()
-                String x = 0;  <--   
-        }
-        Foo y = Foo(); 
-    */
-
-
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>(); //empty
-    List<Exp> classExp = new ArrayList<>();
-
-    Statement statement = new VarDecAssignment(
-    	new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-    	new ClassExp(new ClassName("Foo"), classExp)
-    	);
-
-    List<VarDec> varDec = new ArrayList<>(); //empty
-   	classDef.add(new ClassDef(
-    	new ClassName("Foo"), 
-    	new Constructor(
-    		varDec, 
-    		new VarDecAssignment(
-    			new VarDec(
-    				new StringType(), 
-    				new Variable("x")
-    				), 
-    			new NumberExp(0)
-    			)
-    		), 
-    	varDec, methodDefs));
-
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
-    	
-    }
-
-    @Test
-    public void testStringExp() throws TypeErrorException {
-        /*
-     class Foo{
-            Foo()
-                String x = "str"; 
-        }
-        Foo y = Foo(); 
-    */
-
-
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>(); //empty
-    List<Exp> classExp = new ArrayList<>();
-
-    Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), classExp)
-        );
-
-    List<VarDec> varDec = new ArrayList<>(); //empty
-    classDef.add(new ClassDef(
-        new ClassName("Foo"), 
-        new Constructor(
-            varDec, 
-            new VarDecAssignment(
-                new VarDec(
-                    new StringType(), 
-                    new Variable("x")
-                    ), 
-                //new StringExp("test")
-                new StringExp(new StringName("str"))
-                )
-            ), 
-        varDec, methodDefs));
+        varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     final Program program = new Program(classDef, statement);
     TypeChecker.typecheckProgram(program);
@@ -195,8 +114,8 @@ public class TypeCheckerTest {
     List<Exp> classExp = new ArrayList<>();
 
     Statement statement = new VarDecAssignment(
-    	new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-    	new ClassExp(new ClassName("Foo"), classExp)
+    	new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+    	new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
     	);
 
     List<VarDec> varDec = new ArrayList<>(); //empty
@@ -212,7 +131,7 @@ public class TypeCheckerTest {
     			new NumberExp(0)
     			)
     		), 
-    	varDec, methodDefs));
+    	varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     final Program program = new Program(classDef, statement);
     TypeChecker.typecheckProgram(program);
@@ -235,8 +154,8 @@ public class TypeCheckerTest {
     List<Exp> classExp = new ArrayList<>();
 
     Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), classExp)
+        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
         );
 
     List<VarDec> varDec = new ArrayList<>(); //empty
@@ -253,7 +172,7 @@ public class TypeCheckerTest {
                 new BoolExp(true)
                 )
             ), 
-        varDec, methodDefs));
+        varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     final Program program = new Program(classDef, statement);
     TypeChecker.typecheckProgram(program);
@@ -281,8 +200,8 @@ public class TypeCheckerTest {
     List<Exp> classExp = new ArrayList<>();
 
     Statement statement = new VarDecAssignment(
-    	new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-    	new ClassExp(new ClassName("Boo"), classExp)
+    	new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+    	new ClassExp(new ClassName("Boo"), new ArrayList<Type>(), classExp)
     	);
 
     List<VarDec> varDec = new ArrayList<>(); //empty
@@ -298,7 +217,7 @@ public class TypeCheckerTest {
     			new NumberExp(0)
     			)
     		), 
-    	varDec, methodDefs));
+    	varDec, methodDefs, new ArrayList<TypeVariable>()));
    	classDef.add(new ClassDef(
     	new ClassName("Boo"), 
     	new Constructor(
@@ -311,7 +230,7 @@ public class TypeCheckerTest {
     			new NumberExp(0)
     			)
     		), 
-    	varDec, methodDefs));
+    	varDec, methodDefs, new ArrayList<TypeVariable>()));
     final Program program = new Program(classDef, statement);
     TypeChecker.typecheckProgram(program);
     	
@@ -334,8 +253,8 @@ public class TypeCheckerTest {
     List<Exp> classExp = new ArrayList<>();
 
     Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), classExp)
+        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
         );
 
     List<VarDec> varDec = new ArrayList<>(); //empty
@@ -351,7 +270,7 @@ public class TypeCheckerTest {
                 new NumberExp(0)
                 )
             ), 
-        varDec, methodDefs));
+        varDec, methodDefs, new ArrayList<TypeVariable>()));
     
     final Program program = new Program(classDef, statement);
     TypeChecker.typecheckProgram(program);
@@ -374,8 +293,8 @@ public class TypeCheckerTest {
 	    classExp.add(new BoolExp(true));
 
 	    Statement statement = new VarDecAssignment(
-	    	new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-	    	new ClassExp(new ClassName("Foo"), classExp)
+	    	new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+	    	new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
 	    	);
 
 	    List<VarDec> varDec = new ArrayList<>(); //empty
@@ -394,7 +313,7 @@ public class TypeCheckerTest {
 	    			new VariableExp(new Variable("y"))
 	    			)
 	    		), 
-	    	varDecNonEmpty, methodDefs));
+	    	varDecNonEmpty, methodDefs, new ArrayList<TypeVariable>()));
 
 	    final Program program = new Program(classDef, statement);
 	    TypeChecker.typecheckProgram(program);
@@ -422,8 +341,8 @@ public class TypeCheckerTest {
     List<Exp> classExp = new ArrayList<>();
 
     Statement statement = new VarDecAssignment(
-    	new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-    	new ClassExp(new ClassName("Foo"), classExp)
+    	new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+    	new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
     	);
 
     List<VarDec> varDec = new ArrayList<>(); //empty
@@ -440,7 +359,7 @@ public class TypeCheckerTest {
     			new NumberExp(0)
     			)
     		), 
-    	varDec, methodDefs));
+    	varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     final Program program = new Program(classDef, statement);
     TypeChecker.typecheckProgram(program);
@@ -456,7 +375,7 @@ public class TypeCheckerTest {
             Foo()
                 int x = 0;   
             private int methodA() {
-				return "what"; <-- return int 
+				return true; <-- return int 
             }
         }
         Foo y = Foo(); 
@@ -468,12 +387,21 @@ public class TypeCheckerTest {
     List<Exp> classExp = new ArrayList<>();
 
     Statement statement = new VarDecAssignment(
-    	new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-    	new ClassExp(new ClassName("Foo"), classExp)
+    	new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+    	new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
     	);
 
     List<VarDec> varDec = new ArrayList<>(); //empty
-    methodDefs.add(new MethodDef(new PrivateAccess(), new IntType(), new MethodName("methodA"), varDec, new ReturnExpStatement(new StringExp(new StringName("what")))));
+    methodDefs.add(new MethodDef(
+        new PrivateAccess(), 
+        new IntType(), 
+        new MethodName("methodA"), 
+        varDec, 
+        new ReturnExpStatement(
+            new BoolExp(true)
+            )
+        )
+    );
    	classDef.add(new ClassDef(
     	new ClassName("Foo"), 
     	new Constructor(
@@ -486,7 +414,7 @@ public class TypeCheckerTest {
     			new NumberExp(0)
     			)
     		), 
-    	varDec, methodDefs));
+    	varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     final Program program = new Program(classDef, statement);
     TypeChecker.typecheckProgram(program);
@@ -512,8 +440,8 @@ public class TypeCheckerTest {
     List<Exp> classExp = new ArrayList<>();
 
     Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), classExp)
+        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
         );
 
     List<VarDec> varDec = new ArrayList<>(); //empty
@@ -530,7 +458,7 @@ public class TypeCheckerTest {
                 new NumberExp(0)
                 )
             ), 
-        varDec, methodDefs));
+        varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     final Program program = new Program(classDef, statement);
     TypeChecker.typecheckProgram(program);
@@ -556,8 +484,8 @@ public class TypeCheckerTest {
     List<Exp> classExp = new ArrayList<>();
 
     Statement statement = new VarDecAssignment(
-    	new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-    	new ClassExp(new ClassName("Foo"), classExp)
+    	new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+    	new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
     	);
 
     List<VarDec> varDec = new ArrayList<>(); //empty
@@ -579,7 +507,7 @@ public class TypeCheckerTest {
     			new NumberExp(0)
     			)
     		), 
-    	varDec, methodDefs));
+    	varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     final Program program = new Program(classDef, statement);
     TypeChecker.typecheckProgram(program);
@@ -604,8 +532,8 @@ public class TypeCheckerTest {
 	    List<Exp> classExp = new ArrayList<>();
 
 	    Statement statement = new VarDecAssignment(
-	    	new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-	    	new ClassExp(new ClassName("Foo"), classExp)
+	    	new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+	    	new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
 	    	);
 
 	    List<VarDec> varDec = new ArrayList<>(); //empty
@@ -624,13 +552,13 @@ public class TypeCheckerTest {
 	    			new VariableExp(new Variable("y"))
 	    			)
 	    		), 
-	    	varDecNonEmpty, methodDefs));
+	    	varDecNonEmpty, methodDefs, new ArrayList<TypeVariable>()));
 
 	    final Program program = new Program(classDef, statement);
 	    TypeChecker.typecheckProgram(program);
 	}
 
-	@Test//(expected = TypeErrorException.class)  //***this got issues
+	@Test(expected = TypeErrorException.class)
 	    public void testClassWithInstanceVarAssignmentNotIncludedInStatementReverse() throws TypeErrorException{
 	    /** class foo{
 	    int x;
@@ -646,8 +574,8 @@ public class TypeCheckerTest {
 	    classExp.add(new NumberExp(1));
 
 	    Statement statement = new VarDecAssignment(
-	    	new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-	    	new ClassExp(new ClassName("Foo"), classExp)
+	    	new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+	    	new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
 	    	);
 
 	    List<VarDec> varDec = new ArrayList<>(); //empty
@@ -665,7 +593,7 @@ public class TypeCheckerTest {
 	    			new NumberExp(0)
 	    			)
 	    		), 
-	    	varDecNonEmpty, methodDefs));
+	    	varDecNonEmpty, methodDefs, new ArrayList<TypeVariable>()));
 
 	    final Program program = new Program(classDef, statement);
 	    TypeChecker.typecheckProgram(program);
@@ -686,8 +614,8 @@ public class TypeCheckerTest {
 	    List<Exp> classExp = new ArrayList<>();
 
 	    Statement statement = new VarDecAssignment(
-	    	new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-	    	new ClassExp(new ClassName("Foo"), classExp)
+	    	new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+	    	new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
 	    	);
 
 	    List<VarDec> varDec = new ArrayList<>(); //empty
@@ -700,7 +628,7 @@ public class TypeCheckerTest {
 	    			new NumberExp(0)
 	    			)
 	    		), 
-	    	varDec, methodDefs));
+	    	varDec, methodDefs, new ArrayList<TypeVariable>()));
 
 	    final Program program = new Program(classDef, statement);
 	    TypeChecker.typecheckProgram(program);
@@ -722,8 +650,8 @@ public class TypeCheckerTest {
         List<Exp> classExp = new ArrayList<>();
 
         Statement statement = new VarDecAssignment(
-            new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-            new ClassExp(new ClassName("Foo"), classExp)
+            new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+            new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
             );
 
         List<VarDec> varDec = new ArrayList<>(); //empty
@@ -741,7 +669,7 @@ public class TypeCheckerTest {
                     new NumberExp(0)
                     )
                 ), 
-            varDec, methodDefs));
+            varDec, methodDefs, new ArrayList<TypeVariable>()));
 
         final Program program = new Program(classDef, statement);
         TypeChecker.typecheckProgram(program);
@@ -764,8 +692,8 @@ public class TypeCheckerTest {
         List<Exp> classExp = new ArrayList<>();
 
         Statement statement = new VarDecAssignment(
-            new VarDec(new ClassType(new ClassName("Foo")), new Variable("z")), 
-            new ClassExp(new ClassName("Foo"), classExp)
+            new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("z")), 
+            new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
             );
 
         List<Statement> blockStatements = new ArrayList<>();
@@ -780,7 +708,7 @@ public class TypeCheckerTest {
                 varDecEmpty, 
                 new Block(blockStatements)
                 ), 
-            varDec, methodDefs));
+            varDec, methodDefs, new ArrayList<TypeVariable>()));
 
         final Program program = new Program(classDef, statement);
         TypeChecker.typecheckProgram(program);
@@ -803,8 +731,8 @@ public class TypeCheckerTest {
         List<Exp> classExp = new ArrayList<>();
 
         Statement statement = new VarDecAssignment(
-            new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-            new ClassExp(new ClassName("Foo"), classExp)
+            new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+            new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
             );
 
         List<VarDec> varDec = new ArrayList<>(); //empty
@@ -823,7 +751,7 @@ public class TypeCheckerTest {
                     new NumberExp(8)
                     )
                 ), 
-            varDec, methodDefs));
+            varDec, methodDefs, new ArrayList<TypeVariable>()));
 
         final Program program = new Program(classDef, statement);
         TypeChecker.typecheckProgram(program);
@@ -847,8 +775,8 @@ public class TypeCheckerTest {
     List<Exp> classExp = new ArrayList<>();
 
     Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), classExp)
+        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
         );
 
     List<VarDec> varDec = new ArrayList<>(); //empty
@@ -872,7 +800,7 @@ public class TypeCheckerTest {
                 new NumberExp(0)
                 )
             ), 
-        varDecNonEmpty, methodDefs));
+        varDecNonEmpty, methodDefs, new ArrayList<TypeVariable>()));
 
     final Program program = new Program(classDef, statement);
     TypeChecker.typecheckProgram(program);
@@ -897,8 +825,8 @@ public class TypeCheckerTest {
     List<Exp> classExp = new ArrayList<>();
 
     Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), classExp)
+        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
         );
     List<Statement> statements = new ArrayList<>();
     statements.add(new BreakStatement());
@@ -924,7 +852,7 @@ public class TypeCheckerTest {
                 new NumberExp(0)
                 )
             ), 
-        varDec, methodDefs));
+        varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     final Program program = new Program(classDef, statement);
     TypeChecker.typecheckProgram(program);
@@ -952,8 +880,8 @@ public class TypeCheckerTest {
     List<Exp> classExp = new ArrayList<>();
 
     Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), classExp)
+        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
         );
 
     List<VarDec> varDec = new ArrayList<>(); //empty
@@ -970,7 +898,7 @@ public class TypeCheckerTest {
                 new NumberExp(0)
                 )
             ), 
-        varDec, methodDefs));
+        varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     classDef.add(new ClassDef(
         new ClassName("Foo"), 
@@ -985,7 +913,7 @@ public class TypeCheckerTest {
                 new NumberExp(0)
                 )
             ), 
-        varDec, methodDefs));
+        varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     final Program program = new Program(classDef, statement);
     TypeChecker.typecheckProgram(program);
@@ -999,7 +927,7 @@ public class TypeCheckerTest {
             Foo()
                 int x = 0;
         }
-        String y = "str"; <-- same variable name
+        Boolean y = true; <-- same variable name
         int y = 0;
     */
 
@@ -1009,8 +937,8 @@ public class TypeCheckerTest {
     List<Exp> classExp = new ArrayList<>();
 
     Statement statementOne = new VarDecAssignment(
-        new VarDec(new StringType(), new Variable("y")), 
-        new StringExp(new StringName("str"))
+        new VarDec(new BooleanType(), new Variable("y")), 
+        new BoolExp(true)
         );
     Statement statementTwo = new VarDecAssignment(new VarDec(new IntType(), new Variable("y")), new NumberExp(0));
 
@@ -1032,7 +960,7 @@ public class TypeCheckerTest {
                 new NumberExp(0)
                 )
             ), 
-        varDec, methodDefs));
+        varDec, methodDefs, new ArrayList<TypeVariable>()));
 
 
     final Program program = new Program(classDef, new Block(statement));
@@ -1055,8 +983,8 @@ public class TypeCheckerTest {
     classExp.add(new BoolExp(true));
 
     Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), classExp)
+        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
         );
 
     List<VarDec> varDec = new ArrayList<>(); //empty
@@ -1075,7 +1003,7 @@ public class TypeCheckerTest {
                 new NumberExp(0)
                 )
             ), 
-        varDec, methodDefs));
+        varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     final Program program = new Program(classDef, statement);
     TypeChecker.typecheckProgram(program);
@@ -1097,8 +1025,8 @@ public class TypeCheckerTest {
     classExp.add(new NumberExp(3));
 
     Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), classExp)
+        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
         );
 
     List<VarDec> varDec = new ArrayList<>(); //empty
@@ -1117,7 +1045,7 @@ public class TypeCheckerTest {
                 new BinopExp(new VariableExp(new Variable("x")), new PlusOp(), new NumberExp(2))
                 )
             ), 
-        varDec, methodDefs));
+        varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     final Program program = new Program(classDef, statement);
     TypeChecker.typecheckProgram(program);
@@ -1140,8 +1068,8 @@ public class TypeCheckerTest {
     classExp.add(new NumberExp(3));
 
     Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), classExp)
+        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
         );
 
     List<VarDec> varDec = new ArrayList<>(); //empty
@@ -1160,7 +1088,7 @@ public class TypeCheckerTest {
                 new BinopExp(new VariableExp(new Variable("x")), new PlusOp(), new BoolExp(true))
                 )
             ), 
-        varDec, methodDefs));
+        varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     final Program program = new Program(classDef, statement);
     TypeChecker.typecheckProgram(program);
@@ -1183,8 +1111,8 @@ public class TypeCheckerTest {
     classExp.add(new NumberExp(3));
 
     Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), classExp)
+        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
         );
 
     List<VarDec> varDec = new ArrayList<>(); //empty
@@ -1203,7 +1131,7 @@ public class TypeCheckerTest {
                 new BinopExp(new VariableExp(new Variable("x")), new MinusOp(), new NumberExp(2))
                 )
             ), 
-        varDec, methodDefs));
+        varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     final Program program = new Program(classDef, statement);
     TypeChecker.typecheckProgram(program);
@@ -1226,8 +1154,8 @@ public class TypeCheckerTest {
     classExp.add(new NumberExp(3));
 
     Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), classExp)
+        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
         );
 
     List<VarDec> varDec = new ArrayList<>(); //empty
@@ -1246,7 +1174,7 @@ public class TypeCheckerTest {
                 new BinopExp(new VariableExp(new Variable("x")), new MinusOp(), new BoolExp(true))
                 )
             ), 
-        varDec, methodDefs));
+        varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     final Program program = new Program(classDef, statement);
     TypeChecker.typecheckProgram(program);
@@ -1269,8 +1197,8 @@ public class TypeCheckerTest {
     classExp.add(new NumberExp(3));
 
     Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), classExp)
+        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
         );
 
     List<VarDec> varDec = new ArrayList<>(); //empty
@@ -1289,7 +1217,7 @@ public class TypeCheckerTest {
                 new BinopExp(new VariableExp(new Variable("x")), new MultOp(), new NumberExp(2))
                 )
             ), 
-        varDec, methodDefs));
+        varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     final Program program = new Program(classDef, statement);
     TypeChecker.typecheckProgram(program);
@@ -1312,8 +1240,8 @@ public class TypeCheckerTest {
     classExp.add(new NumberExp(3));
 
     Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), classExp)
+        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
         );
 
     List<VarDec> varDec = new ArrayList<>(); //empty
@@ -1332,7 +1260,7 @@ public class TypeCheckerTest {
                 new BinopExp(new VariableExp(new Variable("x")), new MultOp(), new BoolExp(true))
                 )
             ), 
-        varDec, methodDefs));
+        varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     final Program program = new Program(classDef, statement);
     TypeChecker.typecheckProgram(program);
@@ -1355,8 +1283,8 @@ public class TypeCheckerTest {
     classExp.add(new NumberExp(3));
 
     Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), classExp)
+        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
         );
 
     List<VarDec> varDec = new ArrayList<>(); //empty
@@ -1375,7 +1303,7 @@ public class TypeCheckerTest {
                 new BinopExp(new VariableExp(new Variable("x")), new DivOp(), new NumberExp(2))
                 )
             ), 
-        varDec, methodDefs));
+        varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     final Program program = new Program(classDef, statement);
     TypeChecker.typecheckProgram(program);
@@ -1398,8 +1326,8 @@ public class TypeCheckerTest {
     classExp.add(new NumberExp(3));
 
     Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), classExp)
+        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
         );
 
     List<VarDec> varDec = new ArrayList<>(); //empty
@@ -1418,7 +1346,7 @@ public class TypeCheckerTest {
                 new BinopExp(new VariableExp(new Variable("x")), new DivOp(), new BoolExp(true))
                 )
             ), 
-        varDec, methodDefs));
+        varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     final Program program = new Program(classDef, statement);
     TypeChecker.typecheckProgram(program);
@@ -1444,8 +1372,8 @@ public class TypeCheckerTest {
     classExp.add(new NumberExp(3));
 
     Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), classExp)
+        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
         );
 
     List<VarDec> varDec = new ArrayList<>(); //empty
@@ -1474,7 +1402,7 @@ public class TypeCheckerTest {
                         )
                     )
             ), 
-        varDec, methodDefs));
+        varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     final Program program = new Program(classDef, statement);
     TypeChecker.typecheckProgram(program);
@@ -1500,8 +1428,8 @@ public class TypeCheckerTest {
     classExp.add(new NumberExp(3));
 
     Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), classExp)
+        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
         );
 
     List<VarDec> varDec = new ArrayList<>(); //empty
@@ -1530,7 +1458,7 @@ public class TypeCheckerTest {
                         )
                     )
             ), 
-        varDec, methodDefs));
+        varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     final Program program = new Program(classDef, statement);
     TypeChecker.typecheckProgram(program);
@@ -1556,8 +1484,8 @@ public class TypeCheckerTest {
     classExp.add(new NumberExp(3));
 
     Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), classExp)
+        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
         );
 
     List<VarDec> varDec = new ArrayList<>(); //empty
@@ -1586,7 +1514,7 @@ public class TypeCheckerTest {
                         )
                     )
             ), 
-        varDec, methodDefs));
+        varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     final Program program = new Program(classDef, statement);
     TypeChecker.typecheckProgram(program);
@@ -1612,8 +1540,8 @@ public class TypeCheckerTest {
     classExp.add(new NumberExp(3));
 
     Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), classExp)
+        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
         );
 
     List<VarDec> varDec = new ArrayList<>(); //empty
@@ -1642,7 +1570,7 @@ public class TypeCheckerTest {
                         )
                     )
             ), 
-        varDec, methodDefs));
+        varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     final Program program = new Program(classDef, statement);
     TypeChecker.typecheckProgram(program);
@@ -1665,8 +1593,8 @@ public class TypeCheckerTest {
     classExp.add(new NumberExp(3));
 
     Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), classExp)
+        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
         );
 
     List<VarDec> varDec = new ArrayList<>(); //empty
@@ -1689,7 +1617,7 @@ public class TypeCheckerTest {
                         new NumberExp(2))
                 )
             ), 
-        varDec, methodDefs));
+        varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     final Program program = new Program(classDef, statement);
     TypeChecker.typecheckProgram(program);
@@ -1712,8 +1640,8 @@ public class TypeCheckerTest {
     classExp.add(new NumberExp(3));
 
     Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), classExp)
+        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
         );
 
     List<VarDec> varDec = new ArrayList<>(); //empty
@@ -1736,7 +1664,7 @@ public class TypeCheckerTest {
                         new NumberExp(2))
                 )
             ), 
-        varDec, methodDefs));
+        varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     final Program program = new Program(classDef, statement);
     TypeChecker.typecheckProgram(program);
@@ -1765,8 +1693,8 @@ public class TypeCheckerTest {
     List<Exp> classExp = new ArrayList<>();
 
     Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), classExp)
+        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
         );
 
     List<VarDec> varDec = new ArrayList<>(); //empty
@@ -1785,7 +1713,7 @@ public class TypeCheckerTest {
                 new NumberExp(0)
                 )
             ), 
-        varDec, methodDefs));
+        varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     final Program program = new Program(classDef, statement);
     TypeChecker.typecheckProgram(program);
@@ -1814,13 +1742,13 @@ public class TypeCheckerTest {
     List<Exp> classExp = new ArrayList<>();
 
     Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), classExp)
+        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
         );
 
     List<VarDec> varDec = new ArrayList<>(); //empty
     methodDefs.add(new MethodDef(new PrivateAccess(), new IntType(), new MethodName("methodA"), varDec, new ReturnExpStatement(new NumberExp(1))));
-    methodDefs.add(new MethodDef(new PrivateAccess(), new StringType(), new MethodName("methodA"), varDec, new ReturnExpStatement(new NumberExp(1))));
+    methodDefs.add(new MethodDef(new PrivateAccess(), new BooleanType(), new MethodName("methodA"), varDec, new ReturnExpStatement(new NumberExp(1))));
     
     classDef.add(new ClassDef(
         new ClassName("Foo"), 
@@ -1834,7 +1762,7 @@ public class TypeCheckerTest {
                 new NumberExp(0)
                 )
             ), 
-        varDec, methodDefs));
+        varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     final Program program = new Program(classDef, statement);
     TypeChecker.typecheckProgram(program);
@@ -1861,8 +1789,8 @@ public class TypeCheckerTest {
     List<Exp> classExp = new ArrayList<>();
 
     Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), classExp)
+        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
         );
 
     List<VarDec> varDec = new ArrayList<>(); //empty
@@ -1880,7 +1808,7 @@ public class TypeCheckerTest {
                 new NumberExp(0)
                 )
             ), 
-        varDec, methodDefs));
+        varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     final Program program = new Program(classDef, statement);
     TypeChecker.typecheckProgram(program);
@@ -1907,8 +1835,8 @@ public class TypeCheckerTest {
     List<Exp> classExp = new ArrayList<>();
 
     Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), classExp)
+        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
         );
 
     List<VarDec> varDec = new ArrayList<>(); //empty
@@ -1926,7 +1854,7 @@ public class TypeCheckerTest {
                 new NumberExp(0)
                 )
             ), 
-        varDec, methodDefs));
+        varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     final Program program = new Program(classDef, statement);
     TypeChecker.typecheckProgram(program);
@@ -1953,8 +1881,8 @@ public class TypeCheckerTest {
     List<Exp> classExp = new ArrayList<>();
 
     Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), classExp)
+        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
         );
 
     List<VarDec> varDec = new ArrayList<>(); //empty
@@ -1965,7 +1893,7 @@ public class TypeCheckerTest {
         new Constructor(
             varDec, 
             new ExpStatement(new MethodExp(new MethodName("methodA"), classExp))), 
-        varDec, methodDefs));
+        varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     final Program program = new Program(classDef, statement);
     TypeChecker.typecheckProgram(program);
@@ -1989,8 +1917,8 @@ public class TypeCheckerTest {
     List<Exp> classExp = new ArrayList<>();
 
     Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), classExp)
+        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
         );
 
     List<VarDec> varDec = new ArrayList<>(); //empty
@@ -2000,7 +1928,7 @@ public class TypeCheckerTest {
         new Constructor(
             varDec, 
             new SuperStatement(classExp)), 
-        varDec, methodDefs));
+        varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     final Program program = new Program(classDef, statement);
     TypeChecker.typecheckProgram(program);
@@ -2012,7 +1940,7 @@ public class TypeCheckerTest {
         /*
      class Boo {
         Boo()
-            PrintStatement("what");
+            PrintStatement(true);
         }
      class Foo extends Boo{
             Foo()
@@ -2029,8 +1957,8 @@ public class TypeCheckerTest {
     List<Exp> classExp = new ArrayList<>();
 
     Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), classExp)
+        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
         );
 
     List<VarDec> varDec = new ArrayList<>(); //empty
@@ -2039,16 +1967,16 @@ public class TypeCheckerTest {
         new ClassName("Boo"), 
         new Constructor(
             varDec, 
-            new PrintStatement(new StringExp(new StringName("what")))), 
-        varDec, methodDefs));
+            new PrintStatement(new BoolExp(true))), 
+        varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     classDef.add(new ClassDef(
         new ClassName("Foo"), 
         new Constructor(
             varDec, 
             new SuperStatement(classExp)),
-        new ClassName("Boo"), 
-        varDec, methodDefs));
+        new Extends(new ClassName("Boo"), new ArrayList<Type>()), 
+        varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     
     final Program program = new Program(classDef, statement);
@@ -2077,8 +2005,8 @@ public class TypeCheckerTest {
     List<Exp> classExp = new ArrayList<>();
 
     Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), classExp)
+        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
         );
 
     List<VarDec> varDec = new ArrayList<>(); //empty
@@ -2091,7 +2019,7 @@ public class TypeCheckerTest {
         new Constructor(
             varDec, 
             new ExpStatement(new MethodExp(new MethodName("methodB"), classExp))), 
-        varDec, methodDefs));
+        varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     final Program program = new Program(classDef, statement);
     TypeChecker.typecheckProgram(program);
@@ -2103,7 +2031,7 @@ public class TypeCheckerTest {
         /** class foo{
         int x;
         foo() 
-           print("what");
+           print(false);
         }
 
         Foo y = Foo();
@@ -2113,8 +2041,8 @@ public class TypeCheckerTest {
         List<Exp> classExp = new ArrayList<>();
 
         Statement statement = new VarDecAssignment(
-            new VarDec(new ClassType(new ClassName("Foo")), new Variable("y")), 
-            new ClassExp(new ClassName("Foo"), classExp)
+            new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+            new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
             );
 
         List<VarDec> varDec = new ArrayList<>(); //empty
@@ -2124,9 +2052,9 @@ public class TypeCheckerTest {
             new ClassName("Foo"), 
             new Constructor(
                 varDecEmpty, 
-                new PrintStatement(new StringExp(new StringName("what")))
+                new PrintStatement(new BoolExp(false))
                 ), 
-            varDec, methodDefs));
+            varDec, methodDefs, new ArrayList<TypeVariable>()));
 
         final Program program = new Program(classDef, statement);
         TypeChecker.typecheckProgram(program);
@@ -2138,7 +2066,7 @@ public class TypeCheckerTest {
      class Foo{
             Foo()
                 if(true)
-                    printStatment("what");
+                    printStatment(true);
                 else
                     break; <-- only allowed in while loops
         }
@@ -2160,17 +2088,13 @@ public class TypeCheckerTest {
             varDec, 
             new IfStatement(new BoolExp(true), 
                 new BreakStatement(),
-                new PrintStatement(new StringExp(new StringName("what"))))
+                new PrintStatement(new BoolExp(true)))
             ), 
-        varDec, methodDefs));
+        varDec, methodDefs, new ArrayList<TypeVariable>()));
 
 
     final Program program = new Program(classDef, statementTwo);
     TypeChecker.typecheckProgram(program);
         
     }
-    
-
-
-
 }
