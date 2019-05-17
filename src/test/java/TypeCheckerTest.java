@@ -2097,4 +2097,51 @@ public class TypeCheckerTest {
     TypeChecker.typecheckProgram(program);
         
     }
+
+
+    @Test//(expected = TypeErrorException.class) 
+    public void testGeneric() throws TypeErrorException {
+       /*
+        class GenericClass<A> {
+            A a;
+            constructor() {
+                a = 3;
+            }
+            public A getA() {
+                return a;
+            }
+        }
+        GenericClass g = new GenericaClass<A>();
+       */
+    List<Type> types = new ArrayList<>();
+    types.add(new TypeVariable());
+    List<ClassDef> classDef = new ArrayList<>();
+
+    List<VarDec> instanceVars = new ArrayList<>();
+    instanceVars.add(new VarDec(new TypeVariable(), new Variable("a")));
+
+    List<MethodDef> methodDefs = new ArrayList<>();
+    methodDefs.add(new MethodDef(new PublicAccess(), new TypeVariable(), new MethodName("getA"), new ArrayList<VarDec>(), new ReturnExpStatement(new VariableExp(new Variable("a")))));
+    
+    classDef.add(new ClassDef(
+        new ClassName("GenericClass"), 
+        new Constructor(
+            new ArrayList<VarDec>(), 
+            new VarAssignment(
+                new Variable("a"), 
+                new NumberExp(3))), 
+        instanceVars, 
+        methodDefs, 
+        types));
+
+    
+
+    Statement st = new VarDecAssignment(new VarDec(new ClassType(new ClassName("GenericClass")), new Variable("g")), new ClassExp(new ClassName("GenericClass"), types,new ArrayList<Exp>()));
+ 
+
+    final Program program = new Program(classDef, st);
+    TypeChecker.typecheckProgram(program);
+
+
+    }
 }
