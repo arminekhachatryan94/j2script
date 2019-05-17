@@ -312,7 +312,7 @@ public class ParserTest {
                     new PrintStatement(new NumberExp(7))
                 )
         );
-		Program program = new Program(null, stm);
+		Program program = new Program(new ArrayList<>(), stm);
 		assertParses(tokens, program);
 	}
 
@@ -554,7 +554,7 @@ public class ParserTest {
 			int x;
 			constructor()
 				x = 0;
-			public void setX(int setXToThis)
+			public void setX(int setXToThi s)
 				 x = setXToThis;
     	}
     	*/
