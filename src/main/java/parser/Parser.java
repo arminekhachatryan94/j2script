@@ -146,7 +146,7 @@ public class Parser {
         else if (current instanceof VariableToken) {
             resultExp = new VariableExp(new Variable(((VariableToken)current).name));
             resultPos = startPos + 1;
-        } 
+        }
         else if (current instanceof LeftParenToken) {
             final ParseResult<Exp> nested = parseExp(startPos + 1);
             assertTokenAtPos(new RightParenToken(), nested.tokenPos);
@@ -211,7 +211,17 @@ public class Parser {
     }
     private ParseResult<Exp> ParseExpNonBinop(final int startPos) throws ParserException {
         int resultpos = startPos;
-        if(ensureToken(resultpos, new NewToken())){
+        if (ensureToken(resultpos, new TrueToken())) {
+            final BoolExp resultExp = new BoolExp(true);
+            resultpos = startPos + 1;
+            return new ParseResult<Exp>(resultExp, resultpos);
+        } 
+        else if(ensureToken(resultpos, new FalseToken())) {
+            final BoolExp resultExp = new BoolExp(false);
+            resultpos = startPos + 1;
+            return new ParseResult<Exp>(resultExp, resultpos);
+        }
+        else if(ensureToken(resultpos, new NewToken())){
             ClassName name;
             ArrayList<Exp> parameters = new ArrayList<>();
             ensureTokenIs(resultpos + 1, new VariableToken(tokens.get(resultpos).toString()));
@@ -311,7 +321,7 @@ public class Parser {
             return new ParseResult<Statement>(stmt, resultpos);
         }
         //varassign
-        else if(getToken(resultpos) instanceof VariableToken && getToken(resultpos) instanceof EqualToken){
+        else if(getToken(resultpos) instanceof VariableToken && getToken(resultpos+1) instanceof EqualToken){
             VariableToken vt = (VariableToken) getToken(resultpos);
             Variable var = new Variable(vt.name);
             resultpos++;
@@ -320,6 +330,19 @@ public class Parser {
             resultpos++;
             VarAssignment va = new VarAssignment(var, exp.result);
             return new ParseResult<Statement> (va, resultpos);
+        }
+        //while
+        else if(ensureToken(resultpos, new WhileToken())){
+            System.out.println("its a while");
+
+            ensureTokenIs(++resultpos, new LeftParenToken());
+            final ParseResult<Exp> guard = ParseExpNonBinop(++resultpos);
+            resultpos = guard.tokenPos;
+            ensureTokenIs(resultpos++, new RightParenToken());
+            final ParseResult<Statement> ifTrue = parseStatement(resultpos);
+            resultpos = ifTrue.tokenPos;
+            final WhileStatement While = new WhileStatement(guard.result, ifTrue.result);
+            return new ParseResult<Statement> (While, resultpos);
         }
         //vardec assign
         else if ((ensureToken(resultpos, new IntToken()) || ensureToken(resultpos, new BooleanToken()) || ensureToken(resultpos, new VariableToken()))
@@ -354,6 +377,7 @@ public class Parser {
         
                 }
             }
+            //boolean
             else if (ensureToken(resultpos, new BooleanToken())){
                 BooleanType b = new BooleanType();
                 resultpos++;
