@@ -88,7 +88,7 @@ public class TypeEnvironment {
     public static TypeEnvironment initialEnv(final Set<TypeVariable> inScope,
                                              final List<VarDec> params,
                                              final ClassType thisType) throws TypeErrorException {
-        return new TypeEnvironment(inScope, variableMapping(params), thisType, new HashSet(), false);
+        return new TypeEnvironment(inScope, variableMapping(params), thisType, new HashSet<>(), false);
     } // initialEnv
 
     public static TypeEnvironment initialEnv(final List<TypeVariable> typeVariables,

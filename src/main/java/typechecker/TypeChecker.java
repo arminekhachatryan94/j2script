@@ -505,7 +505,9 @@ public class TypeChecker {
         List<VarDec> variables = new ArrayList<>(getClass(thisType.name).instanceVars);
         variables.addAll(methodDef.varDecs);
         TypeEnvironment env = TypeEnvironment.initialEnv(inScope, variables, thisType);
-        for(VarDec v : methodDef.varDecs) { env.addDefinedVariable(v.var);}
+        for(VarDec v : methodDef.varDecs) { 
+            env = env.addDefinedVariable(v.var);
+        }
         typecheckStatement(env,
                            methodDef.returnType,
                            null,
@@ -521,7 +523,9 @@ public class TypeChecker {
         List<VarDec> variables = new ArrayList<>(getClass(thisType.name).instanceVars);
         variables.addAll(constructor.parameters);
         TypeEnvironment env = TypeEnvironment.initialEnv(inScopeFromClass, variables, thisType);
-        for(VarDec v : constructor.parameters) { env.addDefinedVariable(v.var); }
+        for(VarDec v : constructor.parameters) { 
+            env = env.addDefinedVariable(v.var);
+        }
         typecheckStatement(env,
                            null,
                            getSuperParams(thisType),
