@@ -609,22 +609,45 @@ public class Parser {
 
         return new ParseResult<List<Type>>(types,resultpos);
     }
+    public ParseResult<List<TypeVariable>> checkTypeVariables(int startPos, List<TypeVariable> tv) throws ParserException{
+        int resultpos = startPos;
+        if ( getToken(resultpos) instanceof VariableToken ){
+            while ( getToken(resultpos) instanceof VariableToken){
+                VariableToken vt = (VariableToken) getToken(resultpos);
+                TypeVariable t = new TypeVariable(vt.name);
+                tv.add(t);
+                resultpos++;
+                if (getToken(resultpos) instanceof CommaToken){
+                    resultpos++;
+                }
+            }
+            ensureTokenIs(resultpos, new GreaterThanToken());
+            resultpos++;
+        }
+        else if (getToken(resultpos) instanceof GreaterThanToken){
+            ensureTokenIs(resultpos, new GreaterThanToken());
+            resultpos++;
+        }
+        else{
+            throw new ParserException("This is not a valid type var");
+        }
+        return new ParseResult<List<TypeVariable>>(tv, resultpos);
+    }
     private ParseResult<ClassDef> parseClassDef(final int startPos) throws ParserException {
         int resultpos = startPos;
         ClassName extendsName = null;
-        List<Type> types = new ArrayList<>();
         ClassDef resultClassDef = null;
         Extends extendedClass = null;
         Constructor constructor = null;
         List<VarDec> vardecs = new ArrayList<VarDec>();
         Statement statement = null;
-        List<TypeVariable> typeVariables = null;
+        List<TypeVariable> typeVariables = new ArrayList<TypeVariable>();
         List<MethodDef> methodDefs = new ArrayList<MethodDef>();
         final ClassName name = new ClassName(tokens.get(++resultpos).toString());
         ensureTokenIs(++resultpos,new LessThanToken());
         resultpos++;
-        final ParseResult<List<Type>> pr = checkTypes(resultpos, types);
-        types = pr.result;
+        final ParseResult<List<TypeVariable>> pr = checkTypeVariables(resultpos, typeVariables);
+        typeVariables = pr.result;
         resultpos= pr.tokenPos;
         if (ensureToken(resultpos, new ExtendsToken())){
             List<Type> extendedtypes = new ArrayList<>();
@@ -638,6 +661,7 @@ public class Parser {
         }
         else{
             //Extended class is null, do nothing.
+            ensureTokenIs(resultpos, new GreaterThanToken());
         }
         ensureTokenIs(++resultpos, new LeftCurlyToken());
         CurlyBraceStack.push(1);
@@ -699,10 +723,10 @@ public class Parser {
                 throw new ParserException("This is not a valid class because it doesnt have a matching curly brace");
             }
         }
-        resultClassDef = new ClassDef(name, constructor, extendedClass, vardecs, methodDefs, new ArrayList<TypeVariable>());
         if (constructor == null){
             throw new ParserException("This class Does not have a constructor");
         }
+        resultClassDef = new ClassDef(name, constructor, extendedClass, vardecs, methodDefs, typeVariables);
         return new ParseResult<ClassDef>(resultClassDef, resultpos);
     }
 
