@@ -18,7 +18,7 @@ import java.io.File;
 public class main {
     private static char[] readFile(File f) throws FileNotFoundException {
         String theString = "";
-            Scanner scanner = new Scanner(f);
+        Scanner scanner = new Scanner(f);
 
         theString = scanner.nextLine();
         while (scanner.hasNextLine()) {
@@ -30,7 +30,7 @@ public class main {
 
     public static void main(String[] args) throws FileNotFoundException, ParserException, TokenizerException,
                                                   TypeErrorException, IOException {
-        File inputFile = new File(args[0]);
+        File inputFile = new File("./testPrograms/" + args[0]);
         // lexer reads file in as char[] returns arraylist of tokens
         Tokenizer tokenizer = new Tokenizer(readFile(inputFile));
         final List<Token> tokens = tokenizer.tokenize();
