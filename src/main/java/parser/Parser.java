@@ -325,8 +325,9 @@ public class Parser {
             VariableToken vt = (VariableToken) getToken(resultpos);
             Variable var = new Variable(vt.name);
             resultpos++;
-            ParseResult<Exp> exp = parseExp(resultpos);
-            ensureTokenIs(exp.tokenPos, new SemiToken());
+            ParseResult<Exp> exp = parseExp(++resultpos);
+            resultpos = exp.tokenPos;
+            ensureTokenIs(resultpos, new SemiToken());
             resultpos++;
             VarAssignment va = new VarAssignment(var, exp.result);
             return new ParseResult<Statement> (va, resultpos);
@@ -761,7 +762,7 @@ public class Parser {
                 CurlyBraceStack.pop();
             }
             else{
-                throw new ParserException("This is not a valid class because it doesnt have a matching curly brace");
+                throw new ParserException("This is not a valid class because it doesnt have a matching curly brace @ " + resultpos);
             }
         }
         if (constructor == null){
