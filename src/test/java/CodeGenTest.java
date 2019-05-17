@@ -529,12 +529,16 @@ public class CodeGenTest {
 		/*
 		output
 		*/
+ 
 
 		//var ClassOne_getId = function(self) {return id;};
 		//var ClassOne_vtable = [ClassOne_getId];
-		//var Bran_getName = function(self) {	return name};
+		//var Bran_getName = function(self) {	return false};
 		//var Bran_vtable = [ClassOne_getId, Bran_getName];
-		//var 
+		//var studentOne = {	vtable: ClassOne_vtable,	id: 50}
+		//var student = {	vtable: Bran_vtable,	id: 50}
+		//var resultID = studentOne.vtable[0](studentOne);
+		//var studentID = student.vtable[0](student);
 
 
 		List<ClassDef> classes = new ArrayList<>();
@@ -560,7 +564,7 @@ public class CodeGenTest {
 		//varDecsForSecondClass.add(new VarDec(new BooleanType(), new Variable("name")));
 
 		List<MethodDef> methodDefsForSecondClass = new ArrayList<>();
-		methodDefsForSecondClass.add(new MethodDef(new PublicAccess(), new BooleanType(), new MethodName("getName"), emptyVarDecs, new ReturnExpStatement(new VariableExp(new Variable("name")))));
+		methodDefsForSecondClass.add(new MethodDef(new PublicAccess(), new BooleanType(), new MethodName("getName"), emptyVarDecs, new ReturnExpStatement(new BoolExp(false))));
 
 		classes.add(new ClassDef(new ClassName("Bran"), 
 			new Constructor(emptyyVarDecs, new SuperStatement(new ArrayList<Exp>())), 
@@ -582,7 +586,7 @@ public class CodeGenTest {
 		
 		Statement st = new Block(statements);
 		Program program = new Program(classes, st);
-		assertResultProgram("ygfe", program);
+		assertResultProgram("var ClassOne_getId = function(self) {return id;};var ClassOne_vtable = [ClassOne_getId];var Bran_getName = function(self) {	return false};var Bran_vtable = [ClassOne_getId, Bran_getName];var studentOne = {	vtable: ClassOne_vtable,	id: 50}var student = {	vtable: Bran_vtable,	id: 50}var resultID = studentOne.vtable[0](studentOne);var studentID = student.vtable[0](student);", program);
 
 
 
@@ -602,7 +606,7 @@ public class CodeGenTest {
 		class Bran extends ClassOne{
 
 			constructor(){
-				super(2);
+				super();
 			}
 			public void setId(int i){
 				 id = i;
@@ -647,7 +651,7 @@ public class CodeGenTest {
 
 		List<Exp> n = new ArrayList<>();
 		n.add(new NumberExp(2));
-		classes.add(new ClassDef(new ClassName("Bran"), new Constructor(emptyyVarDecs, new SuperStatement(n)), new ClassName("ClassOne"), varDecsForSecondClass, methodDefsForSecondClass));
+		classes.add(new ClassDef(new ClassName("Bran"), new Constructor(emptyyVarDecs, new SuperStatement(new ArrayList<Exp>())), new ClassName("ClassOne"), varDecsForSecondClass, methodDefsForSecondClass));
 
 
 		List<Exp> parameters = new ArrayList<>();
@@ -672,7 +676,7 @@ public class CodeGenTest {
 
 	}
 
-	//@Test
+	@Test
 	public void testVirtualMethodCallWithoutInheritance() throws IOException {
 		/*class ClassOne {
 			int id;
@@ -685,7 +689,7 @@ public class CodeGenTest {
 		}
 		class Bran extends ClassOne{
 			constructor(){
-				super(2);
+				super();
 			}
 			public int getId() {
 				return 5;
@@ -696,6 +700,13 @@ public class CodeGenTest {
 
 		int resultID = student.getId(); //should be 5
 		*/
+
+		//var ClassOne_getId = function(self) {return id;};
+		//var ClassOne_vtable = [ClassOne_getId];
+		//var Bran_getId = function(self) {	return 5};
+		//var Bran_vtable = [Bran_getId];
+		//var student = {	vtable: Bran_vtable,	id: 50}
+		//var resultID = student.vtable[0](student);
 
 
 		List<ClassDef> classes = new ArrayList<>();
@@ -716,14 +727,13 @@ public class CodeGenTest {
 		classes.add(new ClassDef(new ClassName("ClassOne"), new Constructor(emptyyVarDecs, var), varDecs, methodDefs));
 		
 
-		List<Exp> n = new ArrayList<>();
-		n.add(new NumberExp(2));
+		
 		List<VarDec> varDecsForSecondClass = new ArrayList<>();
 		//varDecsForSecondClass.add(new VarDec(new BooleanType(), new Variable("name")));
 		List<MethodDef> methodDefss = new ArrayList<>();
 		methodDefss.add(new MethodDef(new PublicAccess(), new IntType(), new MethodName("getId"), emptyVarDecs, new ReturnExpStatement(new NumberExp(5))));
 		
-		classes.add(new ClassDef(new ClassName("Bran"), new Constructor(emptyyVarDecs, new SuperStatement(n)), new ClassName("ClassOne"), varDecsForSecondClass, methodDefss));
+		classes.add(new ClassDef(new ClassName("Bran"), new Constructor(emptyyVarDecs, new SuperStatement(new ArrayList<Exp>())), new ClassName("ClassOne"), varDecsForSecondClass, methodDefss));
 
 
 		List<Exp> parameters = new ArrayList<>();
@@ -737,11 +747,10 @@ public class CodeGenTest {
 		
 		Statement st = new Block(statements);
 		Program program = new Program(classes, st);
-		assertResultProgram("var ClassOne_getId = function(self) {	return id};var ClassOne_vtable = [ClassOne_getId];var Bran_getId = function(self) {	return 5};var Bran_vtable = [Bran_getId];", program);
-
+		assertResultProgram("var ClassOne_getId = function(self) {return id;};var ClassOne_vtable = [ClassOne_getId];var Bran_getId = function(self) {	return 5};var Bran_vtable = [Bran_getId];var student = {	vtable: Bran_vtable,	id: 50}var resultID = student.vtable[0](student);", program);
 	}
 
-	//@Test
+	@Test
     public void testInheritFromClassOneWithMultipleChildren() throws IOException {
     	/*class ClassOne {
 			int id;
@@ -754,7 +763,7 @@ public class CodeGenTest {
 		}
 		class Bran extends ClassOne{
 			constructor(){
-				super(2);
+				super();
 			}
 			public int getId() {
 				return 5;
@@ -782,7 +791,17 @@ public class CodeGenTest {
 
     	*/
 
-
+		//[var ClassOne_getId = function(self) {return id;};
+		//var ClassOne_vtable = [ClassOne_getId];
+		//var Bran_getId = function(self) {	return 5};
+		//var Bran_setId = function(IntType i,self) {	id = i};
+		//var Bran_vtable = [Bran_getId, Bran_setId];
+		//var Arya_getName = function(self) {	return name};
+		//var Arya_vtable = [ClassOne_getId, Arya_getName];
+		//var bran = {	vtable: Bran_vtable,	id: 50}
+		//var arya = {	vtable: Arya_vtable,	id: 50}
+		//var iDisFive = bran.vtable[0](bran);
+		//var iDisFifty = arya.vtable[0](arya);
 
 
 		List<ClassDef> classes = new ArrayList<>();
@@ -814,7 +833,7 @@ public class CodeGenTest {
 		
 		List<Exp> n = new ArrayList<>();
 		n.add(new NumberExp(2));
-		classes.add(new ClassDef(new ClassName("Bran"), new Constructor(emptyyVarDecs, new SuperStatement(n)), new ClassName("ClassOne"), varDecsForSecondClass, methodDefss));
+		classes.add(new ClassDef(new ClassName("Bran"), new Constructor(emptyyVarDecs, new SuperStatement(new ArrayList<Exp>())), new ClassName("ClassOne"), varDecsForSecondClass, methodDefss));
 
 
 		List<MethodDef> methodDefsForSecondClass = new ArrayList<>();
@@ -836,10 +855,10 @@ public class CodeGenTest {
 		
 		Statement st = new Block(statements);
 		Program program = new Program(classes, st);
-		assertResultProgram("var ClassOne_getId = function(self) {	return id};var ClassOne_vtable = [ClassOne_getId];var Bran_getId = function(self) {	return 5};var Bran_setId = function(self) {	id = i};var Bran_vtable = [Bran_getId, Bran_setId];var Arya_getName = function(self) {	return name};var Arya_vtable = [ClassOne_getId, Arya_getName];", program);
-	}
+		assertResultProgram("var ClassOne_getId = function(self) {return id;};var ClassOne_vtable = [ClassOne_getId];var Bran_getId = function(self) {	return 5};var Bran_setId = function(IntType i,self) {	id = i};var Bran_vtable = [Bran_getId, Bran_setId];var Arya_getName = function(self) {	return name};var Arya_vtable = [ClassOne_getId, Arya_getName];var bran = {	vtable: Bran_vtable,	id: 50}var arya = {	vtable: Arya_vtable,	id: 50}var iDisFive = bran.vtable[0](bran);var iDisFifty = arya.vtable[0](arya);", program);
+		}
 
-    //@Test
+    @Test
     public void testInheritanceWithGrandchildren() throws IOException {
     	/*class ClassOne {
 			int id;
@@ -852,7 +871,7 @@ public class CodeGenTest {
 		}
 		class Bran extends ClassOne{
 			constructor(){
-				super(2);
+				super();
 			}
 			public int getId() {
 				return 5;
@@ -873,10 +892,21 @@ public class CodeGenTest {
 		Bran bran = new Bran();
 		Arya arya = new Arya();
 
-		int iDisFive= arya.getId();
+		int iDisFive= bran.getId();
+		int iDisFiveHereToo = arya.getId();
 
-		int iDisFiveHereToo = bran.getId();
 
+		var ClassOne_getId = function(self) {return id;};
+		var ClassOne_vtable = [ClassOne_getId];
+		var Bran_getId = function(self) {	return 5};
+		var Bran_setId = function(IntType i,self) {	id = i};
+		var Bran_vtable = [Bran_getId, Bran_setId];
+		var Arya_getName = function(self) {	return name};
+		var Arya_vtable = [Bran_getId, Bran_setId, Arya_getName];
+		var bran = {	vtable: Bran_vtable,	id: 50}
+		var arya = {	vtable: Arya_vtable,	id: 50}
+		var iDisFive = bran.vtable[0](bran);
+		var iDisFiveHereToo = arya.vtable[0](arya);
     	*/
 
 		List<ClassDef> classes = new ArrayList<>();
@@ -908,7 +938,7 @@ public class CodeGenTest {
 		
 		List<Exp> n = new ArrayList<>();
 		n.add(new NumberExp(2));
-		classes.add(new ClassDef(new ClassName("Bran"), new Constructor(emptyyVarDecs, new SuperStatement(n)), new ClassName("ClassOne"), varDecsForSecondClass, methodDefss));
+		classes.add(new ClassDef(new ClassName("Bran"), new Constructor(emptyyVarDecs, new SuperStatement(new ArrayList<Exp>())), new ClassName("ClassOne"), varDecsForSecondClass, methodDefss));
 
 
 		List<MethodDef> methodDefsForSecondClass = new ArrayList<>();
@@ -930,11 +960,10 @@ public class CodeGenTest {
 		
 		Statement st = new Block(statements);
 		Program program = new Program(classes, st);
-		assertResultProgram("var ClassOne_getId = function(self) {	return id};var ClassOne_vtable = [ClassOne_getId];var Bran_getId = function(self) {	return 5};var Bran_setId = function(self) {	id = i};var Bran_vtable = [Bran_getId, Bran_setId];var Arya_getName = function(self) {	return name};var Arya_vtable = [Bran_getId, Bran_setId, Arya_getName];", program);
-
+		assertResultProgram("var ClassOne_getId = function(self) {return id;};var ClassOne_vtable = [ClassOne_getId];var Bran_getId = function(self) {	return 5};var Bran_setId = function(IntType i,self) {	id = i};var Bran_vtable = [Bran_getId, Bran_setId];var Arya_getName = function(self) {	return name};var Arya_vtable = [Bran_getId, Bran_setId, Arya_getName];var bran = {	vtable: Bran_vtable,	id: 50}var arya = {	vtable: Arya_vtable,	id: 50}var iDisFive = bran.vtable[0](bran);var iDisFiveHereToo = arya.vtable[0](arya);", program);
     }
 
-    //@Test
+    @Test
     public void testInheritanceWithSameMethodsInChildClassInDifferentOrder() throws IOException {
     	/*class ClassOne {
 			int id;
@@ -959,7 +988,7 @@ public class CodeGenTest {
 		}
 		class Arya extends Bran{
 			constructor(){
-				super(2);
+				super();
 			}
 			public Boolean getName(){
 				return name;
@@ -981,7 +1010,8 @@ public class CodeGenTest {
 
     	*/
 
-		/*var ClassOne_getId = function(self) {return id;};
+		/*
+		var ClassOne_getId = function(self) {return id;};
 		var ClassOne_vtable = [ClassOne_getId];
 		var Bran_getId = function(self) {	return 5};
 		var Bran_setId = function(IntType i,self) {	id = i};
@@ -989,7 +1019,13 @@ public class CodeGenTest {
 		var Arya_getName = function(self) {	return name};
 		var Arya_getId = function(self) {	return 5};
 		var Arya_setId = function(IntType i,self) {	id = i};
-		var Arya_vtable = [Arya_getId, Arya_setId, Arya_getName];*/
+		var Arya_vtable = [Arya_getId, Arya_setId, Arya_getName];
+		var bran = {	vtable: Bran_vtable,	id: 50}
+		var arya = {	vtable: Arya_vtable,	id: 50}
+		var iDisFive = bran.vtable[0](bran);
+		var iDisFiveHereToo = arya.vtable[0](arya);
+
+		*/
 		List<ClassDef> classes = new ArrayList<>();
 
 		List<VarDec> emptyVarDecs = new ArrayList<>();
@@ -1027,7 +1063,7 @@ public class CodeGenTest {
 		
 		List<Exp> n = new ArrayList<>();
 		n.add(new NumberExp(2));
-		classes.add(new ClassDef(new ClassName("Arya"), new Constructor(emptyyVarDecs, new SuperStatement(n)), new ClassName("Bran"), varDecsForSecondClass, methodDefsForSecondClass));
+		classes.add(new ClassDef(new ClassName("Arya"), new Constructor(emptyyVarDecs, new SuperStatement(new ArrayList<Exp>())), new ClassName("Bran"), varDecsForSecondClass, methodDefsForSecondClass));
 
 
 		List<Exp> parameters = new ArrayList<>();
@@ -1044,12 +1080,12 @@ public class CodeGenTest {
 		Statement st = new Block(statements);
 		Program program = new Program(classes, st);
 		//assertResultProgram("var ClassOne_getId = function(self) {	return id};var ClassOne_vtable = [ClassOne_getId];var Bran_getId = function(self) {	return 5};var Bran_setId = function(self) {	id = i};var Bran_vtable = [Bran_getId, Bran_setId];var Arya_getName = function(self) {	return name};var Arya_getId = function(self) {	return 5};var Arya_setId = function(self) {	id = i};var Arya_vtable = [Arya_getId, Arya_setId, Arya_getName];", program);
-		assertResultProgram("", program);
+		assertResultProgram("var ClassOne_getId = function(self) {return id;};var ClassOne_vtable = [ClassOne_getId];var Bran_getId = function(self) {	return 5};var Bran_setId = function(IntType i,self) {	id = i};var Bran_vtable = [Bran_getId, Bran_setId];var Arya_getName = function(self) {	return name};var Arya_getId = function(self) {	return 5};var Arya_setId = function(IntType i,self) {	id = i};var Arya_vtable = [Arya_getId, Arya_setId, Arya_getName];var bran = {	vtable: Bran_vtable,	id: 50}var arya = {	vtable: Arya_vtable,	id: 50}var iDisFive = bran.vtable[0](bran);var iDisFiveHereToo = arya.vtable[0](arya);", program);
     }
 
 
 
-    //@Test
+    @Test
     public void testMultipleClasseswithInheritance() throws IOException {
     	/*class ClassOne {
 			int id;
@@ -1082,17 +1118,31 @@ public class CodeGenTest {
 			constructor(){
 				super();
 			}
-			public int getB() {
+			public int getName() {
 				return 5;
 			}
 		}
 		
 	
-		Bran bran = new Bran();
-		Arya arya = new Arya();
-		int iDisFive = bran.getId();
-		int fifty = arya.getA();
+		Bran b = new Bran();
+		Arya a = new Arya();
+		int iDisFive = b.getId();
+		int fifty = a.getA();
 
+
+
+		var ClassOne_getId = function(self) {return id;};
+		var ClassOne_vtable = [ClassOne_getId];
+		var Bran_getId = function(self) {	return 5};
+		var Bran_vtable = [Bran_getId];
+		var ClassTwo_getA = function(self) {return a;};
+		var ClassTwo_vtable = [ClassTwo_getA];
+		var Arya_getName = function(self) {	return 5};
+		var Arya_vtable = [ClassTwo_getA, Arya_getName];
+		var b = {	vtable: Bran_vtable,	id: 50}
+		var a = {	vtable: Arya_vtable,	a: 50}
+		var iDisFive = b.vtable[0](b);
+		var fifty = a.vtable[0](a);
     	*/
 
     	List<ClassDef> classes = new ArrayList<>();
@@ -1133,7 +1183,7 @@ public class CodeGenTest {
 
 
 		List<MethodDef> methodDefsForSecondClass = new ArrayList<>();
-		methodDefsForSecondClass.add(new MethodDef(new PublicAccess(), new BooleanType(), new MethodName("getName"), emptyVarDecs, new ReturnExpStatement(new VariableExp(new Variable("name")))));
+		methodDefsForSecondClass.add(new MethodDef(new PublicAccess(), new BooleanType(), new MethodName("getName"), emptyVarDecs, new ReturnExpStatement(new NumberExp(5))));
 
 		classes.add(new ClassDef(new ClassName("Arya"), new Constructor(emptyyVarDecs, new SuperStatement(new ArrayList<Exp>())), new ClassName("ClassTwo"), varDecsForSecondClass, methodDefsForSecondClass));
 
@@ -1151,11 +1201,10 @@ public class CodeGenTest {
 		
 		Statement st = new Block(statements);
 		Program program = new Program(classes, st);
-		assertResultProgram("var ClassOne_getId = function(self) {	return id};var ClassOne_vtable = [ClassOne_getId];var Bran_getId = function(self) {	return 5};var Bran_vtable = [Bran_getId];var ClassTwo_getA = function(self) {	return a};var ClassTwo_vtable = [ClassTwo_getA];var Arya_getName = function(self) {	return name};var Arya_vtable = [ClassTwo_getA, Arya_getName];", program);
-
+		assertResultProgram("var ClassOne_getId = function(self) {return id;};var ClassOne_vtable = [ClassOne_getId];var Bran_getId = function(self) {	return 5};var Bran_vtable = [Bran_getId];var ClassTwo_getA = function(self) {return a;};var ClassTwo_vtable = [ClassTwo_getA];var Arya_getName = function(self) {	return 5};var Arya_vtable = [ClassTwo_getA, Arya_getName];var b = {	vtable: Bran_vtable,	id: 50}var a = {	vtable: Arya_vtable,	a: 50}var iDisFive = b.vtable[0](b);var fifty = a.vtable[0](a);", program);
 	}
 
-	//@Test
+	@Test
 	public void testFourthGenerationInheritanceVtables() throws IOException {
 		/*
 		Class One{
@@ -1207,10 +1256,27 @@ public class CodeGenTest {
 
 		One o = new One(1);
 		Two t = new Two(2);
-		One t = new Three(3);
+		One th = new Three(3);
 		Four f = new Four(4);
-
 		int one = f.getOne();
+
+
+		var One_getOne = function(self) {return one;};
+		var One_vtable = [One_getOne];
+		var Two_getTwo = function(self) {	return two};
+		var Two_getOne = function(self) {	return 1};
+		var Two_vtable = [Two_getOne, Two_getTwo];
+		var Three_getThree = function(self) {	return three};
+		var Three_vtable = [Two_getOne, Two_getTwo, Three_getThree];
+		var Four_getOne = function(self) {	return 1};
+		var Four_getFour = function(self) {	return four};
+		var Four_vtable = [Four_getOne, Two_getTwo, Three_getThree, Four_getFour];
+		var o = {	vtable: One_vtable,	one: 1}
+		var t = {	vtable: Two_vtable,	one: 2}
+		var th = {	vtable: One_vtable,	one: 3}
+		var f = {	vtable: Four_vtable,	one: 4}
+		var one = f.vtable[0](f);
+
 		*/
 		List<VarDec> emptyVarDecs = new ArrayList<>();
 		List<ClassDef> classes = new ArrayList<>();
@@ -1233,7 +1299,9 @@ public class CodeGenTest {
 		parametersFour.add(new NumberExp(4));
 			statements.add(new VarDecAssignment(new VarDec(new ClassType(new ClassName("Four")), new Variable("f")), new ClassExp(new ClassName("Four"), parametersFour)));
 
-
+List<Exp> expressions = new ArrayList<>();
+			statements.add(new VarDecAssignment(new VarDec(new IntType(), new Variable("one")), new VarMethodExp(new Variable("f"), new MethodName("getOne"), expressions)));
+		
 		ArrayList<VarDec> constructorVarDec = new ArrayList<>();
 		constructorVarDec.add(new VarDec(new IntType(), new Variable("i")));
 
@@ -1285,10 +1353,7 @@ public class CodeGenTest {
 
 		Statement block = new Block(statements);
 		Program program = new Program(classes, block);
-		//assertResultProgram("var One_getOne = function(self) {	return one};var One_vtable = [One_getOne];var Two_getTwo = function(self) {	return two};var Two_getOne = function(self) {	return 1};var Two_vtable = [Two_getOne, Two_getTwo];var Three_getThree = function(self) {	return three};var Three_vtable = [Two_getOne, Two_getTwo, Three_getThree];var Four_getFour = function(self) {	return four};var Four_getOne = function(self) {	return 1};var Four_vtable = [Four_getOne, Two_getTwo, Three_getThree, Four_getFour];", program);
-
-		assertResultProgram("var One_getOne = function(self) {	return one};var One_vtable = [One_getOne];var Two_getTwo = function(self) {	return two};var Two_getOne = function(self) {	return 1};var Two_vtable = [Two_getOne, Two_getTwo];var Three_getThree = function(self) {	return three};var Three_vtable = [Two_getOne, Two_getTwo, Three_getThree];var Four_getOne = function(self) {	return 1};var Four_getFour = function(self) {	return four};var Four_vtable = [Four_getOne, Two_getTwo, Three_getThree, Four_getFour];", program);
-
+		assertResultProgram("var One_getOne = function(self) {return one;};var One_vtable = [One_getOne];var Two_getTwo = function(self) {	return two};var Two_getOne = function(self) {	return 1};var Two_vtable = [Two_getOne, Two_getTwo];var Three_getThree = function(self) {	return three};var Three_vtable = [Two_getOne, Two_getTwo, Three_getThree];var Four_getOne = function(self) {	return 1};var Four_getFour = function(self) {	return four};var Four_vtable = [Four_getOne, Two_getTwo, Three_getThree, Four_getFour];var o = {	vtable: One_vtable,	one: 1}var t = {	vtable: Two_vtable,	one: 2}var th = {	vtable: One_vtable,	one: 3}var f = {	vtable: Four_vtable,	one: 4}var one = f.vtable[0](f);", program);
 	}
 
 
