@@ -17,6 +17,6 @@ public class NumberToken implements Token {
     }
 
         public int hashCode() {
-        return 29;
+        return 22;
     }
 }

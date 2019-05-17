@@ -1,7 +1,7 @@
 package j2script.tokens;
 public class IntToken implements Token {
     public int hashCode() {
-        return 9;
+        return 15;
     }
 
     public boolean equals(Object obj) {

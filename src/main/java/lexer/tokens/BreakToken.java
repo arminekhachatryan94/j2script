@@ -1,7 +1,7 @@
 package j2script.tokens;
 public class BreakToken implements Token {
     public int hashCode() {
-        return 3;
+        return 4;
     }
 
     public boolean equals(Object obj) {

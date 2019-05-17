@@ -2,7 +2,7 @@ package j2script.tokens;
 
 public class BooleanEqualsToken implements Token {
     public int hashCode() {
-        return 55;
+        return 2;
     }
 
     public boolean equals(Object obj) {

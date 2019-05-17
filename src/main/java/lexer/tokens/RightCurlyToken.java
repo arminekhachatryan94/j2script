@@ -1,7 +1,7 @@
 package j2script.tokens;
 public class RightCurlyToken implements Token {
     public int hashCode() {
-        return 18;
+        return 27;
     }
 
     public boolean equals(Object obj) {

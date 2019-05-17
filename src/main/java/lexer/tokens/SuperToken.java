@@ -2,7 +2,7 @@ package j2script.tokens;
 
 public class SuperToken implements Token {
     public int hashCode() {
-        return 52;
+        return 30;
     }
 
     public boolean equals(Object obj) {

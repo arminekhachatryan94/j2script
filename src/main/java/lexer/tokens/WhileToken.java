@@ -1,7 +1,7 @@
 package j2script.tokens;
 public class WhileToken implements Token {
     public int hashCode() {
-        return 26;
+        return 34;
     }
 
     public boolean equals(Object obj) {
