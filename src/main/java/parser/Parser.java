@@ -661,7 +661,7 @@ public class Parser {
         }
         else{
             //Extended class is null, do nothing.
-            ensureTokenIs(resultpos, new GreaterThanToken());
+            ensureTokenIs(++resultpos, new GreaterThanToken());
         }
         ensureTokenIs(++resultpos, new LeftCurlyToken());
         CurlyBraceStack.push(1);
