@@ -299,9 +299,11 @@ public class Parser {
 
     private ParseResult<Statement> parseStatement(final int startPos) throws ParserException {
         int resultpos = startPos;
+        System.out.println("in parse stmt");
         Statement stmt;
         //This is a block statement
         if (ensureToken(resultpos, new LeftCurlyToken())){
+            System.out.println("its a block");
             final ParseResult<Statement> block = parseBlock(resultpos);
             stmt = block.result;
             resultpos = block.tokenPos;
@@ -311,6 +313,8 @@ public class Parser {
         else if((ensureToken(resultpos, new VariableToken()) && !ensureToken(resultpos + 1,new LeftParenToken())) 
                 || ensureToken(resultpos, new LeftParenToken())
                 || tokens.get(resultpos) instanceof NumberToken){
+                    System.out.println("its an additve");
+
                     final ParseResult<Exp> stment = parseAdditive(resultpos);
                     stmt = stment.result;
                     resultpos = stment.tokenPos;
@@ -320,6 +324,7 @@ public class Parser {
         }
         //parse new constructor
         else if(ensureToken(resultpos, new NewToken())){
+            System.out.println("its a constructor");
             final ParseResult<Exp> exp = ParseExpNonBinop(resultpos);
             stmt = exp.result;
             resultpos = exp.tokenPos;
@@ -329,6 +334,7 @@ public class Parser {
         }
         //methodcall
         else if((ensureToken(resultpos, new VariableToken()) && ensureToken(resultpos + 1,new LeftParenToken()))){
+            System.out.println("its a methodcall");
             final ParseResult<Exp> exp = ParseExpNonBinop(resultpos);
             stmt = exp.result;
             resultpos = exp.tokenPos;
@@ -338,12 +344,16 @@ public class Parser {
         }
         //return
         else if(ensureToken(resultpos, new ReturnToken())){
+            System.out.println("its a return");
+
             final ReturnVoidStatement rvs = new ReturnVoidStatement();
             ensureTokenIs(++resultpos, new SemiToken());
             resultpos++;
             return new ParseResult<Statement>(rvs,++resultpos);
         }
         else if(ensureToken(resultpos, new BreakToken())){
+            System.out.println("its a break");
+
             final BreakStatement bs = new BreakStatement();
             ensureTokenIs(++resultpos, new SemiToken());
             resultpos++;
@@ -356,6 +366,8 @@ public class Parser {
             || tokens.get(resultpos) instanceof NumberToken
             || ensureToken(resultpos, new NewToken()) 
             || (ensureToken(resultpos, new VariableToken()) && ensureToken(resultpos + 1,new LeftParenToken()))){
+                System.out.println("its an exp not a binop in print");
+
                 ParseResult<Exp> e = ParseExpNonBinop(++resultpos);
                 ensureTokenIs(++resultpos, new RightParenToken());
                 ensureTokenIs(++resultpos, new SemiToken());
@@ -365,6 +377,8 @@ public class Parser {
             }
         }
         else if(ensureToken(resultpos, new IfToken())){
+            System.out.println("its an if");
+
             ensureTokenIs(++resultpos, new LeftParenToken());
             final ParseResult<Exp> guard = ParseExpNonBinop(++resultpos);
             resultpos = guard.tokenPos;
@@ -376,6 +390,101 @@ public class Parser {
             resultpos = ifFalse.tokenPos;
             final IfStatement If = new IfStatement(guard.result,ifTrue.result,ifFalse.result);
             return new ParseResult<Statement> (If, resultpos);
+        }
+        //vardec assign
+        else if ((ensureToken(resultpos, new IntToken()) || ensureToken(resultpos, new BooleanToken()) || ensureToken(resultpos, new VariableToken()))
+        && ensureToken(resultpos + 1, new VariableToken()) && ensureToken(resultpos + 2, new EqualToken())){
+            if (ensureToken(resultpos, new IntToken()))
+            {
+                IntType i = new IntType();
+                resultpos++;
+                VariableToken vt = (VariableToken) getToken(resultpos);
+                Variable var = new Variable(vt.name);
+                VarDec vd = new VarDec(i,var);
+                resultpos++;
+                ensureTokenIs(resultpos, new EqualToken());
+                resultpos++;
+
+                if ((ensureToken(resultpos, new VariableToken()) && !ensureToken(resultpos + 1,new LeftParenToken())) 
+                || ensureToken(resultpos, new LeftParenToken())
+                || tokens.get(resultpos) instanceof NumberToken){
+                    ParseResult<Exp> exp = parseExp(resultpos);
+                    System.out.println("THe token pos is" + exp.tokenPos + " " + getToken(exp.tokenPos));
+                    ensureTokenIs(exp.tokenPos, new SemiToken());
+                    VarDecAssignment vda = new VarDecAssignment(vd,exp.result);
+                    return new ParseResult<Statement> (vda, exp.tokenPos + 1);
+
+                }
+                else{
+                    ParseResult<Exp> exp = ParseExpNonBinop(resultpos);
+                    System.out.println("THe token pos is" + exp.tokenPos + " " + getToken(exp.tokenPos));
+                    ensureTokenIs(exp.tokenPos, new SemiToken());
+                    VarDecAssignment vda = new VarDecAssignment(vd,exp.result);
+                    return new ParseResult<Statement> (vda, exp.tokenPos + 1);
+
+                }
+            }
+            else if (ensureToken(resultpos, new BooleanToken())){
+                BooleanType b = new BooleanType();
+                resultpos++;
+                VariableToken vt = (VariableToken) getToken(resultpos);
+                Variable var = new Variable(vt.name);
+                VarDec vd = new VarDec(b,var);
+                resultpos++;
+                ensureTokenIs(resultpos, new EqualToken());
+                resultpos++;
+
+                if ((ensureToken(resultpos, new VariableToken()) && !ensureToken(resultpos + 1,new LeftParenToken())) 
+                || ensureToken(resultpos, new LeftParenToken())
+                || tokens.get(resultpos) instanceof NumberToken){
+                    ParseResult<Exp> exp = parseExp(resultpos);
+                    System.out.println("THe token pos is" + exp.tokenPos + " " + getToken(exp.tokenPos));
+                    ensureTokenIs(exp.tokenPos, new SemiToken());
+                    VarDecAssignment vda = new VarDecAssignment(vd,exp.result);
+                    return new ParseResult<Statement> (vda, exp.tokenPos + 1);
+
+                }
+                else{
+                    ParseResult<Exp> exp = ParseExpNonBinop(resultpos);
+                    System.out.println("THe token pos is" + exp.tokenPos + " " + getToken(exp.tokenPos));
+                    ensureTokenIs(exp.tokenPos, new SemiToken());
+                    VarDecAssignment vda = new VarDecAssignment(vd,exp.result);
+                    return new ParseResult<Statement> (vda, exp.tokenPos + 1);
+
+                }
+            }
+            else{
+                List<Type> types = new ArrayList<Type>();
+                VariableToken vt = (VariableToken) getToken(resultpos);
+                ClassName cn = new ClassName(vt.name);
+                ClassType c = new ClassType(cn, types);
+                resultpos++;
+                vt = (VariableToken) getToken(resultpos);
+                Variable var = new Variable(vt.name);
+                VarDec vd = new VarDec(c,var);
+                resultpos++;
+                ensureTokenIs(resultpos, new EqualToken());
+                resultpos++;
+
+                if ((ensureToken(resultpos, new VariableToken()) && !ensureToken(resultpos + 1,new LeftParenToken())) 
+                || ensureToken(resultpos, new LeftParenToken())
+                || tokens.get(resultpos) instanceof NumberToken){
+                    ParseResult<Exp> exp = parseExp(resultpos);
+                    System.out.println("THe token pos is" + exp.tokenPos + " " + getToken(exp.tokenPos));
+                    ensureTokenIs(exp.tokenPos, new SemiToken());
+                    VarDecAssignment vda = new VarDecAssignment(vd,exp.result);
+                    return new ParseResult<Statement> (vda, exp.tokenPos + 1);
+
+                }
+                else{
+                    ParseResult<Exp> exp = ParseExpNonBinop(resultpos);
+                    System.out.println("THe token pos is" + exp.tokenPos + " " + getToken(exp.tokenPos));
+                    ensureTokenIs(exp.tokenPos, new SemiToken());
+                    VarDecAssignment vda = new VarDecAssignment(vd,exp.result);
+                    return new ParseResult<Statement> (vda, exp.tokenPos + 1);
+
+                }
+            }
         }
         return null;
     }
@@ -535,6 +644,7 @@ public class Parser {
 
     private ParseResult<Program> parseProgram(final int startPos) throws ParserException {
         final Token tokenhere = tokens.get(startPos);
+        System.out.println("here and tokenhere = " + tokenhere);
         Program resultProgram = null;
         List<ClassDef> classdefs = new ArrayList<ClassDef>();
         int resultpos=startPos;
@@ -557,7 +667,10 @@ public class Parser {
         || ensureToken(resultpos, new IntToken()) || ensureToken(resultpos, new BooleanToken())
         || ensureToken(resultpos, new StringToken()) || ensureToken(resultpos, new LeftCurlyToken())){
             // System.out.println("We are in statement part of program");
+            System.out.println("parsing stmt");
             final ParseResult Statemnt = parseStatement(resultpos);
+            System.out.println(Statemnt.result.toString());
+
             resultProgram = new Program(classdefs, (Statement)Statemnt.result);
             resultpos = Statemnt.tokenPos;
         }
