@@ -510,10 +510,10 @@ public class Parser {
         }
         else if(ensureToken(resultpos, new IfToken())){
             System.out.println("its an if");
-
             ensureTokenIs(++resultpos, new LeftParenToken());
             final ParseResult<Exp> guard = ParseExpNonBinop(++resultpos);
             resultpos = guard.tokenPos;
+            resultpos++;
             ensureTokenIs(resultpos++, new RightParenToken());
             final ParseResult<Statement> ifTrue = parseStatement(resultpos);
             resultpos = ifTrue.tokenPos;
@@ -543,7 +543,7 @@ public class Parser {
                 resultpos = stmt.tokenPos;
             }
             else{
-                throw new ParserException("This is not a valid statement at " + resultpos);
+                throw new ParserException("This is not a valid statement at " + resultpos  + " " + getToken(resultpos).toString());
             }
         }
         CurlyBraceStack.pop();
@@ -556,7 +556,7 @@ public class Parser {
         Access access;
         Type returnType;
         MethodName name;
-        List<VarDec> varDecs;
+        List<VarDec> varDecs = new ArrayList<>();
         Statement statement;
         int resultpos = startPos;
         access = ACCESS_MAP.get(getToken(resultpos));
@@ -564,21 +564,45 @@ public class Parser {
         name = new MethodName(tokens.get(++resultpos).toString());
         ensureTokenIs(++resultpos,new LeftParenToken());
         resultpos++;
-        do{
-            varDecs = new ArrayList<VarDec>();
-            if ((ensureToken(resultpos, new BooleanToken()) ||
-            ensureToken(resultpos, new IntToken()) ||
-            ensureToken(resultpos, new StringToken())) &&
-            ensureToken(resultpos + 1, new VariableToken())){
-                final Type type = TYPE_MAP.get(getToken(resultpos));
-                varDecs.add(new VarDec(type, new Variable(tokens.get(resultpos+2).toString())));
-                resultpos = resultpos + 2;
+
+        if ((ensureToken(resultpos, new BooleanToken()) ||
+        ensureToken(resultpos, new IntToken()) ||
+        ensureToken(resultpos, new StringToken())) &&
+        ensureToken(resultpos + 1, new VariableToken())){
+            Type type = TYPE_MAP.get(getToken(resultpos));
+            varDecs.add(new VarDec(type, new Variable(tokens.get(resultpos+2).toString())));
+            resultpos = resultpos + 2;
+            if (getToken(resultpos) instanceof CommaToken){
+                while(getToken(resultpos) instanceof CommaToken){
+                    resultpos++;
+                    if ((ensureToken(resultpos, new BooleanToken()) ||
+                    ensureToken(resultpos, new IntToken()) ||
+                    ensureToken(resultpos, new StringToken())) &&
+                    ensureToken(resultpos + 1, new VariableToken())){
+                        type = TYPE_MAP.get(getToken(resultpos));
+                        varDecs.add(new VarDec(type, new Variable(tokens.get(resultpos+2).toString())));
+                        resultpos = resultpos + 2;
+                    }
+                    else{
+                        throw new ParserException("This is not a valid var dec1 at " + resultpos);
+                    }
+                }
+                ensureTokenIs(resultpos, new RightParenToken());
+                resultpos++;
+            }
+            else if (ensureToken(resultpos, new RightParenToken())){
+                resultpos++;
             }
             else{
-                throw new ParserException("This is not a valid var dec at " + resultpos);
+                throw new ParserException("This is not a valid var dec2 at " + resultpos);
             }
-        }while(ensureToken(resultpos, new CommaToken()));
-        ensureTokenIs(resultpos, new RightParenToken());
+        }
+        else if (getToken(resultpos) instanceof RightParenToken){
+            resultpos++;
+        }
+        else{
+            throw new ParserException("Not a valid vardec at " + resultpos);
+        }
         if(tokens.get(resultpos) instanceof NumberToken || /*ensureToken(resultpos, new BooleanToken())
         ||*/ ensureToken(resultpos, new VariableToken()) || ensureToken(resultpos, new NewToken()) 
         ||/* ensureToken(resultpos, new StringToken()) ||*/ ensureToken(resultpos, new ReturnToken())
@@ -592,7 +616,7 @@ public class Parser {
 
         }
         else{
-            throw new ParserException("This is not a valid statement at " + resultpos);
+            throw new ParserException("This is not a valid statement at " + resultpos  + " " + getToken(resultpos).toString());
         }
         return new ParseResult<MethodDef>(methodDef, resultpos);
     }
