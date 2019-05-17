@@ -397,9 +397,9 @@ public class Codegen{
                 Statement s = b.statements.get(j);
                 if (s instanceof SuperStatement){
                     SuperStatement ss = (SuperStatement) s;
-                    List<Exp> superparams = ss.exp;
+                    // List<Exp> superparams = ss.exp;
                     VTableClassTable parent = compmap.get(vt.theClass.extendedClass.name);
-                    varstostrings=compileObj(parent, varstostrings, superparams);
+                    varstostrings=compileObj(parent, varstostrings, actualparams);
                 }
                 else if (s instanceof VarAssignment){
                     boolean hasFound = false;
@@ -431,11 +431,11 @@ public class Codegen{
                 System.out.println("start of seccompileobj else");
 
                 SuperStatement ss = (SuperStatement) s;
-                List<Exp> superparams = ss.exp;
+                // List<Exp> superparams = ss.exp;
                 VTableClassTable parent = compmap.get(vt.theClass.extendedClass);
                 System.out.println("The parents name is " + vt.theClass.extendedClass.name.toString());
                 System.out.println(parent != null);
-                varstostrings=compileObj(parent, varstostrings, superparams);
+                varstostrings=compileObj(parent, varstostrings, actualparams);
             }
             else if (s instanceof VarAssignment){
                 boolean hasFound = false;
