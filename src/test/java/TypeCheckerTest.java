@@ -2111,9 +2111,9 @@ public class TypeCheckerTest {
                 return a;
             }
         }
-        GenericClass g = new GenericaClass<A>();
+        GenericClass<int> g = new GenericaClass<int>();
        */
-    List<Type> types = new ArrayList<>();
+    List<TypeVariable> types = new ArrayList<>();
     types.add(new TypeVariable());
     List<ClassDef> classDef = new ArrayList<>();
 
@@ -2135,8 +2135,19 @@ public class TypeCheckerTest {
         types));
 
     
-
-    Statement st = new VarDecAssignment(new VarDec(new ClassType(new ClassName("GenericClass")), new Variable("g")), new ClassExp(new ClassName("GenericClass"), types,new ArrayList<Exp>()));
+    List<Type> classTypes = new ArrayList<>();
+    List<Type> classTypess = new ArrayList<>();
+    classTypes.add(new IntType());
+    classTypes.add(new ClassType(new ClassName("GenericClass"), classTypess));
+    Statement st = new VarDecAssignment(
+        new VarDec(
+            new ClassType(
+                new ClassName("GenericClass"), classTypes), 
+            new Variable("g")), 
+        new ClassExp(
+            new ClassName("GenericClass"), 
+            classTypes, 
+            new ArrayList<Exp>())); //parameters for the constructor
  
 
     final Program program = new Program(classDef, st);
