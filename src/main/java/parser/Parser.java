@@ -746,13 +746,15 @@ public class Parser {
                 resultpos = stmt.tokenPos;
                 constructor = new Constructor(parameters, statement);
             }
+            
             //This is a method def
-            else if((ensureToken(resultpos, new BooleanToken()) ||
-            ensureToken(resultpos , new IntToken()) ||
-            ensureToken(resultpos , new StringToken()) ||
-            ensureToken(resultpos , new VoidToken())) &&
-            ensureToken(resultpos + 1, new VariableToken()) &&
-            ensureToken(resultpos + 2, new LeftParenToken())){
+            else if((getToken(resultpos) instanceof PrivateToken || getToken(resultpos) instanceof PublicToken || getToken(resultpos)instanceof VoidToken)
+            && (ensureToken(resultpos + 1, new BooleanToken()) ||
+            ensureToken(resultpos + 1 , new IntToken()) ||
+            ensureToken(resultpos + 1, new StringToken()) ||
+            ensureToken(resultpos + 1, new VoidToken())) &&
+            ensureToken(resultpos + 2, new VariableToken()) &&
+            ensureToken(resultpos + 3, new LeftParenToken())){
                 final ParseResult<MethodDef> methoddef = parseMethodDef(resultpos);
                 methodDefs.add(methoddef.result);
                 resultpos = methoddef.tokenPos;
