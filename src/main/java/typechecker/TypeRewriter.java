@@ -67,7 +67,7 @@ public class TypeRewriter {
     } // rewriteExtends
     
     public static ClassDef rewriteClassDef(final ClassDef classDef,
-                                                  final List<Type> replacements) throws TypeErrorException {
+                                           final List<Type> replacements) throws TypeErrorException {
         final Map<TypeVariable, Type> mapping = typeReplacementMapping(classDef.typeVariables, replacements);
         final TypeRewriter rewriter = new TypeRewriter(mapping);
         return new ClassDef(classDef.name,

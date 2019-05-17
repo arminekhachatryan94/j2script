@@ -21,7 +21,7 @@ public class TypeCheckerTest {
     public void testClassWithWrongVarDecStatementWithIntType() throws TypeErrorException {
     	/*
 	 class Foo{
-            Foo()
+            constructor()
                 int x = "test";  <--  int to string  
         }
         Foo y = Foo(); 
@@ -61,7 +61,7 @@ public class TypeCheckerTest {
     public void testNumberExp() throws TypeErrorException {
         /*
      class Foo{
-            Foo()
+            constructor()
                 int x = 0;  <--  int to string  
         }
         Foo y = Foo(); 
@@ -102,7 +102,7 @@ public class TypeCheckerTest {
     public void testClassWithWrongVarDecStatementWithBooleanType() throws TypeErrorException{
     	/*
 	 class Foo{
-            Foo()
+            constructor()
                 boolean x = 0;  <--   
         }
         Foo y = Foo(); 
@@ -142,7 +142,7 @@ public class TypeCheckerTest {
     public void testBooleanExp() throws TypeErrorException {
         /*
      class Foo{
-            Foo()
+            constructor()
                 Boolean x = true; 
         }
         Foo y = Foo(); 
@@ -183,7 +183,7 @@ public class TypeCheckerTest {
     public void testClassWithWrongVarDecStatementWithClassType() throws TypeErrorException{
     	/*
 	 class Foo{
-            Foo()
+            constructor()
                 int x = 0;    
         }
       class Boo{
@@ -240,7 +240,7 @@ public class TypeCheckerTest {
     public void testClassType() throws TypeErrorException{
         /*
      class Foo{
-            Foo()
+            constructor()
                 int x = 0;    
         }
       
@@ -281,7 +281,7 @@ public class TypeCheckerTest {
     public void testClassWithInstanceVarAssignmentConstructor() throws TypeErrorException{
     /** class foo{
     int x;
-    foo(boolean y) 
+    constructor(boolean y) 
         x = y ; <--- int to boolean 
     }
 
@@ -326,7 +326,7 @@ public class TypeCheckerTest {
     public void testClassWithWrongVarDecStatementWithVoidTypeReturn() throws TypeErrorException {
     	/*
 	 class Foo{
-            Foo()
+            constructor()
                 int x = 0;   
             private void methodA() {
 				return 1; <-- no return, its void
@@ -372,7 +372,7 @@ public class TypeCheckerTest {
     public void testClassWithWrongVarDecStatementWithIntTypeReturn() throws TypeErrorException {
     	/*
 	 class Foo{
-            Foo()
+            constructor()
                 int x = 0;   
             private int methodA() {
 				return true; <-- return int 
@@ -425,7 +425,7 @@ public class TypeCheckerTest {
     public void testClassWithReturnExpWorking() throws TypeErrorException {
         /*
      class Foo{
-            Foo()
+            constructor()
                 int x = 0;   
             private int methodA() {
                 return 1;
@@ -469,7 +469,7 @@ public class TypeCheckerTest {
     public void testClassWithWrongVarDecStatementWithNoReturn() throws TypeErrorException {
     	/*
 	 class Foo{
-            Foo()
+            constructor()
                 int x = 0;   
             private int methodA() {
 				int y = 0; <-- should return
@@ -521,7 +521,7 @@ public class TypeCheckerTest {
 	    public void testClassWithInstanceVarAssignmentNotIncludedInStatement() throws TypeErrorException {
 	    /** class foo{
 	    int x;
-	    foo(int y) 
+	    constructor(int y) 
 	        x = y ; 
 	    }
 
@@ -562,7 +562,7 @@ public class TypeCheckerTest {
 	    public void testClassWithInstanceVarAssignmentNotIncludedInStatementReverse() throws TypeErrorException{
 	    /** class foo{
 	    int x;
-	    foo() 
+	    constructor() 
 	        x = 0 ; 
 	    }
 
@@ -603,7 +603,7 @@ public class TypeCheckerTest {
 	    public void testVariablesDefinedBeforeAssigning() throws TypeErrorException {
 	    /** class foo{
 	    
-	    foo() 
+	    constructor() 
 	        x = 0 ; <-- not declared
 	    }
 
@@ -639,7 +639,7 @@ public class TypeCheckerTest {
         public void testScopeofInstanceVarAlreadyDeclared() throws TypeErrorException {
         /** class foo{
         int x;
-        foo() 
+        constructor() 
            int x = 0 ; allowed
         }
 
@@ -679,7 +679,7 @@ public class TypeCheckerTest {
         public void testScopeOfSameVariableOutsideofLoop() throws TypeErrorException {
         /** class foo{
         int x;
-        foo() 
+        constructor() 
            while(true) 
                 int y = 2;
             y = 3;
@@ -717,7 +717,7 @@ public class TypeCheckerTest {
     @Test(expected = TypeErrorException.class) 
     public void testScopeOfSameVariableOutsideofScope() throws TypeErrorException {
         /** class foo{
-        foo() 
+        constructor() 
            int y =8;
         methodA() 
             y = 9;
@@ -762,7 +762,7 @@ public class TypeCheckerTest {
         /*
      class Foo{
         int x;
-            Foo()
+            constructor()
                 int z = 0;   
             private int methodA() {
                 return x;  <-- never declared or initialized
@@ -812,7 +812,7 @@ public class TypeCheckerTest {
     public void testBreakCalledWithoutIFandWhileStmts() throws TypeErrorException {
            /*
      class Foo{
-            Foo()
+            constructor()
                 int z = 0;   
             private void methodA() {
                 break;
@@ -863,12 +863,12 @@ public class TypeCheckerTest {
     public void testUniqueNamesOfClasses() throws TypeErrorException {
         /*
      class Foo{
-            Foo()
+            constructor()
                 int x = 0;
         }
 
         class Foo {
-            Foo()
+            constructor()
                 int x =0;
         }
         Foo y = Foo(); 
@@ -924,7 +924,7 @@ public class TypeCheckerTest {
     public void testUniqueNamesOfVariables() throws TypeErrorException {
         /*
      class Foo{
-            Foo()
+            constructor()
                 int x = 0;
         }
         Boolean y = true; <-- same variable name
@@ -972,7 +972,7 @@ public class TypeCheckerTest {
     public void testFunctionCallWithWrongParameters() throws TypeErrorException {
     /*
       class Foo{
-        Foo(int x)
+        constructor(int x)
           int z = 0;   
       }
       Foo y = Foo(true); 
@@ -1013,7 +1013,7 @@ public class TypeCheckerTest {
     public void testBinopOperation() throws TypeErrorException {
            /*
      class Foo{
-            Foo(int x)
+            constructor(int x)
                 int z = x + 2;   
             
         }
@@ -2099,7 +2099,7 @@ public class TypeCheckerTest {
     }
 
 
-    @Test//(expected = TypeErrorException.class) 
+    @Test(expected = TypeErrorException.class) 
     public void testGeneric() throws TypeErrorException {
        /*
         class GenericClass<A> {
@@ -2114,14 +2114,14 @@ public class TypeCheckerTest {
         GenericClass<int> g = new GenericaClass<int>();
        */
     List<TypeVariable> types = new ArrayList<>();
-    types.add(new TypeVariable());
+    types.add(new TypeVariable("A"));
     List<ClassDef> classDef = new ArrayList<>();
 
     List<VarDec> instanceVars = new ArrayList<>();
-    instanceVars.add(new VarDec(new TypeVariable(), new Variable("a")));
+    instanceVars.add(new VarDec(new TypeVariable("A"), new Variable("a")));
 
     List<MethodDef> methodDefs = new ArrayList<>();
-    methodDefs.add(new MethodDef(new PublicAccess(), new TypeVariable(), new MethodName("getA"), new ArrayList<VarDec>(), new ReturnExpStatement(new VariableExp(new Variable("a")))));
+    methodDefs.add(new MethodDef(new PublicAccess(), new TypeVariable("A"), new MethodName("getA"), new ArrayList<VarDec>(), new ReturnExpStatement(new VariableExp(new Variable("a")))));
     
     classDef.add(new ClassDef(
         new ClassName("GenericClass"), 
@@ -2136,9 +2136,8 @@ public class TypeCheckerTest {
 
     
     List<Type> classTypes = new ArrayList<>();
-    List<Type> classTypess = new ArrayList<>();
     classTypes.add(new IntType());
-    classTypes.add(new ClassType(new ClassName("GenericClass"), classTypess));
+    classTypes.add(new ClassType(new ClassName("GenericClass"), classTypes));
     Statement st = new VarDecAssignment(
         new VarDec(
             new ClassType(
@@ -2152,7 +2151,5 @@ public class TypeCheckerTest {
 
     final Program program = new Program(classDef, st);
     TypeChecker.typecheckProgram(program);
-
-
     }
 }

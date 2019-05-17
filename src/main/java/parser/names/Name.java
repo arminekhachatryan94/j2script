@@ -10,7 +10,9 @@ public abstract class Name {
     public abstract boolean sameClass(Name other);
     
     public int hashCode() { return name.hashCode(); }
+    
     public String toString() { return name; }
+
     public boolean equals(final Object other) {
         if (other instanceof Name) {
             final Name otherName = (Name)other;

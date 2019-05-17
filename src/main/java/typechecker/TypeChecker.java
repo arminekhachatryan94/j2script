@@ -46,9 +46,9 @@ public class TypeChecker {
     } // asSet
 
     public static boolean isPrimitive(Type type) {
-        return type.equals(new IntType()) || 
-               type.equals(new BooleanType()) ||
-               type.equals(new VoidType());
+        return type instanceof IntType || 
+               type instanceof BooleanType ||
+               type instanceof VoidType;
     }
 
     private Constructor getConstructor(final ClassName onClass) throws TypeErrorException{
@@ -65,6 +65,12 @@ public class TypeChecker {
         return new ClassType(specialized.extendedClass.extendsName,
                              specialized.extendedClass.types);
     } // asSupertype
+
+    private static void checkDefined(final TypeEnvironment env, final Variable var) throws TypeErrorException {
+        if(!env.checkDefined(var)){
+            throw new TypeErrorException("Variable " + var + " is not defined");
+        }
+    }
 
     // Checks if class types are comparable
     public static void typesOK(final Type baseType, final Type subType) throws TypeErrorException {
@@ -132,7 +138,7 @@ public class TypeChecker {
     // Checks to see if there is a duplicate method defined
     // Not checking names since overloaded methods are allowed
     public static void noDuplicateMethodDefs(final List<MethodDef> methods) throws TypeErrorException {
-    final List<MethodDef> seen = new ArrayList<MethodDef>();
+        final List<MethodDef> seen = new ArrayList<MethodDef>();
         for (int i = 0; i < methods.size(); i++) {
             for(int j = i+1; j < methods.size(); j++) {
                 if(methods.get(i) != methods.get(j)) {
@@ -146,7 +152,7 @@ public class TypeChecker {
         }
     } // noDuplicateMethodDefs
 
-  // checks that subclasses don't redefined parent class instance variables
+    // checks that subclasses don't redefined parent class instance variables
     public void instanceVariablesOk(final Set<Variable> seen, final ClassName current) throws TypeErrorException {
         final ClassDef classDef = getClass(current);
         for (final VarDec param : classDef.instanceVars) {
@@ -271,6 +277,9 @@ public class TypeChecker {
         } else if (exp instanceof BoolExp) {
             return new BooleanType();
         } else if (exp instanceof VariableExp) {
+            // variable is defined
+            checkDefined(env, ((VariableExp)exp).var);
+            // variable is declared
             return env.lookup(((VariableExp)exp).var);
         } else if (exp instanceof BinopExp) {
             // the return type and expected parameter types all depend
@@ -292,8 +301,10 @@ public class TypeChecker {
             return new ClassType(asClassExp.name, asClassExp.types);
         } else if(exp instanceof VarMethodExp) {
             VarMethodExp asMethodExp = (VarMethodExp)exp;
-            // Var is defined
+            // Var is declared
             ClassType classType = (ClassType) env.lookup(asMethodExp.var);
+            // var is defined
+            checkDefined(env, asMethodExp.var);
             // var has methodname
             MethodDef method = findMethod(classType, asMethodExp.methodName);
             // methodname is public
@@ -354,6 +365,7 @@ public class TypeChecker {
         final Type lhsType = stmt.varDec.type;
         final Type expType = typeofExp(env, stmt.exp);
         typesOK(lhsType, expType);
+        env.addDefinedVariable(stmt.varDec.var);
     } // typecheckAssignStmt
 
     public void typecheckVarAssign(final TypeEnvironment env,
@@ -361,6 +373,7 @@ public class TypeChecker {
         final Type lhsType = env.lookup(stmt.variable);
         final Type expType = typeofExp(env, stmt.exp);
         typesOK(lhsType, expType);
+        env.addDefinedVariable(stmt.variable);
     } // typecheckAssignStmt
 
     public TypeEnvironment typeCheckWhileStmt(final TypeEnvironment env,
@@ -377,7 +390,7 @@ public class TypeChecker {
         TypeEnvironment afterStatement = typecheckStatement(env, returnType, superParams, stmt);
         afterStatement.inWhile = prevWhile;
         return afterStatement;
-        }
+    }
 
     public TypeEnvironment typeCheckIfStmt(final TypeEnvironment env,
                                            final Type returnType,      // null if return is not ok
@@ -390,9 +403,9 @@ public class TypeChecker {
     }
 
     public TypeEnvironment typecheckStatement(final TypeEnvironment env,
-                                            final Type returnType,      // null if return is not ok
-                                            final List<VarDec> superParams, // null if not expecting super
-                                            final Statement stmt) throws TypeErrorException {
+                                              final Type returnType,      // null if return is not ok
+                                              final List<VarDec> superParams, // null if not expecting super
+                                              final Statement stmt) throws TypeErrorException {
         if (stmt instanceof Block) {
             return typeCheckBlockStmt(env, returnType, superParams, (Block)stmt);
         } else if (stmt instanceof ExpStatement) {
@@ -486,25 +499,33 @@ public class TypeChecker {
     public void typecheckMethod(final ClassType thisType,
                                 final Set<TypeVariable> inScope,
                                 final MethodDef methodDef) throws TypeErrorException {
-    paramsOk(inScope, methodDef.varDecs);
-    typeInScope(inScope, methodDef.returnType);
-    superReturnOkInMethod(methodDef.body);
-    typecheckStatement(TypeEnvironment.initialEnv(inScope, methodDef.varDecs, thisType),
-                        methodDef.returnType,
-                        null,
-                        methodDef.body);
+        paramsOk(inScope, methodDef.varDecs);
+        typeInScope(inScope, methodDef.returnType);
+        superReturnOkInMethod(methodDef.body);
+        List<VarDec> variables = new ArrayList<>(getClass(thisType.name).instanceVars);
+        variables.addAll(methodDef.varDecs);
+        TypeEnvironment env = TypeEnvironment.initialEnv(inScope, variables, thisType);
+        for(VarDec v : methodDef.varDecs) { env.addDefinedVariable(v.var);}
+        typecheckStatement(env,
+                           methodDef.returnType,
+                           null,
+                           methodDef.body);
     } // typecheckMethod
 
     public void typecheckConstructor(final ClassType thisType,
                                     final Set<TypeVariable> inScopeFromClass,
                                     final Constructor constructor) throws TypeErrorException {
-    final ClassDef classDef = getClass(thisType.name);
-    paramsOk(inScopeFromClass, constructor.parameters);
-    superReturnOkInConstructor(classDef.extendedClass == null, constructor.body);
-    typecheckStatement(TypeEnvironment.initialEnv(inScopeFromClass, constructor.parameters, thisType),
-                       null,
-                       getSuperParams(thisType),
-                       constructor.body);
+        final ClassDef classDef = getClass(thisType.name);
+        paramsOk(inScopeFromClass, constructor.parameters);
+        superReturnOkInConstructor(classDef.extendedClass == null, constructor.body);
+        List<VarDec> variables = new ArrayList<>(getClass(thisType.name).instanceVars);
+        variables.addAll(constructor.parameters);
+        TypeEnvironment env = TypeEnvironment.initialEnv(inScopeFromClass, variables, thisType);
+        for(VarDec v : constructor.parameters) { env.addDefinedVariable(v.var); }
+        typecheckStatement(env,
+                           null,
+                           getSuperParams(thisType),
+                           constructor.body);
     } // typecheckConstructor
 
     public void typecheckClass(final ClassName className) throws TypeErrorException {
