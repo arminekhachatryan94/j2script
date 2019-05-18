@@ -2233,6 +2233,7 @@ public class TypeCheckerTest {
         final Program program = new Program(classDef, new Block(stmts));
         TypeChecker.typecheckProgram(program);
     }
+
     /*
     test case 2: expect error
         class GenericClass<A,B> {
@@ -2244,9 +2245,10 @@ public class TypeCheckerTest {
                 return a;
             }
         }
-        GenericClass<int> g = new GenericaClass<int>(3); <-- need another Parameter
-        
-
+        GenericClass<int> g = new GenericClass<int>(3); <-- need another Parameter
+    */
+    
+    /*
     test case 3: expect error
         class GenericClass<A> { <-- need another Parameter
             A a;
@@ -2257,7 +2259,7 @@ public class TypeCheckerTest {
                 return a;
             }
         }
-        GenericClass<int> g = new GenericaClass<int, Boolean>(3); 
+        GenericClass<int> g = new GenericClass<int, Boolean>(3); 
         
 
 
@@ -2271,7 +2273,7 @@ public class TypeCheckerTest {
                 return a;
             }
         }
-        GenericClass<int> g = new GenericaClass<int>(3); 
+        GenericClass<int> g = new GenericClass<int>(3); 
         boolean b = g.getA(); <-- doesnt return boolean so err
 
 
@@ -2285,7 +2287,7 @@ public class TypeCheckerTest {
                 a = c;<-- error cuz a is set to an integer
             }
         }
-        GenericClass<int> g = new GenericaClass<int>(3); 
+        GenericClass<int> g = new GenericClass<int>(3); 
         g.setA(true);
 
 
@@ -2298,7 +2300,7 @@ public class TypeCheckerTest {
             }
     
         }
-        GenericClass<boolean, int> g = new GenericaClass<boolean, int>(3, true); <-- the parameter doesnt go with the assignment of generics
+        GenericClass<boolean, int> g = new GenericClass<boolean, int>(3, true); <-- the parameter doesnt go with the assignment of generics
 
         test case 7: expect error
         class GenericClass<A> { 
@@ -2310,6 +2312,6 @@ public class TypeCheckerTest {
                 a = c;
             }
         }
-        genericclass<int> c = genericclass<boolean>();
+        genericclass<int> c = GenericClass<boolean>();
     */
 }
