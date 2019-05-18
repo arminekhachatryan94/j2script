@@ -99,6 +99,7 @@ public class TypeChecker {
                                 final MethodName methodName) throws TypeErrorException {
         final ClassDef abstractedClass = getClass(onClass.name);
         final ClassDef specializedClass = TypeRewriter.rewriteClassDef(abstractedClass, onClass.types);
+        System.out.println("Looking for " + methodName + " in " + specializedClass.methodDefs);
         final MethodDef result = findMethodDirect(specializedClass, methodName);
 
         if (result == null) {
@@ -335,6 +336,7 @@ public class TypeChecker {
                                                 final Block stmt)  throws TypeErrorException {
         TypeEnvironment loopEnv = env;
         for (Statement s : stmt.statements) {
+            System.out.println("Typechecking " + s + " in typeCheckBlockStmt");
             loopEnv = typecheckStatement(loopEnv, returnType, superParams, s);
         }
         return loopEnv;                                             
@@ -366,7 +368,8 @@ public class TypeChecker {
         final Type expType = typeofExp(env, stmt.exp);
         typesOK(lhsType, expType);
         System.out.println(stmt.varDec.var + " has been assigned a value in " + stmt);
-        return env.addDefinedVariable(stmt.varDec.var);
+        TypeEnvironment newEnv = env.addVariable(stmt.varDec);
+        return newEnv.addDefinedVariable(stmt.varDec.var);
     } // typecheckAssignStmt
 
     public TypeEnvironment typecheckVarAssign(final TypeEnvironment env,
