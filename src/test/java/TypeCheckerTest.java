@@ -2114,18 +2114,20 @@ public class TypeCheckerTest {
         GenericClass<int> g = new GenericClass<int>(3);
         */
 
-        List<TypeVariable> types = new ArrayList<>();
-        types.add(new TypeVariable("A"));
-        List<ClassDef> classDef = new ArrayList<>();
+    List<ClassDef> classDef = new ArrayList<>();
 
-        List<VarDec> instanceVars = new ArrayList<>();
+    List<VarDec> instanceVars = new ArrayList<>();
         instanceVars.add(new VarDec(new TypeVariable("A"), new Variable("a")));
 
         List<MethodDef> methodDefs = new ArrayList<>();
         methodDefs.add(new MethodDef(new PublicAccess(), new TypeVariable("A"), new MethodName("getA"), new ArrayList<VarDec>(), new ReturnExpStatement(new VariableExp(new Variable("a")))));
-        List<VarDec> constructorParam = new ArrayList<>();
+
+    List<VarDec> constructorParam = new ArrayList<>();
         constructorParam.add(new VarDec(new TypeVariable("A"), new Variable("b")));
-         classDef.add(new ClassDef(
+
+        List<TypeVariable> types = new ArrayList<>();
+        types.add(new TypeVariable("A"));
+    classDef.add(new ClassDef(
             new ClassName("GenericClass"), 
             new Constructor(
                 constructorParam, 
@@ -2136,13 +2138,17 @@ public class TypeCheckerTest {
             methodDefs, 
             types));
 
-        
-        List<Type> classTypes = new ArrayList<>();
-        classTypes.add(new IntType());
-        List<Exp> expressions = new ArrayList<>();
-        expressions.add(new NumberExp(3));
-        classTypes.add(new ClassType(new ClassName("GenericClass"), classTypes));
-        Statement st = new VarDecAssignment(
+
+
+
+    //GenericClass<int> g = new GenericClass<int>(3);
+    List<Type> classTypes = new ArrayList<>();
+    classTypes.add(new IntType());
+
+    List<Exp> expressions = new ArrayList<>();
+    expressions.add(new NumberExp(3));
+
+    Statement stm = new VarDecAssignment(
             new VarDec(
                 new ClassType(
                     new ClassName("GenericClass"), classTypes), 
@@ -2151,11 +2157,14 @@ public class TypeCheckerTest {
                 new ClassName("GenericClass"), 
                 classTypes, 
                 expressions
-                )); //parameters for the constructor
-    
+                ));
 
-        final Program program = new Program(classDef, st);
-        TypeChecker.typecheckProgram(program);
+
+
+
+    final Program program = new Program(classDef, stm);
+    TypeChecker.typecheckProgram(program);
+        
     }
 
 
