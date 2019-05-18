@@ -2100,7 +2100,7 @@ public class TypeCheckerTest {
 
 
     @Test(expected = TypeErrorException.class) 
-    public void testGeneric() throws TypeErrorException {
+    public void testGenericWithOneTypeVariable() throws TypeErrorException {
        /*
         class GenericClass<A> {
             A a;
@@ -2154,7 +2154,7 @@ public class TypeCheckerTest {
     }
 
     @Test(expected = TypeErrorException.class) 
-    public void testGeneric2() throws TypeErrorException {
+    public void testGenericWithTwoTypeVariables() throws TypeErrorException {
        /*
         class GenericClass<A, B> {
             A a;
@@ -2188,14 +2188,18 @@ public class TypeCheckerTest {
         classDef.add(new ClassDef(
             new ClassName("GenericClass"), 
             new Constructor(
-                new ArrayList<VarDec>(), 
-                new VarAssignment(
-                    new Variable("a"), 
-                    new NumberExp(3))),
-            instanceVars, 
+                new Block(new ArrayList<Statements>(
+                    new VarAssignment(
+                        new Variable("a"), 
+                        new NumberExp(3)),
+                    new VarAssignment(
+                        new Variable("b"),
+                        new NumberExp(5)))
+                )
+            ),
+            instanceVars,
             methodDefs, 
             types));
-
         
         List<Type> classTypes = new ArrayList<>();
         classTypes.add(new IntType());
