@@ -2096,6 +2096,7 @@
 //     final Program program = new Program(classDef, statementTwo);
 //     TypeChecker.typecheckProgram(program);
         
+<<<<<<< HEAD
 //     }
 
 
@@ -2263,3 +2264,222 @@
 //         TypeChecker.typecheckProgram(program);
 //     }
 // }
+=======
+    }
+
+
+    @Test//(expected = TypeErrorException.class) 
+    public void testGenericWithOneTypeVariable() throws TypeErrorException {
+       /*
+        class GenericClass<A> {
+            A a;
+            constructor(A b) {
+                a = b;
+            }
+            public A getA() {
+                return a;
+            }
+        }
+        GenericClass<int> g = new GenericClass<int>(3);
+        */
+
+        List<ClassDef> classDef = new ArrayList<>();
+
+        List<VarDec> instanceVars = new ArrayList<>();
+        instanceVars.add(new VarDec(new TypeVariable("A"), new Variable("a")));
+
+        List<MethodDef> methodDefs = new ArrayList<>();
+        methodDefs.add(new MethodDef(new PublicAccess(), new TypeVariable("A"), new MethodName("getA"), new ArrayList<VarDec>(), new ReturnExpStatement(new VariableExp(new Variable("a")))));
+
+        List<VarDec> constructorParam = new ArrayList<>();
+        constructorParam.add(new VarDec(new TypeVariable("A"), new Variable("b")));
+
+        List<TypeVariable> types = new ArrayList<>();
+        types.add(new TypeVariable("A"));
+        classDef.add(new ClassDef(
+            new ClassName("GenericClass"), 
+            new Constructor(
+                constructorParam, 
+                new VarAssignment(
+                    new Variable("a"),
+                    new VariableExp(new Variable("b")))), 
+            instanceVars, 
+            methodDefs, 
+            types));
+
+
+
+
+        //GenericClass<int> g = new GenericClass<int>(3);
+        List<Type> classTypes = new ArrayList<>();
+        classTypes.add(new IntType());
+
+        List<Exp> expressions = new ArrayList<>();
+        expressions.add(new NumberExp(3));
+
+        Statement stm = new VarDecAssignment(
+            new VarDec(
+                new ClassType(
+                    new ClassName("GenericClass"), classTypes), 
+                new Variable("g")), 
+            new ClassExp(
+                new ClassName("GenericClass"), 
+                classTypes, 
+                expressions
+                ));
+
+        final Program program = new Program(classDef, stm);
+        TypeChecker.typecheckProgram(program);
+        
+    }
+
+    @Test//(expected = TypeErrorException.class) 
+    public void testGenericGetAWithOneTypeVariable() throws TypeErrorException {
+        /* test case 1: dont expect error
+        class GenericClass<A> {
+            A a;
+            constructor(A b) {
+                a = b;
+            }
+            public A getA() {
+                return a;
+            }
+        }
+        GenericClass<int> g = new GenericClass<int>(3);
+        int k = g.getA();
+        */
+
+        List<ClassDef> classDef = new ArrayList<>();
+
+        List<VarDec> instanceVars = new ArrayList<>();
+        instanceVars.add(new VarDec(new TypeVariable("A"), new Variable("a")));
+
+        List<MethodDef> methodDefs = new ArrayList<>();
+        methodDefs.add(new MethodDef(new PublicAccess(), new TypeVariable("A"), new MethodName("getA"), new ArrayList<VarDec>(), new ReturnExpStatement(new VariableExp(new Variable("a")))));
+
+        List<VarDec> constructorParam = new ArrayList<>();
+        constructorParam.add(new VarDec(new TypeVariable("A"), new Variable("b")));
+
+        List<TypeVariable> types = new ArrayList<>();
+        types.add(new TypeVariable("A"));
+        classDef.add(new ClassDef(
+            new ClassName("GenericClass"), 
+            new Constructor(
+                constructorParam, 
+                new VarAssignment(
+                    new Variable("a"),
+                    new VariableExp(new Variable("b")))), 
+            instanceVars, 
+            methodDefs, 
+            types));
+
+        // GenericClass<int> g = new GenericClass<int>(3);
+        List<Type> classTypes = new ArrayList<>();
+        classTypes.add(new IntType());
+
+        List<Exp> expressions = new ArrayList<>();
+        expressions.add(new NumberExp(3));
+
+        List<Statement> stmts = new ArrayList<>();
+        stmts.add(new VarDecAssignment(
+            new VarDec(
+                new ClassType(
+                    new ClassName("GenericClass"), classTypes), 
+                new Variable("g")), 
+            new ClassExp(
+                new ClassName("GenericClass"), 
+                classTypes, 
+                expressions
+                ))
+        );
+        stmts.add(new VarDecAssignment(
+            new VarDec(new IntType(), new Variable("k")),
+            new Methodcall(
+                new MethodName("getA"), new ArrayList<Exp>()
+            ))
+        );
+
+        final Program program = new Program(classDef, new Block(stmts));
+        TypeChecker.typecheckProgram(program);
+    }
+    /*
+    test case 2: expect error
+        class GenericClass<A,B> {
+            A a;
+            constructor(A b) {
+                a = b;
+            }
+            public A getA() {
+                return a;
+            }
+        }
+        GenericClass<int> g = new GenericaClass<int>(3); <-- need another Parameter
+        
+
+    test case 3: expect error
+        class GenericClass<A> { <-- need another Parameter
+            A a;
+            constructor(A b) {
+                a = b;
+            }
+            public A getA() {
+                return a;
+            }
+        }
+        GenericClass<int> g = new GenericaClass<int, Boolean>(3); 
+        
+
+
+        test case 4: expect error
+        class GenericClass<A> { 
+            A a;
+            constructor(A b) {
+                a = b;
+            }
+            public A getA() {
+                return a;
+            }
+        }
+        GenericClass<int> g = new GenericaClass<int>(3); 
+        boolean b = g.getA(); <-- doesnt return boolean so err
+
+
+        test case 5: expect error
+        class GenericClass<A> { 
+            A a;
+            constructor(A b) {
+                a = b;
+            }
+            public void setA(A c) { 
+                a = c;<-- error cuz a is set to an integer
+            }
+        }
+        GenericClass<int> g = new GenericaClass<int>(3); 
+        g.setA(true);
+
+
+        test case 6: expect error
+        class GenericClass<A,B> { 
+            A a;
+            B b;
+            constructor(A b, B b) {
+                a = b;
+            }
+    
+        }
+        GenericClass<boolean, int> g = new GenericaClass<boolean, int>(3, true); <-- the parameter doesnt go with the assignment of generics
+
+        test case 7: expect error
+        class GenericClass<A> { 
+            A a;
+            constructor(A b) {
+                a = b;
+            }
+            public void setA(A c) { 
+                a = c;
+            }
+        }
+        genericclass<int> c = genericclass<boolean>();
+    */
+}
+>>>>>>> e63592d1ce5c25cdddaf43a33c6e0749c593f479

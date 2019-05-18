@@ -16,7 +16,7 @@ import java.util.HashSet;
 public class TypeEnvironment {
     private final Set<TypeVariable> inScope;     // type variables in scope
     private final Map<Variable, Type> variables;
-    private final Set<Variable> defined;
+    public final Set<Variable> defined;
     public final ClassType thisType; // null if outside of method
     public boolean inWhile;
     
@@ -73,6 +73,12 @@ public class TypeEnvironment {
     public TypeEnvironment addDefinedVariable(final Variable variable) throws TypeErrorException {
         final Set<Variable> newdefined = new HashSet<>(defined);
         newdefined.add(variable);
+        return new TypeEnvironment(inScope, variables, thisType, newdefined, inWhile);
+    }
+
+    public TypeEnvironment removeDefinedVariable(final Variable variable) throws TypeErrorException {
+        final Set<Variable> newdefined = new HashSet<>(defined);
+        newdefined.remove(variable);
         return new TypeEnvironment(inScope, variables, thisType, newdefined, inWhile);
     }
 
