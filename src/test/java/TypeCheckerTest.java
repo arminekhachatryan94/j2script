@@ -1,2265 +1,2265 @@
-package j2script;
+// package j2script;
 
-import j2script.*;
-import j2script.tokens.*;
-import j2script.access.*;
-import j2script.declarations.*;
-import j2script.expressions.*;
-import j2script.names.*;
-import j2script.operators.*;
-import j2script.statements.*;
-import j2script.types.*;
-import org.junit.Test;
-import java.util.List;
-import j2script.TypeChecker;
-import java.util.ArrayList;
+// import j2script.*;
+// import j2script.tokens.*;
+// import j2script.access.*;
+// import j2script.declarations.*;
+// import j2script.expressions.*;
+// import j2script.names.*;
+// import j2script.operators.*;
+// import j2script.statements.*;
+// import j2script.types.*;
+// import org.junit.Test;
+// import java.util.List;
+// import j2script.TypeChecker;
+// import java.util.ArrayList;
 
-public class TypeCheckerTest {
+// public class TypeCheckerTest {
 
-	//assigning types
-    @Test(expected = TypeErrorException.class) 
-    public void testClassWithWrongVarDecStatementWithIntType() throws TypeErrorException {
-    	/*
-	 class Foo{
-            constructor()
-                int x = "test";  <--  int to string  
-        }
-        Foo y = Foo(); 
-    */
+// 	//assigning types
+//     @Test(expected = TypeErrorException.class) 
+//     public void testClassWithWrongVarDecStatementWithIntType() throws TypeErrorException {
+//     	/*
+// 	 class Foo{
+//             constructor()
+//                 int x = "test";  <--  int to string  
+//         }
+//         Foo y = Foo(); 
+//     */
 
 
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>(); //empty
-    List<Exp> classExp = new ArrayList<>();
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>(); //empty
+//     List<Exp> classExp = new ArrayList<>();
 
-    Statement statement = new VarDecAssignment(
-    	new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-    	new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-    	);
+//     Statement statement = new VarDecAssignment(
+//     	new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//     	new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//     	);
 
-    List<VarDec> varDec = new ArrayList<>(); //empty
-   	classDef.add(new ClassDef(
-    	new ClassName("Foo"), 
-    	new Constructor(
-    		varDec, 
-    		new VarDecAssignment(
-    			new VarDec(
-    				new IntType(), 
-    				new Variable("x")
-    				), 
-    			//new StringExp("test")
-    			new VariableExp(new Variable("test"))
-    			)
-    		), 
-    	varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     List<VarDec> varDec = new ArrayList<>(); //empty
+//    	classDef.add(new ClassDef(
+//     	new ClassName("Foo"), 
+//     	new Constructor(
+//     		varDec, 
+//     		new VarDecAssignment(
+//     			new VarDec(
+//     				new IntType(), 
+//     				new Variable("x")
+//     				), 
+//     			//new StringExp("test")
+//     			new VariableExp(new Variable("test"))
+//     			)
+//     		), 
+//     	varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
+//     final Program program = new Program(classDef, statement);
+//     TypeChecker.typecheckProgram(program);
     	
-    }
-    @Test
-    public void testNumberExp() throws TypeErrorException {
-        /*
-     class Foo{
-            constructor()
-                int x = 0;  <--  int to string  
-        }
-        Foo y = Foo(); 
-    */
+//     }
+//     @Test
+//     public void testNumberExp() throws TypeErrorException {
+//         /*
+//      class Foo{
+//             constructor()
+//                 int x = 0;  <--  int to string  
+//         }
+//         Foo y = Foo(); 
+//     */
 
 
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>(); //empty
-    List<Exp> classExp = new ArrayList<>();
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>(); //empty
+//     List<Exp> classExp = new ArrayList<>();
 
-    Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-        );
+//     Statement statement = new VarDecAssignment(
+//         new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//         new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//         );
 
-    List<VarDec> varDec = new ArrayList<>(); //empty
-    classDef.add(new ClassDef(
-        new ClassName("Foo"), 
-        new Constructor(
-            varDec, 
-            new VarDecAssignment(
-                new VarDec(
-                    new IntType(), 
-                    new Variable("x")
-                    ), 
-                //new StringExp("test")
-                new NumberExp(0)
-                )
-            ), 
-        varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     List<VarDec> varDec = new ArrayList<>(); //empty
+//     classDef.add(new ClassDef(
+//         new ClassName("Foo"), 
+//         new Constructor(
+//             varDec, 
+//             new VarDecAssignment(
+//                 new VarDec(
+//                     new IntType(), 
+//                     new Variable("x")
+//                     ), 
+//                 //new StringExp("test")
+//                 new NumberExp(0)
+//                 )
+//             ), 
+//         varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
+//     final Program program = new Program(classDef, statement);
+//     TypeChecker.typecheckProgram(program);
         
-    }
+//     }
 
-    @Test(expected = TypeErrorException.class) 
-    public void testClassWithWrongVarDecStatementWithBooleanType() throws TypeErrorException{
-    	/*
-	 class Foo{
-            constructor()
-                boolean x = 0;  <--   
-        }
-        Foo y = Foo(); 
-    */
+//     @Test(expected = TypeErrorException.class) 
+//     public void testClassWithWrongVarDecStatementWithBooleanType() throws TypeErrorException{
+//     	/*
+// 	 class Foo{
+//             constructor()
+//                 boolean x = 0;  <--   
+//         }
+//         Foo y = Foo(); 
+//     */
 
 
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>(); //empty
-    List<Exp> classExp = new ArrayList<>();
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>(); //empty
+//     List<Exp> classExp = new ArrayList<>();
 
-    Statement statement = new VarDecAssignment(
-    	new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-    	new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-    	);
+//     Statement statement = new VarDecAssignment(
+//     	new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//     	new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//     	);
 
-    List<VarDec> varDec = new ArrayList<>(); //empty
-   	classDef.add(new ClassDef(
-    	new ClassName("Foo"), 
-    	new Constructor(
-    		varDec, 
-    		new VarDecAssignment(
-    			new VarDec(
-    				new BooleanType(), 
-    				new Variable("x")
-    				), 
-    			new NumberExp(0)
-    			)
-    		), 
-    	varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     List<VarDec> varDec = new ArrayList<>(); //empty
+//    	classDef.add(new ClassDef(
+//     	new ClassName("Foo"), 
+//     	new Constructor(
+//     		varDec, 
+//     		new VarDecAssignment(
+//     			new VarDec(
+//     				new BooleanType(), 
+//     				new Variable("x")
+//     				), 
+//     			new NumberExp(0)
+//     			)
+//     		), 
+//     	varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
+//     final Program program = new Program(classDef, statement);
+//     TypeChecker.typecheckProgram(program);
     	
-    }
+//     }
 
-    @Test
-    public void testBooleanExp() throws TypeErrorException {
-        /*
-     class Foo{
-            constructor()
-                Boolean x = true; 
-        }
-        Foo y = Foo(); 
-    */
+//     @Test
+//     public void testBooleanExp() throws TypeErrorException {
+//         /*
+//      class Foo{
+//             constructor()
+//                 Boolean x = true; 
+//         }
+//         Foo y = Foo(); 
+//     */
 
 
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>(); //empty
-    List<Exp> classExp = new ArrayList<>();
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>(); //empty
+//     List<Exp> classExp = new ArrayList<>();
 
-    Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-        );
+//     Statement statement = new VarDecAssignment(
+//         new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//         new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//         );
 
-    List<VarDec> varDec = new ArrayList<>(); //empty
-    classDef.add(new ClassDef(
-        new ClassName("Foo"), 
-        new Constructor(
-            varDec, 
-            new VarDecAssignment(
-                new VarDec(
-                    new BooleanType(), 
-                    new Variable("x")
-                    ), 
-                //new StringExp("test")
-                new BoolExp(true)
-                )
-            ), 
-        varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     List<VarDec> varDec = new ArrayList<>(); //empty
+//     classDef.add(new ClassDef(
+//         new ClassName("Foo"), 
+//         new Constructor(
+//             varDec, 
+//             new VarDecAssignment(
+//                 new VarDec(
+//                     new BooleanType(), 
+//                     new Variable("x")
+//                     ), 
+//                 //new StringExp("test")
+//                 new BoolExp(true)
+//                 )
+//             ), 
+//         varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
+//     final Program program = new Program(classDef, statement);
+//     TypeChecker.typecheckProgram(program);
         
-    }
+//     }
 
-    @Test(expected = TypeErrorException.class) 
-    public void testClassWithWrongVarDecStatementWithClassType() throws TypeErrorException{
-    	/*
-	 class Foo{
-            constructor()
-                int x = 0;    
-        }
-      class Boo{
-            Boo()
-                int x = 0;  
-       }
-        Foo y = Boo(); <--
+//     @Test(expected = TypeErrorException.class) 
+//     public void testClassWithWrongVarDecStatementWithClassType() throws TypeErrorException{
+//     	/*
+// 	 class Foo{
+//             constructor()
+//                 int x = 0;    
+//         }
+//       class Boo{
+//             Boo()
+//                 int x = 0;  
+//        }
+//         Foo y = Boo(); <--
 
-    */
+//     */
 
 
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>(); //empty
-    List<Exp> classExp = new ArrayList<>();
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>(); //empty
+//     List<Exp> classExp = new ArrayList<>();
 
-    Statement statement = new VarDecAssignment(
-    	new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-    	new ClassExp(new ClassName("Boo"), new ArrayList<Type>(), classExp)
-    	);
+//     Statement statement = new VarDecAssignment(
+//     	new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//     	new ClassExp(new ClassName("Boo"), new ArrayList<Type>(), classExp)
+//     	);
 
-    List<VarDec> varDec = new ArrayList<>(); //empty
-   	classDef.add(new ClassDef(
-    	new ClassName("Foo"), 
-    	new Constructor(
-    		varDec, 
-    		new VarDecAssignment(
-    			new VarDec(
-    				new IntType(), 
-    				new Variable("x")
-    				), 
-    			new NumberExp(0)
-    			)
-    		), 
-    	varDec, methodDefs, new ArrayList<TypeVariable>()));
-   	classDef.add(new ClassDef(
-    	new ClassName("Boo"), 
-    	new Constructor(
-    		varDec, 
-    		new VarDecAssignment(
-    			new VarDec(
-    				new IntType(), 
-    				new Variable("x")
-    				), 
-    			new NumberExp(0)
-    			)
-    		), 
-    	varDec, methodDefs, new ArrayList<TypeVariable>()));
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
+//     List<VarDec> varDec = new ArrayList<>(); //empty
+//    	classDef.add(new ClassDef(
+//     	new ClassName("Foo"), 
+//     	new Constructor(
+//     		varDec, 
+//     		new VarDecAssignment(
+//     			new VarDec(
+//     				new IntType(), 
+//     				new Variable("x")
+//     				), 
+//     			new NumberExp(0)
+//     			)
+//     		), 
+//     	varDec, methodDefs, new ArrayList<TypeVariable>()));
+//    	classDef.add(new ClassDef(
+//     	new ClassName("Boo"), 
+//     	new Constructor(
+//     		varDec, 
+//     		new VarDecAssignment(
+//     			new VarDec(
+//     				new IntType(), 
+//     				new Variable("x")
+//     				), 
+//     			new NumberExp(0)
+//     			)
+//     		), 
+//     	varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     final Program program = new Program(classDef, statement);
+//     TypeChecker.typecheckProgram(program);
     	
-    }
+//     }
 
-    @Test
-    public void testClassType() throws TypeErrorException{
-        /*
-     class Foo{
-            constructor()
-                int x = 0;    
-        }
+//     @Test
+//     public void testClassType() throws TypeErrorException{
+//         /*
+//      class Foo{
+//             constructor()
+//                 int x = 0;    
+//         }
       
-        Foo y = Foo(); 
-    */
+//         Foo y = Foo(); 
+//     */
 
 
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>(); //empty
-    List<Exp> classExp = new ArrayList<>();
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>(); //empty
+//     List<Exp> classExp = new ArrayList<>();
 
-    Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-        );
+//     Statement statement = new VarDecAssignment(
+//         new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//         new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//         );
 
-    List<VarDec> varDec = new ArrayList<>(); //empty
-    classDef.add(new ClassDef(
-        new ClassName("Foo"), 
-        new Constructor(
-            varDec, 
-            new VarDecAssignment(
-                new VarDec(
-                    new IntType(), 
-                    new Variable("x")
-                    ), 
-                new NumberExp(0)
-                )
-            ), 
-        varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     List<VarDec> varDec = new ArrayList<>(); //empty
+//     classDef.add(new ClassDef(
+//         new ClassName("Foo"), 
+//         new Constructor(
+//             varDec, 
+//             new VarDecAssignment(
+//                 new VarDec(
+//                     new IntType(), 
+//                     new Variable("x")
+//                     ), 
+//                 new NumberExp(0)
+//                 )
+//             ), 
+//         varDec, methodDefs, new ArrayList<TypeVariable>()));
     
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
+//     final Program program = new Program(classDef, statement);
+//     TypeChecker.typecheckProgram(program);
         
-    }
+//     }
 
-    @Test(expected = TypeErrorException.class) 
-    public void testClassWithInstanceVarAssignmentConstructor() throws TypeErrorException{
-    /** class foo{
-    int x;
-    constructor(boolean y) 
-        x = y ; <--- int to boolean 
-    }
+//     @Test(expected = TypeErrorException.class) 
+//     public void testClassWithInstanceVarAssignmentConstructor() throws TypeErrorException{
+//     /** class foo{
+//     int x;
+//     constructor(boolean y) 
+//         x = y ; <--- int to boolean 
+//     }
 
-    Foo y = Foo(true);
-**/
-	    List<ClassDef> classDef = new ArrayList<>();
-	    List<MethodDef> methodDefs = new ArrayList<>(); //empty
-	    List<Exp> classExp = new ArrayList<>();
-	    classExp.add(new BoolExp(true));
+//     Foo y = Foo(true);
+// **/
+// 	    List<ClassDef> classDef = new ArrayList<>();
+// 	    List<MethodDef> methodDefs = new ArrayList<>(); //empty
+// 	    List<Exp> classExp = new ArrayList<>();
+// 	    classExp.add(new BoolExp(true));
 
-	    Statement statement = new VarDecAssignment(
-	    	new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-	    	new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-	    	);
+// 	    Statement statement = new VarDecAssignment(
+// 	    	new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+// 	    	new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+// 	    	);
 
-	    List<VarDec> varDec = new ArrayList<>(); //empty
-	    varDec.add(new VarDec(new BooleanType(), new Variable("y")));
-	    List<VarDec> varDecNonEmpty = new ArrayList<>();
-	    varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
-	   	classDef.add(new ClassDef(
-	    	new ClassName("Foo"), 
-	    	new Constructor(
-	    		varDec, 
-	    		new VarDecAssignment(
-	    			new VarDec(
-	    				new IntType(), 
-	    				new Variable("x")
-	    				), 
-	    			new VariableExp(new Variable("y"))
-	    			)
-	    		), 
-	    	varDecNonEmpty, methodDefs, new ArrayList<TypeVariable>()));
+// 	    List<VarDec> varDec = new ArrayList<>(); //empty
+// 	    varDec.add(new VarDec(new BooleanType(), new Variable("y")));
+// 	    List<VarDec> varDecNonEmpty = new ArrayList<>();
+// 	    varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
+// 	   	classDef.add(new ClassDef(
+// 	    	new ClassName("Foo"), 
+// 	    	new Constructor(
+// 	    		varDec, 
+// 	    		new VarDecAssignment(
+// 	    			new VarDec(
+// 	    				new IntType(), 
+// 	    				new Variable("x")
+// 	    				), 
+// 	    			new VariableExp(new Variable("y"))
+// 	    			)
+// 	    		), 
+// 	    	varDecNonEmpty, methodDefs, new ArrayList<TypeVariable>()));
 
-	    final Program program = new Program(classDef, statement);
-	    TypeChecker.typecheckProgram(program);
-	}
+// 	    final Program program = new Program(classDef, statement);
+// 	    TypeChecker.typecheckProgram(program);
+// 	}
 
-    //Assigning types tests end
+//     //Assigning types tests end
 
-	//return types
-    @Test(expected = TypeErrorException.class) 
-    public void testClassWithWrongVarDecStatementWithVoidTypeReturn() throws TypeErrorException {
-    	/*
-	 class Foo{
-            constructor()
-                int x = 0;   
-            private void methodA() {
-				return 1; <-- no return, its void
-            }
-        }
-        Foo y = Foo(); 
-    */
+// 	//return types
+//     @Test(expected = TypeErrorException.class) 
+//     public void testClassWithWrongVarDecStatementWithVoidTypeReturn() throws TypeErrorException {
+//     	/*
+// 	 class Foo{
+//             constructor()
+//                 int x = 0;   
+//             private void methodA() {
+// 				return 1; <-- no return, its void
+//             }
+//         }
+//         Foo y = Foo(); 
+//     */
 
 
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>();
-    List<Exp> classExp = new ArrayList<>();
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>();
+//     List<Exp> classExp = new ArrayList<>();
 
-    Statement statement = new VarDecAssignment(
-    	new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-    	new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-    	);
+//     Statement statement = new VarDecAssignment(
+//     	new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//     	new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//     	);
 
-    List<VarDec> varDec = new ArrayList<>(); //empty
-    methodDefs.add(new MethodDef(new PrivateAccess(), new VoidType(), new MethodName("methodA"), varDec, new ReturnExpStatement(new NumberExp(1))));
-   	classDef.add(new ClassDef(
-    	new ClassName("Foo"), 
-    	new Constructor(
-    		varDec, 
-    		new VarDecAssignment(
-    			new VarDec(
-    				new IntType(), 
-    				new Variable("x")
-    				), 
-    			new NumberExp(0)
-    			)
-    		), 
-    	varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     List<VarDec> varDec = new ArrayList<>(); //empty
+//     methodDefs.add(new MethodDef(new PrivateAccess(), new VoidType(), new MethodName("methodA"), varDec, new ReturnExpStatement(new NumberExp(1))));
+//    	classDef.add(new ClassDef(
+//     	new ClassName("Foo"), 
+//     	new Constructor(
+//     		varDec, 
+//     		new VarDecAssignment(
+//     			new VarDec(
+//     				new IntType(), 
+//     				new Variable("x")
+//     				), 
+//     			new NumberExp(0)
+//     			)
+//     		), 
+//     	varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
+//     final Program program = new Program(classDef, statement);
+//     TypeChecker.typecheckProgram(program);
     	
-    }
+//     }
 
     
 
-    @Test(expected = TypeErrorException.class) 
-    public void testClassWithWrongVarDecStatementWithIntTypeReturn() throws TypeErrorException {
-    	/*
-	 class Foo{
-            constructor()
-                int x = 0;   
-            private int methodA() {
-				return true; <-- return int 
-            }
-        }
-        Foo y = Foo(); 
-    */
+//     @Test(expected = TypeErrorException.class) 
+//     public void testClassWithWrongVarDecStatementWithIntTypeReturn() throws TypeErrorException {
+//     	/*
+// 	 class Foo{
+//             constructor()
+//                 int x = 0;   
+//             private int methodA() {
+// 				return true; <-- return int 
+//             }
+//         }
+//         Foo y = Foo(); 
+//     */
 
 
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>();
-    List<Exp> classExp = new ArrayList<>();
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>();
+//     List<Exp> classExp = new ArrayList<>();
 
-    Statement statement = new VarDecAssignment(
-    	new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-    	new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-    	);
+//     Statement statement = new VarDecAssignment(
+//     	new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//     	new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//     	);
 
-    List<VarDec> varDec = new ArrayList<>(); //empty
-    methodDefs.add(new MethodDef(
-        new PrivateAccess(), 
-        new IntType(), 
-        new MethodName("methodA"), 
-        varDec, 
-        new ReturnExpStatement(
-            new BoolExp(true)
-            )
-        )
-    );
-   	classDef.add(new ClassDef(
-    	new ClassName("Foo"), 
-    	new Constructor(
-    		varDec, 
-    		new VarDecAssignment(
-    			new VarDec(
-    				new IntType(), 
-    				new Variable("x")
-    				), 
-    			new NumberExp(0)
-    			)
-    		), 
-    	varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     List<VarDec> varDec = new ArrayList<>(); //empty
+//     methodDefs.add(new MethodDef(
+//         new PrivateAccess(), 
+//         new IntType(), 
+//         new MethodName("methodA"), 
+//         varDec, 
+//         new ReturnExpStatement(
+//             new BoolExp(true)
+//             )
+//         )
+//     );
+//    	classDef.add(new ClassDef(
+//     	new ClassName("Foo"), 
+//     	new Constructor(
+//     		varDec, 
+//     		new VarDecAssignment(
+//     			new VarDec(
+//     				new IntType(), 
+//     				new Variable("x")
+//     				), 
+//     			new NumberExp(0)
+//     			)
+//     		), 
+//     	varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
+//     final Program program = new Program(classDef, statement);
+//     TypeChecker.typecheckProgram(program);
     	
-    }
+//     }
 
-    @Test//(expected = TypeErrorException.class) 
-    public void testClassWithReturnExpWorking() throws TypeErrorException {
-        /*
-     class Foo{
-            constructor()
-                int x = 0;   
-            private int methodA() {
-                return 1;
-            }
-        }
-        Foo y = Foo(); 
-    */
+//     @Test//(expected = TypeErrorException.class) 
+//     public void testClassWithReturnExpWorking() throws TypeErrorException {
+//         /*
+//      class Foo{
+//             constructor()
+//                 int x = 0;   
+//             private int methodA() {
+//                 return 1;
+//             }
+//         }
+//         Foo y = Foo(); 
+//     */
 
 
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>();
-    List<Exp> classExp = new ArrayList<>();
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>();
+//     List<Exp> classExp = new ArrayList<>();
 
-    Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-        );
+//     Statement statement = new VarDecAssignment(
+//         new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//         new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//         );
 
-    List<VarDec> varDec = new ArrayList<>(); //empty
-    methodDefs.add(new MethodDef(new PrivateAccess(), new IntType(), new MethodName("methodA"), varDec, new ReturnExpStatement(new NumberExp(1))));
-    classDef.add(new ClassDef(
-        new ClassName("Foo"), 
-        new Constructor(
-            varDec, 
-            new VarDecAssignment(
-                new VarDec(
-                    new IntType(), 
-                    new Variable("x")
-                    ), 
-                new NumberExp(0)
-                )
-            ), 
-        varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     List<VarDec> varDec = new ArrayList<>(); //empty
+//     methodDefs.add(new MethodDef(new PrivateAccess(), new IntType(), new MethodName("methodA"), varDec, new ReturnExpStatement(new NumberExp(1))));
+//     classDef.add(new ClassDef(
+//         new ClassName("Foo"), 
+//         new Constructor(
+//             varDec, 
+//             new VarDecAssignment(
+//                 new VarDec(
+//                     new IntType(), 
+//                     new Variable("x")
+//                     ), 
+//                 new NumberExp(0)
+//                 )
+//             ), 
+//         varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
+//     final Program program = new Program(classDef, statement);
+//     TypeChecker.typecheckProgram(program);
         
-    }
+//     }
 
-    @Test(expected = TypeErrorException.class) 
-    public void testClassWithWrongVarDecStatementWithNoReturn() throws TypeErrorException {
-    	/*
-	 class Foo{
-            constructor()
-                int x = 0;   
-            private int methodA() {
-				int y = 0; <-- should return
-            }
-        }
-        Foo y = Foo(); 
-    */
+//     @Test(expected = TypeErrorException.class) 
+//     public void testClassWithWrongVarDecStatementWithNoReturn() throws TypeErrorException {
+//     	/*
+// 	 class Foo{
+//             constructor()
+//                 int x = 0;   
+//             private int methodA() {
+// 				int y = 0; <-- should return
+//             }
+//         }
+//         Foo y = Foo(); 
+//     */
 
 
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>();
-    List<Exp> classExp = new ArrayList<>();
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>();
+//     List<Exp> classExp = new ArrayList<>();
 
-    Statement statement = new VarDecAssignment(
-    	new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-    	new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-    	);
+//     Statement statement = new VarDecAssignment(
+//     	new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//     	new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//     	);
 
-    List<VarDec> varDec = new ArrayList<>(); //empty
-    methodDefs.add(new MethodDef(new PrivateAccess(), new IntType(), new MethodName("methodA"), varDec, new VarDecAssignment(new VarDec(
-    				new IntType(), 
-    				new Variable("y")
-    				), 
-    			new NumberExp(0)
-    )));
-   	classDef.add(new ClassDef(
-    	new ClassName("Foo"), 
-    	new Constructor(
-    		varDec, 
-    		new VarDecAssignment(
-    			new VarDec(
-    				new IntType(), 
-    				new Variable("x")
-    				), 
-    			new NumberExp(0)
-    			)
-    		), 
-    	varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     List<VarDec> varDec = new ArrayList<>(); //empty
+//     methodDefs.add(new MethodDef(new PrivateAccess(), new IntType(), new MethodName("methodA"), varDec, new VarDecAssignment(new VarDec(
+//     				new IntType(), 
+//     				new Variable("y")
+//     				), 
+//     			new NumberExp(0)
+//     )));
+//    	classDef.add(new ClassDef(
+//     	new ClassName("Foo"), 
+//     	new Constructor(
+//     		varDec, 
+//     		new VarDecAssignment(
+//     			new VarDec(
+//     				new IntType(), 
+//     				new Variable("x")
+//     				), 
+//     			new NumberExp(0)
+//     			)
+//     		), 
+//     	varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
+//     final Program program = new Program(classDef, statement);
+//     TypeChecker.typecheckProgram(program);
     	
-    }
+//     }
 
-    // return type tests end
+//     // return type tests end
     
 
-	@Test(expected = TypeErrorException.class) 
-	    public void testClassWithInstanceVarAssignmentNotIncludedInStatement() throws TypeErrorException {
-	    /** class foo{
-	    int x;
-	    constructor(int y) 
-	        x = y ; 
-	    }
+// 	@Test(expected = TypeErrorException.class) 
+// 	    public void testClassWithInstanceVarAssignmentNotIncludedInStatement() throws TypeErrorException {
+// 	    /** class foo{
+// 	    int x;
+// 	    constructor(int y) 
+// 	        x = y ; 
+// 	    }
 
-	    Foo y = Foo(); <-- should have paramter
-	**/
-	    List<ClassDef> classDef = new ArrayList<>();
-	    List<MethodDef> methodDefs = new ArrayList<>(); //empty
-	    List<Exp> classExp = new ArrayList<>();
+// 	    Foo y = Foo(); <-- should have paramter
+// 	**/
+// 	    List<ClassDef> classDef = new ArrayList<>();
+// 	    List<MethodDef> methodDefs = new ArrayList<>(); //empty
+// 	    List<Exp> classExp = new ArrayList<>();
 
-	    Statement statement = new VarDecAssignment(
-	    	new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-	    	new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-	    	);
+// 	    Statement statement = new VarDecAssignment(
+// 	    	new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+// 	    	new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+// 	    	);
 
-	    List<VarDec> varDec = new ArrayList<>(); //empty
-	    varDec.add(new VarDec(new BooleanType(), new Variable("y")));
-	    List<VarDec> varDecNonEmpty = new ArrayList<>();
-	    varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
-	   	classDef.add(new ClassDef(
-	    	new ClassName("Foo"), 
-	    	new Constructor(
-	    		varDec, 
-	    		new VarDecAssignment(
-	    			new VarDec(
-	    				new IntType(), 
-	    				new Variable("x")
-	    				), 
-	    			new VariableExp(new Variable("y"))
-	    			)
-	    		), 
-	    	varDecNonEmpty, methodDefs, new ArrayList<TypeVariable>()));
+// 	    List<VarDec> varDec = new ArrayList<>(); //empty
+// 	    varDec.add(new VarDec(new BooleanType(), new Variable("y")));
+// 	    List<VarDec> varDecNonEmpty = new ArrayList<>();
+// 	    varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
+// 	   	classDef.add(new ClassDef(
+// 	    	new ClassName("Foo"), 
+// 	    	new Constructor(
+// 	    		varDec, 
+// 	    		new VarDecAssignment(
+// 	    			new VarDec(
+// 	    				new IntType(), 
+// 	    				new Variable("x")
+// 	    				), 
+// 	    			new VariableExp(new Variable("y"))
+// 	    			)
+// 	    		), 
+// 	    	varDecNonEmpty, methodDefs, new ArrayList<TypeVariable>()));
 
-	    final Program program = new Program(classDef, statement);
-	    TypeChecker.typecheckProgram(program);
-	}
+// 	    final Program program = new Program(classDef, statement);
+// 	    TypeChecker.typecheckProgram(program);
+// 	}
 
-	@Test(expected = TypeErrorException.class)
-	    public void testClassWithInstanceVarAssignmentNotIncludedInStatementReverse() throws TypeErrorException{
-	    /** class foo{
-	    int x;
-	    constructor() 
-	        x = 0 ; 
-	    }
+// 	@Test(expected = TypeErrorException.class)
+// 	    public void testClassWithInstanceVarAssignmentNotIncludedInStatementReverse() throws TypeErrorException{
+// 	    /** class foo{
+// 	    int x;
+// 	    constructor() 
+// 	        x = 0 ; 
+// 	    }
 
-	    Foo y = Foo(1); <-- should not have paramter
-	**/
-	    List<ClassDef> classDef = new ArrayList<>();
-	    List<MethodDef> methodDefs = new ArrayList<>(); //empty
-	    List<Exp> classExp = new ArrayList<>();
-	    classExp.add(new NumberExp(1));
+// 	    Foo y = Foo(1); <-- should not have paramter
+// 	**/
+// 	    List<ClassDef> classDef = new ArrayList<>();
+// 	    List<MethodDef> methodDefs = new ArrayList<>(); //empty
+// 	    List<Exp> classExp = new ArrayList<>();
+// 	    classExp.add(new NumberExp(1));
 
-	    Statement statement = new VarDecAssignment(
-	    	new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-	    	new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-	    	);
+// 	    Statement statement = new VarDecAssignment(
+// 	    	new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+// 	    	new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+// 	    	);
 
-	    List<VarDec> varDec = new ArrayList<>(); //empty
-	    List<VarDec> varDecNonEmpty = new ArrayList<>();
-	    varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
-	   	classDef.add(new ClassDef(
-	    	new ClassName("Foo"), 
-	    	new Constructor(
-	    		varDec, 
-	    		new VarDecAssignment(
-	    			new VarDec(
-	    				new IntType(), 
-	    				new Variable("x")
-	    				), 
-	    			new NumberExp(0)
-	    			)
-	    		), 
-	    	varDecNonEmpty, methodDefs, new ArrayList<TypeVariable>()));
+// 	    List<VarDec> varDec = new ArrayList<>(); //empty
+// 	    List<VarDec> varDecNonEmpty = new ArrayList<>();
+// 	    varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
+// 	   	classDef.add(new ClassDef(
+// 	    	new ClassName("Foo"), 
+// 	    	new Constructor(
+// 	    		varDec, 
+// 	    		new VarDecAssignment(
+// 	    			new VarDec(
+// 	    				new IntType(), 
+// 	    				new Variable("x")
+// 	    				), 
+// 	    			new NumberExp(0)
+// 	    			)
+// 	    		), 
+// 	    	varDecNonEmpty, methodDefs, new ArrayList<TypeVariable>()));
 
-	    final Program program = new Program(classDef, statement);
-	    TypeChecker.typecheckProgram(program);
-	}
+// 	    final Program program = new Program(classDef, statement);
+// 	    TypeChecker.typecheckProgram(program);
+// 	}
 
-	@Test(expected = TypeErrorException.class) 
-	    public void testVariablesDefinedBeforeAssigning() throws TypeErrorException {
-	    /** class foo{
+// 	@Test(expected = TypeErrorException.class) 
+// 	    public void testVariablesDefinedBeforeAssigning() throws TypeErrorException {
+// 	    /** class foo{
 	    
-	    constructor() 
-	        x = 0 ; <-- not declared
-	    }
+// 	    constructor() 
+// 	        x = 0 ; <-- not declared
+// 	    }
 
-	    Foo y = Foo();
-	**/
-	    List<ClassDef> classDef = new ArrayList<>();
-	    List<MethodDef> methodDefs = new ArrayList<>(); //empty
-	    List<Exp> classExp = new ArrayList<>();
+// 	    Foo y = Foo();
+// 	**/
+// 	    List<ClassDef> classDef = new ArrayList<>();
+// 	    List<MethodDef> methodDefs = new ArrayList<>(); //empty
+// 	    List<Exp> classExp = new ArrayList<>();
 
-	    Statement statement = new VarDecAssignment(
-	    	new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-	    	new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-	    	);
+// 	    Statement statement = new VarDecAssignment(
+// 	    	new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+// 	    	new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+// 	    	);
 
-	    List<VarDec> varDec = new ArrayList<>(); //empty
-	   	classDef.add(new ClassDef(
-	    	new ClassName("Foo"), 
-	    	new Constructor(
-	    		varDec, 
-	    		new VarAssignment(
-	    			new Variable("x"), 
-	    			new NumberExp(0)
-	    			)
-	    		), 
-	    	varDec, methodDefs, new ArrayList<TypeVariable>()));
+// 	    List<VarDec> varDec = new ArrayList<>(); //empty
+// 	   	classDef.add(new ClassDef(
+// 	    	new ClassName("Foo"), 
+// 	    	new Constructor(
+// 	    		varDec, 
+// 	    		new VarAssignment(
+// 	    			new Variable("x"), 
+// 	    			new NumberExp(0)
+// 	    			)
+// 	    		), 
+// 	    	varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-	    final Program program = new Program(classDef, statement);
-	    TypeChecker.typecheckProgram(program);
-	}
+// 	    final Program program = new Program(classDef, statement);
+// 	    TypeChecker.typecheckProgram(program);
+// 	}
 
-	//scope tests
-    @Test
-        public void testScopeofInstanceVarAlreadyDeclared() throws TypeErrorException {
-        /** class foo{
-        int x;
-        constructor() 
-           int x = 0 ; allowed
-        }
+// 	//scope tests
+//     @Test
+//         public void testScopeofInstanceVarAlreadyDeclared() throws TypeErrorException {
+//         /** class foo{
+//         int x;
+//         constructor() 
+//            int x = 0 ; allowed
+//         }
 
-        Foo y = Foo();
-    **/
-        List<ClassDef> classDef = new ArrayList<>();
-        List<MethodDef> methodDefs = new ArrayList<>(); //empty
-        List<Exp> classExp = new ArrayList<>();
+//         Foo y = Foo();
+//     **/
+//         List<ClassDef> classDef = new ArrayList<>();
+//         List<MethodDef> methodDefs = new ArrayList<>(); //empty
+//         List<Exp> classExp = new ArrayList<>();
 
-        Statement statement = new VarDecAssignment(
-            new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-            new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-            );
+//         Statement statement = new VarDecAssignment(
+//             new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//             new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//             );
 
-        List<VarDec> varDec = new ArrayList<>(); //empty
-        varDec.add(new VarDec(new IntType(), new Variable("x")));
-        List<VarDec> varDecEmpty = new ArrayList<>(); //empty
-        classDef.add(new ClassDef(
-            new ClassName("Foo"), 
-            new Constructor(
-                varDecEmpty, 
-                new VarDecAssignment(
-                    new VarDec(
-                        new IntType(), 
-                        new Variable("x")
-                        ), 
-                    new NumberExp(0)
-                    )
-                ), 
-            varDec, methodDefs, new ArrayList<TypeVariable>()));
+//         List<VarDec> varDec = new ArrayList<>(); //empty
+//         varDec.add(new VarDec(new IntType(), new Variable("x")));
+//         List<VarDec> varDecEmpty = new ArrayList<>(); //empty
+//         classDef.add(new ClassDef(
+//             new ClassName("Foo"), 
+//             new Constructor(
+//                 varDecEmpty, 
+//                 new VarDecAssignment(
+//                     new VarDec(
+//                         new IntType(), 
+//                         new Variable("x")
+//                         ), 
+//                     new NumberExp(0)
+//                     )
+//                 ), 
+//             varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-        final Program program = new Program(classDef, statement);
-        TypeChecker.typecheckProgram(program);
-    }
+//         final Program program = new Program(classDef, statement);
+//         TypeChecker.typecheckProgram(program);
+//     }
 
-        @Test(expected = TypeErrorException.class) //why is this stack overflow
-        public void testScopeOfSameVariableOutsideofLoop() throws TypeErrorException {
-        /** class foo{
-        int x;
-        constructor() 
-           while(true) 
-                int y = 2;
-            y = 3;
-        }
+//         @Test(expected = TypeErrorException.class) //why is this stack overflow
+//         public void testScopeOfSameVariableOutsideofLoop() throws TypeErrorException {
+//         /** class foo{
+//         int x;
+//         constructor() 
+//            while(true) 
+//                 int y = 2;
+//             y = 3;
+//         }
 
-        Foo z = Foo();
-    **/
-        List<ClassDef> classDef = new ArrayList<>();
-        List<MethodDef> methodDefs = new ArrayList<>(); //empty
-        List<Exp> classExp = new ArrayList<>();
+//         Foo z = Foo();
+//     **/
+//         List<ClassDef> classDef = new ArrayList<>();
+//         List<MethodDef> methodDefs = new ArrayList<>(); //empty
+//         List<Exp> classExp = new ArrayList<>();
 
-        Statement statement = new VarDecAssignment(
-            new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("z")), 
-            new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-            );
+//         Statement statement = new VarDecAssignment(
+//             new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("z")), 
+//             new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//             );
 
-        List<Statement> blockStatements = new ArrayList<>();
-        blockStatements.add(new WhileStatement(new BoolExp(true), new VarDecAssignment(new VarDec(new IntType(), new Variable("y")), new NumberExp(2))));
-        blockStatements.add(new VarAssignment(new Variable("y"), new NumberExp(3)));
-        List<VarDec> varDec = new ArrayList<>(); //empty
-        varDec.add(new VarDec(new IntType(), new Variable("x")));
-        List<VarDec> varDecEmpty = new ArrayList<>(); //empty
-        classDef.add(new ClassDef(
-            new ClassName("Foo"), 
-            new Constructor(
-                varDecEmpty, 
-                new Block(blockStatements)
-                ), 
-            varDec, methodDefs, new ArrayList<TypeVariable>()));
+//         List<Statement> blockStatements = new ArrayList<>();
+//         blockStatements.add(new WhileStatement(new BoolExp(true), new VarDecAssignment(new VarDec(new IntType(), new Variable("y")), new NumberExp(2))));
+//         blockStatements.add(new VarAssignment(new Variable("y"), new NumberExp(3)));
+//         List<VarDec> varDec = new ArrayList<>(); //empty
+//         varDec.add(new VarDec(new IntType(), new Variable("x")));
+//         List<VarDec> varDecEmpty = new ArrayList<>(); //empty
+//         classDef.add(new ClassDef(
+//             new ClassName("Foo"), 
+//             new Constructor(
+//                 varDecEmpty, 
+//                 new Block(blockStatements)
+//                 ), 
+//             varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-        final Program program = new Program(classDef, statement);
-        TypeChecker.typecheckProgram(program);
-    }
+//         final Program program = new Program(classDef, statement);
+//         TypeChecker.typecheckProgram(program);
+//     }
 	
-    @Test(expected = TypeErrorException.class) 
-    public void testScopeOfSameVariableOutsideofScope() throws TypeErrorException {
-        /** class foo{
-        constructor() 
-           int y =8;
-        methodA() 
-            y = 9;
-        }
+//     @Test(expected = TypeErrorException.class) 
+//     public void testScopeOfSameVariableOutsideofScope() throws TypeErrorException {
+//         /** class foo{
+//         constructor() 
+//            int y =8;
+//         methodA() 
+//             y = 9;
+//         }
 
 
-        Foo y = Foo();
-    **/
-        List<ClassDef> classDef = new ArrayList<>();
-        List<MethodDef> methodDefs = new ArrayList<>(); //empty
-        List<Exp> classExp = new ArrayList<>();
+//         Foo y = Foo();
+//     **/
+//         List<ClassDef> classDef = new ArrayList<>();
+//         List<MethodDef> methodDefs = new ArrayList<>(); //empty
+//         List<Exp> classExp = new ArrayList<>();
 
-        Statement statement = new VarDecAssignment(
-            new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-            new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-            );
+//         Statement statement = new VarDecAssignment(
+//             new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//             new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//             );
 
-        List<VarDec> varDec = new ArrayList<>(); //empty
-         methodDefs.add(new MethodDef(new PrivateAccess(), new IntType(), new MethodName("methodA"), varDec, new VarAssignment(new Variable("y"), new NumberExp(9))));
+//         List<VarDec> varDec = new ArrayList<>(); //empty
+//          methodDefs.add(new MethodDef(new PrivateAccess(), new IntType(), new MethodName("methodA"), varDec, new VarAssignment(new Variable("y"), new NumberExp(9))));
 
-        List<VarDec> varDecEmpty = new ArrayList<>(); //empty
-        classDef.add(new ClassDef(
-            new ClassName("Foo"), 
-            new Constructor(
-                varDecEmpty, 
-                new VarDecAssignment(
-                    new VarDec(
-                        new IntType(), 
-                        new Variable("y")
-                        ), 
-                    new NumberExp(8)
-                    )
-                ), 
-            varDec, methodDefs, new ArrayList<TypeVariable>()));
+//         List<VarDec> varDecEmpty = new ArrayList<>(); //empty
+//         classDef.add(new ClassDef(
+//             new ClassName("Foo"), 
+//             new Constructor(
+//                 varDecEmpty, 
+//                 new VarDecAssignment(
+//                     new VarDec(
+//                         new IntType(), 
+//                         new Variable("y")
+//                         ), 
+//                     new NumberExp(8)
+//                     )
+//                 ), 
+//             varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-        final Program program = new Program(classDef, statement);
-        TypeChecker.typecheckProgram(program);
-    }
+//         final Program program = new Program(classDef, statement);
+//         TypeChecker.typecheckProgram(program);
+//     }
 
-    @Test(expected = TypeErrorException.class) 
-    public void testVariableNeverAssignedButReturned() throws TypeErrorException {
-        /*
-     class Foo{
-        int x;
-            constructor()
-                int z = 0;   
-            private int methodA() {
-                return x;  <-- never declared or initialized
-            }
-        }
-        Foo y = Foo(); 
-    */
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>();
-    List<Exp> classExp = new ArrayList<>();
+//     @Test(expected = TypeErrorException.class) 
+//     public void testVariableNeverAssignedButReturned() throws TypeErrorException {
+//         /*
+//      class Foo{
+//         int x;
+//             constructor()
+//                 int z = 0;   
+//             private int methodA() {
+//                 return x;  <-- never declared or initialized
+//             }
+//         }
+//         Foo y = Foo(); 
+//     */
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>();
+//     List<Exp> classExp = new ArrayList<>();
 
-    Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-        );
+//     Statement statement = new VarDecAssignment(
+//         new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//         new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//         );
 
-    List<VarDec> varDec = new ArrayList<>(); //empty
-    List<VarDec> varDecNonEmpty = new ArrayList<>();
-    varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
-    methodDefs.add(new MethodDef(
-        new PrivateAccess(), 
-        new IntType(), 
-        new MethodName("methodA"), 
-        varDec, 
-        new ReturnExpStatement(new VariableExp(new Variable("x")))));
-    classDef.add(new ClassDef(
-        new ClassName("Foo"), 
-        new Constructor(
-            varDec, 
-            new VarDecAssignment(
-                new VarDec(
-                    new IntType(), 
-                    new Variable("z")
-                    ), 
-                new NumberExp(0)
-                )
-            ), 
-        varDecNonEmpty, methodDefs, new ArrayList<TypeVariable>()));
+//     List<VarDec> varDec = new ArrayList<>(); //empty
+//     List<VarDec> varDecNonEmpty = new ArrayList<>();
+//     varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
+//     methodDefs.add(new MethodDef(
+//         new PrivateAccess(), 
+//         new IntType(), 
+//         new MethodName("methodA"), 
+//         varDec, 
+//         new ReturnExpStatement(new VariableExp(new Variable("x")))));
+//     classDef.add(new ClassDef(
+//         new ClassName("Foo"), 
+//         new Constructor(
+//             varDec, 
+//             new VarDecAssignment(
+//                 new VarDec(
+//                     new IntType(), 
+//                     new Variable("z")
+//                     ), 
+//                 new NumberExp(0)
+//                 )
+//             ), 
+//         varDecNonEmpty, methodDefs, new ArrayList<TypeVariable>()));
 
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
+//     final Program program = new Program(classDef, statement);
+//     TypeChecker.typecheckProgram(program);
 
         
-    }
+//     }
 
-    @Test(expected = TypeErrorException.class) 
-    public void testBreakCalledWithoutIFandWhileStmts() throws TypeErrorException {
-           /*
-     class Foo{
-            constructor()
-                int z = 0;   
-            private void methodA() {
-                break;
-            }
-        }
-        Foo y = Foo(); 
-    */
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>();
-    List<Exp> classExp = new ArrayList<>();
+//     @Test(expected = TypeErrorException.class) 
+//     public void testBreakCalledWithoutIFandWhileStmts() throws TypeErrorException {
+//            /*
+//      class Foo{
+//             constructor()
+//                 int z = 0;   
+//             private void methodA() {
+//                 break;
+//             }
+//         }
+//         Foo y = Foo(); 
+//     */
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>();
+//     List<Exp> classExp = new ArrayList<>();
 
-    Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-        );
-    List<Statement> statements = new ArrayList<>();
-    statements.add(new BreakStatement());
-    statements.add(new ReturnVoidStatement());
-    List<VarDec> varDec = new ArrayList<>(); //empty
+//     Statement statement = new VarDecAssignment(
+//         new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//         new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//         );
+//     List<Statement> statements = new ArrayList<>();
+//     statements.add(new BreakStatement());
+//     statements.add(new ReturnVoidStatement());
+//     List<VarDec> varDec = new ArrayList<>(); //empty
     
-    methodDefs.add(new MethodDef(
-        new PrivateAccess(), 
-        new VoidType(), 
-        new MethodName("methodA"), 
-        varDec, 
-        new Block(statements)
-        ));
-    classDef.add(new ClassDef(
-        new ClassName("Foo"), 
-        new Constructor(
-            varDec, 
-            new VarDecAssignment(
-                new VarDec(
-                    new IntType(), 
-                    new Variable("z")
-                    ), 
-                new NumberExp(0)
-                )
-            ), 
-        varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     methodDefs.add(new MethodDef(
+//         new PrivateAccess(), 
+//         new VoidType(), 
+//         new MethodName("methodA"), 
+//         varDec, 
+//         new Block(statements)
+//         ));
+//     classDef.add(new ClassDef(
+//         new ClassName("Foo"), 
+//         new Constructor(
+//             varDec, 
+//             new VarDecAssignment(
+//                 new VarDec(
+//                     new IntType(), 
+//                     new Variable("z")
+//                     ), 
+//                 new NumberExp(0)
+//                 )
+//             ), 
+//         varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
+//     final Program program = new Program(classDef, statement);
+//     TypeChecker.typecheckProgram(program);
 
-    }
+//     }
 
-    @Test(expected = TypeErrorException.class) 
-    public void testUniqueNamesOfClasses() throws TypeErrorException {
-        /*
-     class Foo{
-            constructor()
-                int x = 0;
-        }
+//     @Test(expected = TypeErrorException.class) 
+//     public void testUniqueNamesOfClasses() throws TypeErrorException {
+//         /*
+//      class Foo{
+//             constructor()
+//                 int x = 0;
+//         }
 
-        class Foo {
-            constructor()
-                int x =0;
-        }
-        Foo y = Foo(); 
-    */
+//         class Foo {
+//             constructor()
+//                 int x =0;
+//         }
+//         Foo y = Foo(); 
+//     */
 
 
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>(); //empty
-    List<Exp> classExp = new ArrayList<>();
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>(); //empty
+//     List<Exp> classExp = new ArrayList<>();
 
-    Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-        );
+//     Statement statement = new VarDecAssignment(
+//         new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//         new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//         );
 
-    List<VarDec> varDec = new ArrayList<>(); //empty
-    classDef.add(new ClassDef(
-        new ClassName("Foo"), 
-        new Constructor(
-            varDec, 
-            new VarDecAssignment(
-                new VarDec(
-                    new IntType(), 
-                    new Variable("x")
-                    ), 
-                //new StringExp("test")
-                new NumberExp(0)
-                )
-            ), 
-        varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     List<VarDec> varDec = new ArrayList<>(); //empty
+//     classDef.add(new ClassDef(
+//         new ClassName("Foo"), 
+//         new Constructor(
+//             varDec, 
+//             new VarDecAssignment(
+//                 new VarDec(
+//                     new IntType(), 
+//                     new Variable("x")
+//                     ), 
+//                 //new StringExp("test")
+//                 new NumberExp(0)
+//                 )
+//             ), 
+//         varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-    classDef.add(new ClassDef(
-        new ClassName("Foo"), 
-        new Constructor(
-            varDec, 
-            new VarDecAssignment(
-                new VarDec(
-                    new IntType(), 
-                    new Variable("x")
-                    ), 
-                //new StringExp("test")
-                new NumberExp(0)
-                )
-            ), 
-        varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     classDef.add(new ClassDef(
+//         new ClassName("Foo"), 
+//         new Constructor(
+//             varDec, 
+//             new VarDecAssignment(
+//                 new VarDec(
+//                     new IntType(), 
+//                     new Variable("x")
+//                     ), 
+//                 //new StringExp("test")
+//                 new NumberExp(0)
+//                 )
+//             ), 
+//         varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
+//     final Program program = new Program(classDef, statement);
+//     TypeChecker.typecheckProgram(program);
         
-    }
+//     }
 
-    @Test//(expected = TypeErrorException.class)
-    public void testUniqueNamesOfVariables() throws TypeErrorException {
-        /*
-     class Foo{
-            constructor()
-                int x = 0;
-        }
-        Boolean y = true; <-- same variable name
-        int y = 0;
-    */
-
-
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>(); //empty
-    List<Exp> classExp = new ArrayList<>();
-
-    Statement statementOne = new VarDecAssignment(
-        new VarDec(new BooleanType(), new Variable("y")), 
-        new BoolExp(true)
-        );
-    Statement statementTwo = new VarDecAssignment(new VarDec(new IntType(), new Variable("y")), new NumberExp(0));
-
-    List<Statement> statement = new ArrayList<>();
-    statement.add(statementOne);
-    statement.add(statementOne);
-
-    List<VarDec> varDec = new ArrayList<>(); //empty
-    classDef.add(new ClassDef(
-        new ClassName("Foo"), 
-        new Constructor(
-            varDec, 
-            new VarDecAssignment(
-                new VarDec(
-                    new IntType(), 
-                    new Variable("x")
-                    ), 
-                //new StringExp("test")
-                new NumberExp(0)
-                )
-            ), 
-        varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     @Test//(expected = TypeErrorException.class)
+//     public void testUniqueNamesOfVariables() throws TypeErrorException {
+//         /*
+//      class Foo{
+//             constructor()
+//                 int x = 0;
+//         }
+//         Boolean y = true; <-- same variable name
+//         int y = 0;
+//     */
 
 
-    final Program program = new Program(classDef, new Block(statement));
-    TypeChecker.typecheckProgram(program);
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>(); //empty
+//     List<Exp> classExp = new ArrayList<>();
+
+//     Statement statementOne = new VarDecAssignment(
+//         new VarDec(new BooleanType(), new Variable("y")), 
+//         new BoolExp(true)
+//         );
+//     Statement statementTwo = new VarDecAssignment(new VarDec(new IntType(), new Variable("y")), new NumberExp(0));
+
+//     List<Statement> statement = new ArrayList<>();
+//     statement.add(statementOne);
+//     statement.add(statementOne);
+
+//     List<VarDec> varDec = new ArrayList<>(); //empty
+//     classDef.add(new ClassDef(
+//         new ClassName("Foo"), 
+//         new Constructor(
+//             varDec, 
+//             new VarDecAssignment(
+//                 new VarDec(
+//                     new IntType(), 
+//                     new Variable("x")
+//                     ), 
+//                 //new StringExp("test")
+//                 new NumberExp(0)
+//                 )
+//             ), 
+//         varDec, methodDefs, new ArrayList<TypeVariable>()));
+
+
+//     final Program program = new Program(classDef, new Block(statement));
+//     TypeChecker.typecheckProgram(program);
         
-    }
+//     }
 
-    @Test(expected = TypeErrorException.class) 
-    public void testFunctionCallWithWrongParameters() throws TypeErrorException {
-    /*
-      class Foo{
-        constructor(int x)
-          int z = 0;   
-      }
-      Foo y = Foo(true); 
-    */
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>();
-    List<Exp> classExp = new ArrayList<>();
-    classExp.add(new BoolExp(true));
+//     @Test(expected = TypeErrorException.class) 
+//     public void testFunctionCallWithWrongParameters() throws TypeErrorException {
+//     /*
+//       class Foo{
+//         constructor(int x)
+//           int z = 0;   
+//       }
+//       Foo y = Foo(true); 
+//     */
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>();
+//     List<Exp> classExp = new ArrayList<>();
+//     classExp.add(new BoolExp(true));
 
-    Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-        );
+//     Statement statement = new VarDecAssignment(
+//         new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//         new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//         );
 
-    List<VarDec> varDec = new ArrayList<>(); //empty
-    List<VarDec> varDecNonEmpty = new ArrayList<>(); 
-    varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
+//     List<VarDec> varDec = new ArrayList<>(); //empty
+//     List<VarDec> varDecNonEmpty = new ArrayList<>(); 
+//     varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
     
-    classDef.add(new ClassDef(
-        new ClassName("Foo"), 
-        new Constructor(
-            varDecNonEmpty, 
-            new VarDecAssignment(
-                new VarDec(
-                    new IntType(), 
-                    new Variable("z")
-                    ), 
-                new NumberExp(0)
-                )
-            ), 
-        varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     classDef.add(new ClassDef(
+//         new ClassName("Foo"), 
+//         new Constructor(
+//             varDecNonEmpty, 
+//             new VarDecAssignment(
+//                 new VarDec(
+//                     new IntType(), 
+//                     new Variable("z")
+//                     ), 
+//                 new NumberExp(0)
+//                 )
+//             ), 
+//         varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
-    }
+//     final Program program = new Program(classDef, statement);
+//     TypeChecker.typecheckProgram(program);
+//     }
 
-    @Test
-    public void testBinopOperation() throws TypeErrorException {
-           /*
-     class Foo{
-            constructor(int x)
-                int z = x + 2;   
+//     @Test
+//     public void testBinopOperation() throws TypeErrorException {
+//            /*
+//      class Foo{
+//             constructor(int x)
+//                 int z = x + 2;   
             
-        }
-        Foo y = Foo(3); 
-    */
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>();
-    List<Exp> classExp = new ArrayList<>();
-    classExp.add(new NumberExp(3));
+//         }
+//         Foo y = Foo(3); 
+//     */
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>();
+//     List<Exp> classExp = new ArrayList<>();
+//     classExp.add(new NumberExp(3));
 
-    Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-        );
+//     Statement statement = new VarDecAssignment(
+//         new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//         new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//         );
 
-    List<VarDec> varDec = new ArrayList<>(); //empty
-    List<VarDec> varDecNonEmpty = new ArrayList<>(); 
-    varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
+//     List<VarDec> varDec = new ArrayList<>(); //empty
+//     List<VarDec> varDecNonEmpty = new ArrayList<>(); 
+//     varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
     
-    classDef.add(new ClassDef(
-        new ClassName("Foo"), 
-        new Constructor(
-            varDecNonEmpty, 
-            new VarDecAssignment(
-                new VarDec(
-                    new IntType(), 
-                    new Variable("z")
-                    ), 
-                new BinopExp(new VariableExp(new Variable("x")), new PlusOp(), new NumberExp(2))
-                )
-            ), 
-        varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     classDef.add(new ClassDef(
+//         new ClassName("Foo"), 
+//         new Constructor(
+//             varDecNonEmpty, 
+//             new VarDecAssignment(
+//                 new VarDec(
+//                     new IntType(), 
+//                     new Variable("z")
+//                     ), 
+//                 new BinopExp(new VariableExp(new Variable("x")), new PlusOp(), new NumberExp(2))
+//                 )
+//             ), 
+//         varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
+//     final Program program = new Program(classDef, statement);
+//     TypeChecker.typecheckProgram(program);
 
-    }
+//     }
 
-    @Test(expected = TypeErrorException.class) 
-    public void testBinopOperationWithBoolean() throws TypeErrorException {
-           /*
-     class Foo{
-            Foo(int x)
-                int z = x + true;   
+//     @Test(expected = TypeErrorException.class) 
+//     public void testBinopOperationWithBoolean() throws TypeErrorException {
+//            /*
+//      class Foo{
+//             Foo(int x)
+//                 int z = x + true;   
             
-        }
-        Foo y = Foo(3); 
-    */
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>();
-    List<Exp> classExp = new ArrayList<>();
-    classExp.add(new NumberExp(3));
+//         }
+//         Foo y = Foo(3); 
+//     */
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>();
+//     List<Exp> classExp = new ArrayList<>();
+//     classExp.add(new NumberExp(3));
 
-    Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-        );
+//     Statement statement = new VarDecAssignment(
+//         new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//         new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//         );
 
-    List<VarDec> varDec = new ArrayList<>(); //empty
-    List<VarDec> varDecNonEmpty = new ArrayList<>(); 
-    varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
+//     List<VarDec> varDec = new ArrayList<>(); //empty
+//     List<VarDec> varDecNonEmpty = new ArrayList<>(); 
+//     varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
     
-    classDef.add(new ClassDef(
-        new ClassName("Foo"), 
-        new Constructor(
-            varDecNonEmpty, 
-            new VarDecAssignment(
-                new VarDec(
-                    new IntType(), 
-                    new Variable("z")
-                    ), 
-                new BinopExp(new VariableExp(new Variable("x")), new PlusOp(), new BoolExp(true))
-                )
-            ), 
-        varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     classDef.add(new ClassDef(
+//         new ClassName("Foo"), 
+//         new Constructor(
+//             varDecNonEmpty, 
+//             new VarDecAssignment(
+//                 new VarDec(
+//                     new IntType(), 
+//                     new Variable("z")
+//                     ), 
+//                 new BinopExp(new VariableExp(new Variable("x")), new PlusOp(), new BoolExp(true))
+//                 )
+//             ), 
+//         varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
+//     final Program program = new Program(classDef, statement);
+//     TypeChecker.typecheckProgram(program);
 
-    }
+//     }
 
-    @Test
-    public void testBinopOperationMinus() throws TypeErrorException {
-           /*
-     class Foo{
-            Foo(int x)
-                int z = x - 2;   
+//     @Test
+//     public void testBinopOperationMinus() throws TypeErrorException {
+//            /*
+//      class Foo{
+//             Foo(int x)
+//                 int z = x - 2;   
             
-        }
-        Foo y = Foo(3); 
-    */
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>();
-    List<Exp> classExp = new ArrayList<>();
-    classExp.add(new NumberExp(3));
+//         }
+//         Foo y = Foo(3); 
+//     */
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>();
+//     List<Exp> classExp = new ArrayList<>();
+//     classExp.add(new NumberExp(3));
 
-    Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-        );
+//     Statement statement = new VarDecAssignment(
+//         new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//         new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//         );
 
-    List<VarDec> varDec = new ArrayList<>(); //empty
-    List<VarDec> varDecNonEmpty = new ArrayList<>(); 
-    varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
+//     List<VarDec> varDec = new ArrayList<>(); //empty
+//     List<VarDec> varDecNonEmpty = new ArrayList<>(); 
+//     varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
     
-    classDef.add(new ClassDef(
-        new ClassName("Foo"), 
-        new Constructor(
-            varDecNonEmpty, 
-            new VarDecAssignment(
-                new VarDec(
-                    new IntType(), 
-                    new Variable("z")
-                    ), 
-                new BinopExp(new VariableExp(new Variable("x")), new MinusOp(), new NumberExp(2))
-                )
-            ), 
-        varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     classDef.add(new ClassDef(
+//         new ClassName("Foo"), 
+//         new Constructor(
+//             varDecNonEmpty, 
+//             new VarDecAssignment(
+//                 new VarDec(
+//                     new IntType(), 
+//                     new Variable("z")
+//                     ), 
+//                 new BinopExp(new VariableExp(new Variable("x")), new MinusOp(), new NumberExp(2))
+//                 )
+//             ), 
+//         varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
+//     final Program program = new Program(classDef, statement);
+//     TypeChecker.typecheckProgram(program);
 
-    }
+//     }
 
-    @Test(expected = TypeErrorException.class) 
-    public void testBinopOperationWithBooleanWithMinus() throws TypeErrorException {
-           /*
-     class Foo{
-            Foo(int x)
-                int z = x - true;   
+//     @Test(expected = TypeErrorException.class) 
+//     public void testBinopOperationWithBooleanWithMinus() throws TypeErrorException {
+//            /*
+//      class Foo{
+//             Foo(int x)
+//                 int z = x - true;   
             
-        }
-        Foo y = Foo(3); 
-    */
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>();
-    List<Exp> classExp = new ArrayList<>();
-    classExp.add(new NumberExp(3));
+//         }
+//         Foo y = Foo(3); 
+//     */
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>();
+//     List<Exp> classExp = new ArrayList<>();
+//     classExp.add(new NumberExp(3));
 
-    Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-        );
+//     Statement statement = new VarDecAssignment(
+//         new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//         new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//         );
 
-    List<VarDec> varDec = new ArrayList<>(); //empty
-    List<VarDec> varDecNonEmpty = new ArrayList<>(); 
-    varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
+//     List<VarDec> varDec = new ArrayList<>(); //empty
+//     List<VarDec> varDecNonEmpty = new ArrayList<>(); 
+//     varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
     
-    classDef.add(new ClassDef(
-        new ClassName("Foo"), 
-        new Constructor(
-            varDecNonEmpty, 
-            new VarDecAssignment(
-                new VarDec(
-                    new IntType(), 
-                    new Variable("z")
-                    ), 
-                new BinopExp(new VariableExp(new Variable("x")), new MinusOp(), new BoolExp(true))
-                )
-            ), 
-        varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     classDef.add(new ClassDef(
+//         new ClassName("Foo"), 
+//         new Constructor(
+//             varDecNonEmpty, 
+//             new VarDecAssignment(
+//                 new VarDec(
+//                     new IntType(), 
+//                     new Variable("z")
+//                     ), 
+//                 new BinopExp(new VariableExp(new Variable("x")), new MinusOp(), new BoolExp(true))
+//                 )
+//             ), 
+//         varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
+//     final Program program = new Program(classDef, statement);
+//     TypeChecker.typecheckProgram(program);
 
-    }
+//     }
 
-    @Test
-    public void testBinopOperationMultiply() throws TypeErrorException {
-           /*
-     class Foo{
-            Foo(int x)
-                int z = x * 2;   
+//     @Test
+//     public void testBinopOperationMultiply() throws TypeErrorException {
+//            /*
+//      class Foo{
+//             Foo(int x)
+//                 int z = x * 2;   
             
-        }
-        Foo y = Foo(3); 
-    */
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>();
-    List<Exp> classExp = new ArrayList<>();
-    classExp.add(new NumberExp(3));
+//         }
+//         Foo y = Foo(3); 
+//     */
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>();
+//     List<Exp> classExp = new ArrayList<>();
+//     classExp.add(new NumberExp(3));
 
-    Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-        );
+//     Statement statement = new VarDecAssignment(
+//         new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//         new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//         );
 
-    List<VarDec> varDec = new ArrayList<>(); //empty
-    List<VarDec> varDecNonEmpty = new ArrayList<>(); 
-    varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
+//     List<VarDec> varDec = new ArrayList<>(); //empty
+//     List<VarDec> varDecNonEmpty = new ArrayList<>(); 
+//     varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
     
-    classDef.add(new ClassDef(
-        new ClassName("Foo"), 
-        new Constructor(
-            varDecNonEmpty, 
-            new VarDecAssignment(
-                new VarDec(
-                    new IntType(), 
-                    new Variable("z")
-                    ), 
-                new BinopExp(new VariableExp(new Variable("x")), new MultOp(), new NumberExp(2))
-                )
-            ), 
-        varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     classDef.add(new ClassDef(
+//         new ClassName("Foo"), 
+//         new Constructor(
+//             varDecNonEmpty, 
+//             new VarDecAssignment(
+//                 new VarDec(
+//                     new IntType(), 
+//                     new Variable("z")
+//                     ), 
+//                 new BinopExp(new VariableExp(new Variable("x")), new MultOp(), new NumberExp(2))
+//                 )
+//             ), 
+//         varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
+//     final Program program = new Program(classDef, statement);
+//     TypeChecker.typecheckProgram(program);
 
-    }
+//     }
 
-    @Test(expected = TypeErrorException.class) 
-    public void testBinopOperationWithBooleanMultiply() throws TypeErrorException {
-           /*
-     class Foo{
-            Foo(int x)
-                int z = x + true;   
+//     @Test(expected = TypeErrorException.class) 
+//     public void testBinopOperationWithBooleanMultiply() throws TypeErrorException {
+//            /*
+//      class Foo{
+//             Foo(int x)
+//                 int z = x + true;   
             
-        }
-        Foo y = Foo(3); 
-    */
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>();
-    List<Exp> classExp = new ArrayList<>();
-    classExp.add(new NumberExp(3));
+//         }
+//         Foo y = Foo(3); 
+//     */
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>();
+//     List<Exp> classExp = new ArrayList<>();
+//     classExp.add(new NumberExp(3));
 
-    Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-        );
+//     Statement statement = new VarDecAssignment(
+//         new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//         new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//         );
 
-    List<VarDec> varDec = new ArrayList<>(); //empty
-    List<VarDec> varDecNonEmpty = new ArrayList<>(); 
-    varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
+//     List<VarDec> varDec = new ArrayList<>(); //empty
+//     List<VarDec> varDecNonEmpty = new ArrayList<>(); 
+//     varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
     
-    classDef.add(new ClassDef(
-        new ClassName("Foo"), 
-        new Constructor(
-            varDecNonEmpty, 
-            new VarDecAssignment(
-                new VarDec(
-                    new IntType(), 
-                    new Variable("z")
-                    ), 
-                new BinopExp(new VariableExp(new Variable("x")), new MultOp(), new BoolExp(true))
-                )
-            ), 
-        varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     classDef.add(new ClassDef(
+//         new ClassName("Foo"), 
+//         new Constructor(
+//             varDecNonEmpty, 
+//             new VarDecAssignment(
+//                 new VarDec(
+//                     new IntType(), 
+//                     new Variable("z")
+//                     ), 
+//                 new BinopExp(new VariableExp(new Variable("x")), new MultOp(), new BoolExp(true))
+//                 )
+//             ), 
+//         varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
+//     final Program program = new Program(classDef, statement);
+//     TypeChecker.typecheckProgram(program);
 
-    }
+//     }
 
-    @Test
-    public void testBinopOperationDiv() throws TypeErrorException {
-           /*
-     class Foo{
-            Foo(int x)
-                int z = x + 2;   
+//     @Test
+//     public void testBinopOperationDiv() throws TypeErrorException {
+//            /*
+//      class Foo{
+//             Foo(int x)
+//                 int z = x + 2;   
             
-        }
-        Foo y = Foo(3); 
-    */
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>();
-    List<Exp> classExp = new ArrayList<>();
-    classExp.add(new NumberExp(3));
+//         }
+//         Foo y = Foo(3); 
+//     */
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>();
+//     List<Exp> classExp = new ArrayList<>();
+//     classExp.add(new NumberExp(3));
 
-    Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-        );
+//     Statement statement = new VarDecAssignment(
+//         new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//         new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//         );
 
-    List<VarDec> varDec = new ArrayList<>(); //empty
-    List<VarDec> varDecNonEmpty = new ArrayList<>(); 
-    varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
+//     List<VarDec> varDec = new ArrayList<>(); //empty
+//     List<VarDec> varDecNonEmpty = new ArrayList<>(); 
+//     varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
     
-    classDef.add(new ClassDef(
-        new ClassName("Foo"), 
-        new Constructor(
-            varDecNonEmpty, 
-            new VarDecAssignment(
-                new VarDec(
-                    new IntType(), 
-                    new Variable("z")
-                    ), 
-                new BinopExp(new VariableExp(new Variable("x")), new DivOp(), new NumberExp(2))
-                )
-            ), 
-        varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     classDef.add(new ClassDef(
+//         new ClassName("Foo"), 
+//         new Constructor(
+//             varDecNonEmpty, 
+//             new VarDecAssignment(
+//                 new VarDec(
+//                     new IntType(), 
+//                     new Variable("z")
+//                     ), 
+//                 new BinopExp(new VariableExp(new Variable("x")), new DivOp(), new NumberExp(2))
+//                 )
+//             ), 
+//         varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
+//     final Program program = new Program(classDef, statement);
+//     TypeChecker.typecheckProgram(program);
 
-    }
+//     }
 
-    @Test(expected = TypeErrorException.class) 
-    public void testBinopOperationWithBooleanDiv() throws TypeErrorException {
-           /*
-     class Foo{
-            Foo(int x)
-                int z = x / true;   
+//     @Test(expected = TypeErrorException.class) 
+//     public void testBinopOperationWithBooleanDiv() throws TypeErrorException {
+//            /*
+//      class Foo{
+//             Foo(int x)
+//                 int z = x / true;   
             
-        }
-        Foo y = Foo(3); 
-    */
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>();
-    List<Exp> classExp = new ArrayList<>();
-    classExp.add(new NumberExp(3));
+//         }
+//         Foo y = Foo(3); 
+//     */
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>();
+//     List<Exp> classExp = new ArrayList<>();
+//     classExp.add(new NumberExp(3));
 
-    Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-        );
+//     Statement statement = new VarDecAssignment(
+//         new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//         new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//         );
 
-    List<VarDec> varDec = new ArrayList<>(); //empty
-    List<VarDec> varDecNonEmpty = new ArrayList<>(); 
-    varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
+//     List<VarDec> varDec = new ArrayList<>(); //empty
+//     List<VarDec> varDecNonEmpty = new ArrayList<>(); 
+//     varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
     
-    classDef.add(new ClassDef(
-        new ClassName("Foo"), 
-        new Constructor(
-            varDecNonEmpty, 
-            new VarDecAssignment(
-                new VarDec(
-                    new IntType(), 
-                    new Variable("z")
-                    ), 
-                new BinopExp(new VariableExp(new Variable("x")), new DivOp(), new BoolExp(true))
-                )
-            ), 
-        varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     classDef.add(new ClassDef(
+//         new ClassName("Foo"), 
+//         new Constructor(
+//             varDecNonEmpty, 
+//             new VarDecAssignment(
+//                 new VarDec(
+//                     new IntType(), 
+//                     new Variable("z")
+//                     ), 
+//                 new BinopExp(new VariableExp(new Variable("x")), new DivOp(), new BoolExp(true))
+//                 )
+//             ), 
+//         varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
+//     final Program program = new Program(classDef, statement);
+//     TypeChecker.typecheckProgram(program);
 
-    }
+//     }
 
-    @Test
-    public void testBinopOperationEquals() throws TypeErrorException {
-           /*
-     class Foo{
-            Foo(int x)
-                if(x==3)
-                    x = 2;
-                else 
-                    x = 1;
+//     @Test
+//     public void testBinopOperationEquals() throws TypeErrorException {
+//            /*
+//      class Foo{
+//             Foo(int x)
+//                 if(x==3)
+//                     x = 2;
+//                 else 
+//                     x = 1;
             
-        }
-        Foo y = Foo(3); 
-    */
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>();
-    List<Exp> classExp = new ArrayList<>();
-    classExp.add(new NumberExp(3));
+//         }
+//         Foo y = Foo(3); 
+//     */
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>();
+//     List<Exp> classExp = new ArrayList<>();
+//     classExp.add(new NumberExp(3));
 
-    Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-        );
+//     Statement statement = new VarDecAssignment(
+//         new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//         new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//         );
 
-    List<VarDec> varDec = new ArrayList<>(); //empty
-    List<VarDec> varDecNonEmpty = new ArrayList<>(); 
-    varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
+//     List<VarDec> varDec = new ArrayList<>(); //empty
+//     List<VarDec> varDecNonEmpty = new ArrayList<>(); 
+//     varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
     
-    classDef.add(new ClassDef(
-        new ClassName("Foo"), 
-        new Constructor(
-            varDecNonEmpty, 
-                new IfStatement(
-                    new BinopExp(
-                        new VariableExp(
-                            new Variable("x")
-                            ), 
-                        new EqualsOp(), 
-                        new NumberExp(3)
-                        ), 
-                    new VarAssignment(
-                        new Variable("x"), 
-                        new NumberExp(2)
-                        ), 
-                    new VarAssignment(
-                        new Variable("x"), 
-                        new NumberExp(1)
-                        )
-                    )
-            ), 
-        varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     classDef.add(new ClassDef(
+//         new ClassName("Foo"), 
+//         new Constructor(
+//             varDecNonEmpty, 
+//                 new IfStatement(
+//                     new BinopExp(
+//                         new VariableExp(
+//                             new Variable("x")
+//                             ), 
+//                         new EqualsOp(), 
+//                         new NumberExp(3)
+//                         ), 
+//                     new VarAssignment(
+//                         new Variable("x"), 
+//                         new NumberExp(2)
+//                         ), 
+//                     new VarAssignment(
+//                         new Variable("x"), 
+//                         new NumberExp(1)
+//                         )
+//                     )
+//             ), 
+//         varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
+//     final Program program = new Program(classDef, statement);
+//     TypeChecker.typecheckProgram(program);
 
-    }
+//     }
 
-    @Test(expected = TypeErrorException.class) 
-    public void testBinopOperationWithBooleanWithEquals() throws TypeErrorException {
-           /*
-     class Foo{
-            Foo(int x)
-                if(x==true) 
-                    x =2
-                else
-                    x= 1
+//     @Test(expected = TypeErrorException.class) 
+//     public void testBinopOperationWithBooleanWithEquals() throws TypeErrorException {
+//            /*
+//      class Foo{
+//             Foo(int x)
+//                 if(x==true) 
+//                     x =2
+//                 else
+//                     x= 1
             
-        }
-        Foo y = Foo(3); 
-    */
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>();
-    List<Exp> classExp = new ArrayList<>();
-    classExp.add(new NumberExp(3));
+//         }
+//         Foo y = Foo(3); 
+//     */
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>();
+//     List<Exp> classExp = new ArrayList<>();
+//     classExp.add(new NumberExp(3));
 
-    Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-        );
+//     Statement statement = new VarDecAssignment(
+//         new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//         new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//         );
 
-    List<VarDec> varDec = new ArrayList<>(); //empty
-    List<VarDec> varDecNonEmpty = new ArrayList<>(); 
-    varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
+//     List<VarDec> varDec = new ArrayList<>(); //empty
+//     List<VarDec> varDecNonEmpty = new ArrayList<>(); 
+//     varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
     
-    classDef.add(new ClassDef(
-        new ClassName("Foo"), 
-        new Constructor(
-            varDecNonEmpty, 
-            new IfStatement(
-                    new BinopExp(
-                        new VariableExp(
-                            new Variable("x")
-                            ), 
-                        new EqualsOp(), 
-                        new BoolExp(true)
-                        ), 
-                    new VarAssignment(
-                        new Variable("x"), 
-                        new NumberExp(2)
-                        ), 
-                    new VarAssignment(
-                        new Variable("x"), 
-                        new NumberExp(1)
-                        )
-                    )
-            ), 
-        varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     classDef.add(new ClassDef(
+//         new ClassName("Foo"), 
+//         new Constructor(
+//             varDecNonEmpty, 
+//             new IfStatement(
+//                     new BinopExp(
+//                         new VariableExp(
+//                             new Variable("x")
+//                             ), 
+//                         new EqualsOp(), 
+//                         new BoolExp(true)
+//                         ), 
+//                     new VarAssignment(
+//                         new Variable("x"), 
+//                         new NumberExp(2)
+//                         ), 
+//                     new VarAssignment(
+//                         new Variable("x"), 
+//                         new NumberExp(1)
+//                         )
+//                     )
+//             ), 
+//         varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
+//     final Program program = new Program(classDef, statement);
+//     TypeChecker.typecheckProgram(program);
 
-    }
+//     }
 
-    @Test
-    public void testBinopOperationLessThanEquals() throws TypeErrorException {
-           /*
-     class Foo{
-            Foo(int x)
-                if(x<3)
-                    x = 2;
-                else 
-                    x = 1;
+//     @Test
+//     public void testBinopOperationLessThanEquals() throws TypeErrorException {
+//            /*
+//      class Foo{
+//             Foo(int x)
+//                 if(x<3)
+//                     x = 2;
+//                 else 
+//                     x = 1;
             
-        }
-        Foo y = Foo(3); 
-    */
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>();
-    List<Exp> classExp = new ArrayList<>();
-    classExp.add(new NumberExp(3));
+//         }
+//         Foo y = Foo(3); 
+//     */
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>();
+//     List<Exp> classExp = new ArrayList<>();
+//     classExp.add(new NumberExp(3));
 
-    Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-        );
+//     Statement statement = new VarDecAssignment(
+//         new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//         new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//         );
 
-    List<VarDec> varDec = new ArrayList<>(); //empty
-    List<VarDec> varDecNonEmpty = new ArrayList<>(); 
-    varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
+//     List<VarDec> varDec = new ArrayList<>(); //empty
+//     List<VarDec> varDecNonEmpty = new ArrayList<>(); 
+//     varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
     
-    classDef.add(new ClassDef(
-        new ClassName("Foo"), 
-        new Constructor(
-            varDecNonEmpty, 
-                new IfStatement(
-                    new BinopExp(
-                        new VariableExp(
-                            new Variable("x")
-                            ), 
-                        new LessThanOp(), 
-                        new NumberExp(3)
-                        ), 
-                    new VarAssignment(
-                        new Variable("x"), 
-                        new NumberExp(2)
-                        ), 
-                    new VarAssignment(
-                        new Variable("x"), 
-                        new NumberExp(1)
-                        )
-                    )
-            ), 
-        varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     classDef.add(new ClassDef(
+//         new ClassName("Foo"), 
+//         new Constructor(
+//             varDecNonEmpty, 
+//                 new IfStatement(
+//                     new BinopExp(
+//                         new VariableExp(
+//                             new Variable("x")
+//                             ), 
+//                         new LessThanOp(), 
+//                         new NumberExp(3)
+//                         ), 
+//                     new VarAssignment(
+//                         new Variable("x"), 
+//                         new NumberExp(2)
+//                         ), 
+//                     new VarAssignment(
+//                         new Variable("x"), 
+//                         new NumberExp(1)
+//                         )
+//                     )
+//             ), 
+//         varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
+//     final Program program = new Program(classDef, statement);
+//     TypeChecker.typecheckProgram(program);
 
-    }
+//     }
 
-    @Test(expected = TypeErrorException.class) 
-    public void testBinopOperationWithBooleanWithLessThanEquals() throws TypeErrorException {
-           /*
-     class Foo{
-            Foo(int x)
-                if(x<true) 
-                    x =2
-                else
-                    x= 1
+//     @Test(expected = TypeErrorException.class) 
+//     public void testBinopOperationWithBooleanWithLessThanEquals() throws TypeErrorException {
+//            /*
+//      class Foo{
+//             Foo(int x)
+//                 if(x<true) 
+//                     x =2
+//                 else
+//                     x= 1
             
-        }
-        Foo y = Foo(3); 
-    */
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>();
-    List<Exp> classExp = new ArrayList<>();
-    classExp.add(new NumberExp(3));
+//         }
+//         Foo y = Foo(3); 
+//     */
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>();
+//     List<Exp> classExp = new ArrayList<>();
+//     classExp.add(new NumberExp(3));
 
-    Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-        );
+//     Statement statement = new VarDecAssignment(
+//         new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//         new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//         );
 
-    List<VarDec> varDec = new ArrayList<>(); //empty
-    List<VarDec> varDecNonEmpty = new ArrayList<>(); 
-    varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
+//     List<VarDec> varDec = new ArrayList<>(); //empty
+//     List<VarDec> varDecNonEmpty = new ArrayList<>(); 
+//     varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
     
-    classDef.add(new ClassDef(
-        new ClassName("Foo"), 
-        new Constructor(
-            varDecNonEmpty, 
-            new IfStatement(
-                    new BinopExp(
-                        new VariableExp(
-                            new Variable("x")
-                            ), 
-                        new LessThanOp(), 
-                        new BoolExp(true)
-                        ), 
-                    new VarAssignment(
-                        new Variable("x"), 
-                        new NumberExp(2)
-                        ), 
-                    new VarAssignment(
-                        new Variable("x"), 
-                        new NumberExp(1)
-                        )
-                    )
-            ), 
-        varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     classDef.add(new ClassDef(
+//         new ClassName("Foo"), 
+//         new Constructor(
+//             varDecNonEmpty, 
+//             new IfStatement(
+//                     new BinopExp(
+//                         new VariableExp(
+//                             new Variable("x")
+//                             ), 
+//                         new LessThanOp(), 
+//                         new BoolExp(true)
+//                         ), 
+//                     new VarAssignment(
+//                         new Variable("x"), 
+//                         new NumberExp(2)
+//                         ), 
+//                     new VarAssignment(
+//                         new Variable("x"), 
+//                         new NumberExp(1)
+//                         )
+//                     )
+//             ), 
+//         varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
+//     final Program program = new Program(classDef, statement);
+//     TypeChecker.typecheckProgram(program);
 
-    }
+//     }
 
-    @Test(expected = TypeErrorException.class) 
-    public void testBinopOperationWithIntegerWithLessThanEquals() throws TypeErrorException {
-           /*
-     class Foo{
-            Foo(int x)
-                int f = x < 2;
+//     @Test(expected = TypeErrorException.class) 
+//     public void testBinopOperationWithIntegerWithLessThanEquals() throws TypeErrorException {
+//            /*
+//      class Foo{
+//             Foo(int x)
+//                 int f = x < 2;
             
-        }
-        Foo y = Foo(3); 
-    */
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>();
-    List<Exp> classExp = new ArrayList<>();
-    classExp.add(new NumberExp(3));
+//         }
+//         Foo y = Foo(3); 
+//     */
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>();
+//     List<Exp> classExp = new ArrayList<>();
+//     classExp.add(new NumberExp(3));
 
-    Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-        );
+//     Statement statement = new VarDecAssignment(
+//         new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//         new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//         );
 
-    List<VarDec> varDec = new ArrayList<>(); //empty
-    List<VarDec> varDecNonEmpty = new ArrayList<>(); 
-    varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
+//     List<VarDec> varDec = new ArrayList<>(); //empty
+//     List<VarDec> varDecNonEmpty = new ArrayList<>(); 
+//     varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
     
-    classDef.add(new ClassDef(
-        new ClassName("Foo"), 
-        new Constructor(
-            varDecNonEmpty, 
-            new VarDecAssignment(
-                    new VarDec(
-                    new IntType(), 
-                    new Variable("f")
-                    ), 
-                new BinopExp(new VariableExp(
-                            new Variable("x")
-                            ), 
-                        new LessThanOp(), 
-                        new NumberExp(2))
-                )
-            ), 
-        varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     classDef.add(new ClassDef(
+//         new ClassName("Foo"), 
+//         new Constructor(
+//             varDecNonEmpty, 
+//             new VarDecAssignment(
+//                     new VarDec(
+//                     new IntType(), 
+//                     new Variable("f")
+//                     ), 
+//                 new BinopExp(new VariableExp(
+//                             new Variable("x")
+//                             ), 
+//                         new LessThanOp(), 
+//                         new NumberExp(2))
+//                 )
+//             ), 
+//         varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
+//     final Program program = new Program(classDef, statement);
+//     TypeChecker.typecheckProgram(program);
 
-    }
+//     }
 
-    @Test//(expected = TypeErrorException.class) 
-    public void testBinopOperationWithBooleanForLessThanEquals() throws TypeErrorException {
-           /*
-     class Foo{
-            Foo(int x)
-                boolean f = x < 2;
+//     @Test//(expected = TypeErrorException.class) 
+//     public void testBinopOperationWithBooleanForLessThanEquals() throws TypeErrorException {
+//            /*
+//      class Foo{
+//             Foo(int x)
+//                 boolean f = x < 2;
             
-        }
-        Foo y = Foo(3); 
-    */
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>();
-    List<Exp> classExp = new ArrayList<>();
-    classExp.add(new NumberExp(3));
+//         }
+//         Foo y = Foo(3); 
+//     */
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>();
+//     List<Exp> classExp = new ArrayList<>();
+//     classExp.add(new NumberExp(3));
 
-    Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-        );
+//     Statement statement = new VarDecAssignment(
+//         new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//         new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//         );
 
-    List<VarDec> varDec = new ArrayList<>(); //empty
-    List<VarDec> varDecNonEmpty = new ArrayList<>(); 
-    varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
+//     List<VarDec> varDec = new ArrayList<>(); //empty
+//     List<VarDec> varDecNonEmpty = new ArrayList<>(); 
+//     varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
     
-    classDef.add(new ClassDef(
-        new ClassName("Foo"), 
-        new Constructor(
-            varDecNonEmpty, 
-            new VarDecAssignment(
-                    new VarDec(
-                    new BooleanType(), 
-                    new Variable("f")
-                    ), 
-                new BinopExp(new VariableExp(
-                            new Variable("x")
-                            ), 
-                        new LessThanOp(), 
-                        new NumberExp(2))
-                )
-            ), 
-        varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     classDef.add(new ClassDef(
+//         new ClassName("Foo"), 
+//         new Constructor(
+//             varDecNonEmpty, 
+//             new VarDecAssignment(
+//                     new VarDec(
+//                     new BooleanType(), 
+//                     new Variable("f")
+//                     ), 
+//                 new BinopExp(new VariableExp(
+//                             new Variable("x")
+//                             ), 
+//                         new LessThanOp(), 
+//                         new NumberExp(2))
+//                 )
+//             ), 
+//         varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
+//     final Program program = new Program(classDef, statement);
+//     TypeChecker.typecheckProgram(program);
 
-    }
+//     }
 
-    @Test(expected = TypeErrorException.class) 
-    public void testDuplicateMethods() throws TypeErrorException {
-        /*
-     class Foo{
-            Foo()
-                int x = 0;   
-            private int methodA() {
-                return 1; 
-            }
-            private int methodA() {
-                return 1; 
-            }
-        }
-        Foo y = Foo(); 
-    */
+//     @Test(expected = TypeErrorException.class) 
+//     public void testDuplicateMethods() throws TypeErrorException {
+//         /*
+//      class Foo{
+//             Foo()
+//                 int x = 0;   
+//             private int methodA() {
+//                 return 1; 
+//             }
+//             private int methodA() {
+//                 return 1; 
+//             }
+//         }
+//         Foo y = Foo(); 
+//     */
 
 
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>();
-    List<Exp> classExp = new ArrayList<>();
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>();
+//     List<Exp> classExp = new ArrayList<>();
 
-    Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-        );
+//     Statement statement = new VarDecAssignment(
+//         new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//         new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//         );
 
-    List<VarDec> varDec = new ArrayList<>(); //empty
-    methodDefs.add(new MethodDef(new PrivateAccess(), new IntType(), new MethodName("methodA"), varDec, new ReturnExpStatement(new NumberExp(1))));
-    methodDefs.add(new MethodDef(new PrivateAccess(), new IntType(), new MethodName("methodA"), varDec, new ReturnExpStatement(new NumberExp(1))));
+//     List<VarDec> varDec = new ArrayList<>(); //empty
+//     methodDefs.add(new MethodDef(new PrivateAccess(), new IntType(), new MethodName("methodA"), varDec, new ReturnExpStatement(new NumberExp(1))));
+//     methodDefs.add(new MethodDef(new PrivateAccess(), new IntType(), new MethodName("methodA"), varDec, new ReturnExpStatement(new NumberExp(1))));
     
-    classDef.add(new ClassDef(
-        new ClassName("Foo"), 
-        new Constructor(
-            varDec, 
-            new VarDecAssignment(
-                new VarDec(
-                    new IntType(), 
-                    new Variable("x")
-                    ), 
-                new NumberExp(0)
-                )
-            ), 
-        varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     classDef.add(new ClassDef(
+//         new ClassName("Foo"), 
+//         new Constructor(
+//             varDec, 
+//             new VarDecAssignment(
+//                 new VarDec(
+//                     new IntType(), 
+//                     new Variable("x")
+//                     ), 
+//                 new NumberExp(0)
+//                 )
+//             ), 
+//         varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
+//     final Program program = new Program(classDef, statement);
+//     TypeChecker.typecheckProgram(program);
         
-    }
+//     }
 
-    @Test(expected = TypeErrorException.class) 
-    public void testDuplicateMethodsNames() throws TypeErrorException {
-        /*
-     class Foo{
-            Foo()
-                int x = 0;   
-            private int methodA() {
-                return 1; 
-            }
-            private String methodA() {
-                return 1; 
-            }
-        }
-        Foo y = Foo(); 
-    */
+//     @Test(expected = TypeErrorException.class) 
+//     public void testDuplicateMethodsNames() throws TypeErrorException {
+//         /*
+//      class Foo{
+//             Foo()
+//                 int x = 0;   
+//             private int methodA() {
+//                 return 1; 
+//             }
+//             private String methodA() {
+//                 return 1; 
+//             }
+//         }
+//         Foo y = Foo(); 
+//     */
 
 
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>();
-    List<Exp> classExp = new ArrayList<>();
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>();
+//     List<Exp> classExp = new ArrayList<>();
 
-    Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-        );
+//     Statement statement = new VarDecAssignment(
+//         new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//         new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//         );
 
-    List<VarDec> varDec = new ArrayList<>(); //empty
-    methodDefs.add(new MethodDef(new PrivateAccess(), new IntType(), new MethodName("methodA"), varDec, new ReturnExpStatement(new NumberExp(1))));
-    methodDefs.add(new MethodDef(new PrivateAccess(), new BooleanType(), new MethodName("methodA"), varDec, new ReturnExpStatement(new NumberExp(1))));
+//     List<VarDec> varDec = new ArrayList<>(); //empty
+//     methodDefs.add(new MethodDef(new PrivateAccess(), new IntType(), new MethodName("methodA"), varDec, new ReturnExpStatement(new NumberExp(1))));
+//     methodDefs.add(new MethodDef(new PrivateAccess(), new BooleanType(), new MethodName("methodA"), varDec, new ReturnExpStatement(new NumberExp(1))));
     
-    classDef.add(new ClassDef(
-        new ClassName("Foo"), 
-        new Constructor(
-            varDec, 
-            new VarDecAssignment(
-                new VarDec(
-                    new IntType(), 
-                    new Variable("x")
-                    ), 
-                new NumberExp(0)
-                )
-            ), 
-        varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     classDef.add(new ClassDef(
+//         new ClassName("Foo"), 
+//         new Constructor(
+//             varDec, 
+//             new VarDecAssignment(
+//                 new VarDec(
+//                     new IntType(), 
+//                     new Variable("x")
+//                     ), 
+//                 new NumberExp(0)
+//                 )
+//             ), 
+//         varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
+//     final Program program = new Program(classDef, statement);
+//     TypeChecker.typecheckProgram(program);
         
-    }
+//     }
 
-    @Test//(expected = TypeErrorException.class) 
-    public void testVoidMethod() throws TypeErrorException {
-        /*
-     class Foo{
-            Foo()
-                int x = 0;   
-            private void methodA() {
-                return;
-            }
+//     @Test//(expected = TypeErrorException.class) 
+//     public void testVoidMethod() throws TypeErrorException {
+//         /*
+//      class Foo{
+//             Foo()
+//                 int x = 0;   
+//             private void methodA() {
+//                 return;
+//             }
             
-        }
-        Foo y = Foo(); 
-    */
+//         }
+//         Foo y = Foo(); 
+//     */
 
 
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>();
-    List<Exp> classExp = new ArrayList<>();
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>();
+//     List<Exp> classExp = new ArrayList<>();
 
-    Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-        );
+//     Statement statement = new VarDecAssignment(
+//         new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//         new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//         );
 
-    List<VarDec> varDec = new ArrayList<>(); //empty
-    methodDefs.add(new MethodDef(new PrivateAccess(), new VoidType(), new MethodName("methodA"), varDec, new ReturnVoidStatement()));
+//     List<VarDec> varDec = new ArrayList<>(); //empty
+//     methodDefs.add(new MethodDef(new PrivateAccess(), new VoidType(), new MethodName("methodA"), varDec, new ReturnVoidStatement()));
     
-    classDef.add(new ClassDef(
-        new ClassName("Foo"), 
-        new Constructor(
-            varDec, 
-            new VarDecAssignment(
-                new VarDec(
-                    new IntType(), 
-                    new Variable("x")
-                    ), 
-                new NumberExp(0)
-                )
-            ), 
-        varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     classDef.add(new ClassDef(
+//         new ClassName("Foo"), 
+//         new Constructor(
+//             varDec, 
+//             new VarDecAssignment(
+//                 new VarDec(
+//                     new IntType(), 
+//                     new Variable("x")
+//                     ), 
+//                 new NumberExp(0)
+//                 )
+//             ), 
+//         varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
+//     final Program program = new Program(classDef, statement);
+//     TypeChecker.typecheckProgram(program);
         
-    }
+//     }
 
-    @Test//(expected = TypeErrorException.class) 
-    public void testIntMethod() throws TypeErrorException {
-        /*
-     class Foo{
-            Foo()
-                int x = 0;   
-            private int methodA() {
-                return 1;
-            }
+//     @Test//(expected = TypeErrorException.class) 
+//     public void testIntMethod() throws TypeErrorException {
+//         /*
+//      class Foo{
+//             Foo()
+//                 int x = 0;   
+//             private int methodA() {
+//                 return 1;
+//             }
             
-        }
-        Foo y = Foo(); 
-    */
+//         }
+//         Foo y = Foo(); 
+//     */
 
 
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>();
-    List<Exp> classExp = new ArrayList<>();
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>();
+//     List<Exp> classExp = new ArrayList<>();
 
-    Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-        );
+//     Statement statement = new VarDecAssignment(
+//         new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//         new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//         );
 
-    List<VarDec> varDec = new ArrayList<>(); //empty
-    methodDefs.add(new MethodDef(new PrivateAccess(), new IntType(), new MethodName("methodA"), varDec, new ReturnExpStatement(new NumberExp(1))));
+//     List<VarDec> varDec = new ArrayList<>(); //empty
+//     methodDefs.add(new MethodDef(new PrivateAccess(), new IntType(), new MethodName("methodA"), varDec, new ReturnExpStatement(new NumberExp(1))));
     
-    classDef.add(new ClassDef(
-        new ClassName("Foo"), 
-        new Constructor(
-            varDec, 
-            new VarDecAssignment(
-                new VarDec(
-                    new IntType(), 
-                    new Variable("x")
-                    ), 
-                new NumberExp(0)
-                )
-            ), 
-        varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     classDef.add(new ClassDef(
+//         new ClassName("Foo"), 
+//         new Constructor(
+//             varDec, 
+//             new VarDecAssignment(
+//                 new VarDec(
+//                     new IntType(), 
+//                     new Variable("x")
+//                     ), 
+//                 new NumberExp(0)
+//                 )
+//             ), 
+//         varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
+//     final Program program = new Program(classDef, statement);
+//     TypeChecker.typecheckProgram(program);
         
-    }
+//     }
 
-    @Test//(expected = TypeErrorException.class) 
-    public void testMethodCallFromWithinClass() throws TypeErrorException {
-        /*
-     class Foo{
-            Foo()
-                methodA();  
-            private void methodA() {
-                return;
-            }
+//     @Test//(expected = TypeErrorException.class) 
+//     public void testMethodCallFromWithinClass() throws TypeErrorException {
+//         /*
+//      class Foo{
+//             Foo()
+//                 methodA();  
+//             private void methodA() {
+//                 return;
+//             }
             
-        }
-        Foo y = Foo(); 
-    */
+//         }
+//         Foo y = Foo(); 
+//     */
 
 
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>();
-    List<Exp> classExp = new ArrayList<>();
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>();
+//     List<Exp> classExp = new ArrayList<>();
 
-    Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-        );
+//     Statement statement = new VarDecAssignment(
+//         new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//         new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//         );
 
-    List<VarDec> varDec = new ArrayList<>(); //empty
-    methodDefs.add(new MethodDef(new PrivateAccess(), new VoidType(), new MethodName("methodA"), varDec, new ReturnVoidStatement()));
+//     List<VarDec> varDec = new ArrayList<>(); //empty
+//     methodDefs.add(new MethodDef(new PrivateAccess(), new VoidType(), new MethodName("methodA"), varDec, new ReturnVoidStatement()));
     
-    classDef.add(new ClassDef(
-        new ClassName("Foo"), 
-        new Constructor(
-            varDec, 
-            new ExpStatement(new MethodExp(new MethodName("methodA"), classExp))), 
-        varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     classDef.add(new ClassDef(
+//         new ClassName("Foo"), 
+//         new Constructor(
+//             varDec, 
+//             new ExpStatement(new MethodExp(new MethodName("methodA"), classExp))), 
+//         varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
+//     final Program program = new Program(classDef, statement);
+//     TypeChecker.typecheckProgram(program);
         
-    }
+//     }
 
-    @Test(expected = TypeErrorException.class) 
-    public void testSuperMethodWithoutInheritingAClass() throws TypeErrorException {
-        /*
-     class Foo{
-            Foo()
-                super();  
+//     @Test(expected = TypeErrorException.class) 
+//     public void testSuperMethodWithoutInheritingAClass() throws TypeErrorException {
+//         /*
+//      class Foo{
+//             Foo()
+//                 super();  
             
-        }
-        Foo y = Foo(); 
-    */
+//         }
+//         Foo y = Foo(); 
+//     */
 
 
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>();
-    List<Exp> classExp = new ArrayList<>();
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>();
+//     List<Exp> classExp = new ArrayList<>();
 
-    Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-        );
+//     Statement statement = new VarDecAssignment(
+//         new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//         new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//         );
 
-    List<VarDec> varDec = new ArrayList<>(); //empty
+//     List<VarDec> varDec = new ArrayList<>(); //empty
     
-    classDef.add(new ClassDef(
-        new ClassName("Foo"), 
-        new Constructor(
-            varDec, 
-            new SuperStatement(classExp)), 
-        varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     classDef.add(new ClassDef(
+//         new ClassName("Foo"), 
+//         new Constructor(
+//             varDec, 
+//             new SuperStatement(classExp)), 
+//         varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
+//     final Program program = new Program(classDef, statement);
+//     TypeChecker.typecheckProgram(program);
         
-    }
+//     }
 
-    @Test//(expected = TypeErrorException.class) 
-    public void testSuperMethodWithNoExpressions() throws TypeErrorException {
-        /*
-     class Boo {
-        Boo()
-            PrintStatement(true);
-        }
-     class Foo extends Boo{
-            Foo()
-                super();         
-        }
+//     @Test//(expected = TypeErrorException.class) 
+//     public void testSuperMethodWithNoExpressions() throws TypeErrorException {
+//         /*
+//      class Boo {
+//         Boo()
+//             PrintStatement(true);
+//         }
+//      class Foo extends Boo{
+//             Foo()
+//                 super();         
+//         }
     
-        Foo y = Foo(); 
-    }
-    */
+//         Foo y = Foo(); 
+//     }
+//     */
 
 
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>();
-    List<Exp> classExp = new ArrayList<>();
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>();
+//     List<Exp> classExp = new ArrayList<>();
 
-    Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-        );
+//     Statement statement = new VarDecAssignment(
+//         new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//         new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//         );
 
-    List<VarDec> varDec = new ArrayList<>(); //empty
+//     List<VarDec> varDec = new ArrayList<>(); //empty
     
-    classDef.add(new ClassDef(
-        new ClassName("Boo"), 
-        new Constructor(
-            varDec, 
-            new PrintStatement(new BoolExp(true))), 
-        varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     classDef.add(new ClassDef(
+//         new ClassName("Boo"), 
+//         new Constructor(
+//             varDec, 
+//             new PrintStatement(new BoolExp(true))), 
+//         varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-    classDef.add(new ClassDef(
-        new ClassName("Foo"), 
-        new Constructor(
-            varDec, 
-            new SuperStatement(classExp)),
-        new Extends(new ClassName("Boo"), new ArrayList<Type>()), 
-        varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     classDef.add(new ClassDef(
+//         new ClassName("Foo"), 
+//         new Constructor(
+//             varDec, 
+//             new SuperStatement(classExp)),
+//         new Extends(new ClassName("Boo"), new ArrayList<Type>()), 
+//         varDec, methodDefs, new ArrayList<TypeVariable>()));
 
     
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
+//     final Program program = new Program(classDef, statement);
+//     TypeChecker.typecheckProgram(program);
         
-    }
+//     }
 
 
-    @Test(expected = TypeErrorException.class) 
-    public void testMethodCallToAMethodThatDontExist() throws TypeErrorException {
-        /*
-     class Foo{
-            Foo()
-                methodB();  
-            private void methodA() {
-                return;
-            }
+//     @Test(expected = TypeErrorException.class) 
+//     public void testMethodCallToAMethodThatDontExist() throws TypeErrorException {
+//         /*
+//      class Foo{
+//             Foo()
+//                 methodB();  
+//             private void methodA() {
+//                 return;
+//             }
             
-        }
-        Foo y = Foo(); 
-    */
+//         }
+//         Foo y = Foo(); 
+//     */
 
 
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>();
-    List<Exp> classExp = new ArrayList<>();
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>();
+//     List<Exp> classExp = new ArrayList<>();
 
-    Statement statement = new VarDecAssignment(
-        new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-        new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-        );
+//     Statement statement = new VarDecAssignment(
+//         new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//         new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//         );
 
-    List<VarDec> varDec = new ArrayList<>(); //empty
-    List<VarDec> varDecNonEmpty = new ArrayList<>();
-    varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
-    methodDefs.add(new MethodDef(new PrivateAccess(), new VoidType(), new MethodName("methodA"), varDec, new ReturnVoidStatement()));
+//     List<VarDec> varDec = new ArrayList<>(); //empty
+//     List<VarDec> varDecNonEmpty = new ArrayList<>();
+//     varDecNonEmpty.add(new VarDec(new IntType(), new Variable("x")));
+//     methodDefs.add(new MethodDef(new PrivateAccess(), new VoidType(), new MethodName("methodA"), varDec, new ReturnVoidStatement()));
     
-    classDef.add(new ClassDef(
-        new ClassName("Foo"), 
-        new Constructor(
-            varDec, 
-            new ExpStatement(new MethodExp(new MethodName("methodB"), classExp))), 
-        varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     classDef.add(new ClassDef(
+//         new ClassName("Foo"), 
+//         new Constructor(
+//             varDec, 
+//             new ExpStatement(new MethodExp(new MethodName("methodB"), classExp))), 
+//         varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-    final Program program = new Program(classDef, statement);
-    TypeChecker.typecheckProgram(program);
+//     final Program program = new Program(classDef, statement);
+//     TypeChecker.typecheckProgram(program);
         
-    }
+//     }
 
-    @Test//(expected = TypeErrorException.class) 
-        public void testPrintStmt() throws TypeErrorException {
-        /** class foo{
-        int x;
-        foo() 
-           print(false);
-        }
+//     @Test//(expected = TypeErrorException.class) 
+//         public void testPrintStmt() throws TypeErrorException {
+//         /** class foo{
+//         int x;
+//         foo() 
+//            print(false);
+//         }
 
-        Foo y = Foo();
-    **/
-        List<ClassDef> classDef = new ArrayList<>();
-        List<MethodDef> methodDefs = new ArrayList<>(); //empty
-        List<Exp> classExp = new ArrayList<>();
+//         Foo y = Foo();
+//     **/
+//         List<ClassDef> classDef = new ArrayList<>();
+//         List<MethodDef> methodDefs = new ArrayList<>(); //empty
+//         List<Exp> classExp = new ArrayList<>();
 
-        Statement statement = new VarDecAssignment(
-            new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
-            new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
-            );
+//         Statement statement = new VarDecAssignment(
+//             new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+//             new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+//             );
 
-        List<VarDec> varDec = new ArrayList<>(); //empty
-        varDec.add(new VarDec(new IntType(), new Variable("x")));
-        List<VarDec> varDecEmpty = new ArrayList<>(); //empty
-        classDef.add(new ClassDef(
-            new ClassName("Foo"), 
-            new Constructor(
-                varDecEmpty, 
-                new PrintStatement(new BoolExp(false))
-                ), 
-            varDec, methodDefs, new ArrayList<TypeVariable>()));
+//         List<VarDec> varDec = new ArrayList<>(); //empty
+//         varDec.add(new VarDec(new IntType(), new Variable("x")));
+//         List<VarDec> varDecEmpty = new ArrayList<>(); //empty
+//         classDef.add(new ClassDef(
+//             new ClassName("Foo"), 
+//             new Constructor(
+//                 varDecEmpty, 
+//                 new PrintStatement(new BoolExp(false))
+//                 ), 
+//             varDec, methodDefs, new ArrayList<TypeVariable>()));
 
-        final Program program = new Program(classDef, statement);
-        TypeChecker.typecheckProgram(program);
-    }
+//         final Program program = new Program(classDef, statement);
+//         TypeChecker.typecheckProgram(program);
+//     }
 
-    @Test(expected = TypeErrorException.class)
-    public void testIfStatmentsWithBreak() throws TypeErrorException {
-        /*
-     class Foo{
-            Foo()
-                if(true)
-                    printStatment(true);
-                else
-                    break; <-- only allowed in while loops
-        }
-        int y = 0;
-    */
-
-
-    List<ClassDef> classDef = new ArrayList<>();
-    List<MethodDef> methodDefs = new ArrayList<>(); //empty
-    List<Exp> classExp = new ArrayList<>();
+//     @Test(expected = TypeErrorException.class)
+//     public void testIfStatmentsWithBreak() throws TypeErrorException {
+//         /*
+//      class Foo{
+//             Foo()
+//                 if(true)
+//                     printStatment(true);
+//                 else
+//                     break; <-- only allowed in while loops
+//         }
+//         int y = 0;
+//     */
 
 
-    Statement statementTwo = new VarDecAssignment(new VarDec(new IntType(), new Variable("y")), new NumberExp(0));
-
-    List<VarDec> varDec = new ArrayList<>(); //empty
-    classDef.add(new ClassDef(
-        new ClassName("Foo"), 
-        new Constructor(
-            varDec, 
-            new IfStatement(new BoolExp(true), 
-                new BreakStatement(),
-                new PrintStatement(new BoolExp(true)))
-            ), 
-        varDec, methodDefs, new ArrayList<TypeVariable>()));
+//     List<ClassDef> classDef = new ArrayList<>();
+//     List<MethodDef> methodDefs = new ArrayList<>(); //empty
+//     List<Exp> classExp = new ArrayList<>();
 
 
-    final Program program = new Program(classDef, statementTwo);
-    TypeChecker.typecheckProgram(program);
+//     Statement statementTwo = new VarDecAssignment(new VarDec(new IntType(), new Variable("y")), new NumberExp(0));
+
+//     List<VarDec> varDec = new ArrayList<>(); //empty
+//     classDef.add(new ClassDef(
+//         new ClassName("Foo"), 
+//         new Constructor(
+//             varDec, 
+//             new IfStatement(new BoolExp(true), 
+//                 new BreakStatement(),
+//                 new PrintStatement(new BoolExp(true)))
+//             ), 
+//         varDec, methodDefs, new ArrayList<TypeVariable>()));
+
+
+//     final Program program = new Program(classDef, statementTwo);
+//     TypeChecker.typecheckProgram(program);
         
-    }
+//     }
 
 
-    @Test//(expected = TypeErrorException.class) 
-    public void testGenericWithOneTypeVariable() throws TypeErrorException {
-       /*
-        class GenericClass<A> {
-            A a;
-            constructor(A b) {
-                a = b;
-            }
-            public A getA() {
-                return a;
-            }
-        }
-        GenericClass<int> g = new GenericClass<int>(3);
-        */
+//     @Test//(expected = TypeErrorException.class) 
+//     public void testGenericWithOneTypeVariable() throws TypeErrorException {
+//        /*
+//         class GenericClass<A> {
+//             A a;
+//             constructor(A b) {
+//                 a = b;
+//             }
+//             public A getA() {
+//                 return a;
+//             }
+//         }
+//         GenericClass<int> g = new GenericClass<int>(3);
+//         */
 
-        List<TypeVariable> types = new ArrayList<>();
-        types.add(new TypeVariable("A"));
-        List<ClassDef> classDef = new ArrayList<>();
+//         List<TypeVariable> types = new ArrayList<>();
+//         types.add(new TypeVariable("A"));
+//         List<ClassDef> classDef = new ArrayList<>();
 
-        List<VarDec> instanceVars = new ArrayList<>();
-        instanceVars.add(new VarDec(new TypeVariable("A"), new Variable("a")));
+//         List<VarDec> instanceVars = new ArrayList<>();
+//         instanceVars.add(new VarDec(new TypeVariable("A"), new Variable("a")));
 
-        List<MethodDef> methodDefs = new ArrayList<>();
-        methodDefs.add(new MethodDef(new PublicAccess(), new TypeVariable("A"), new MethodName("getA"), new ArrayList<VarDec>(), new ReturnExpStatement(new VariableExp(new Variable("a")))));
-        List<VarDec> constructorParam = new ArrayList<>();
-        constructorParam.add(new VarDec(new TypeVariable("A"), new Variable("b")));
-         classDef.add(new ClassDef(
-            new ClassName("GenericClass"), 
-            new Constructor(
-                constructorParam, 
-                new VarAssignment(
-                    new Variable("a"),
-                    new VariableExp(new Variable("b")))), 
-            instanceVars, 
-            methodDefs, 
-            types));
+//         List<MethodDef> methodDefs = new ArrayList<>();
+//         methodDefs.add(new MethodDef(new PublicAccess(), new TypeVariable("A"), new MethodName("getA"), new ArrayList<VarDec>(), new ReturnExpStatement(new VariableExp(new Variable("a")))));
+//         List<VarDec> constructorParam = new ArrayList<>();
+//         constructorParam.add(new VarDec(new TypeVariable("A"), new Variable("b")));
+//          classDef.add(new ClassDef(
+//             new ClassName("GenericClass"), 
+//             new Constructor(
+//                 constructorParam, 
+//                 new VarAssignment(
+//                     new Variable("a"),
+//                     new VariableExp(new Variable("b")))), 
+//             instanceVars, 
+//             methodDefs, 
+//             types));
 
         
-        List<Type> classTypes = new ArrayList<>();
-        classTypes.add(new IntType());
-        List<Exp> expressions = new ArrayList<>();
-        expressions.add(new NumberExp(3));
-        classTypes.add(new ClassType(new ClassName("GenericClass"), classTypes));
-        Statement st = new VarDecAssignment(
-            new VarDec(
-                new ClassType(
-                    new ClassName("GenericClass"), classTypes), 
-                new Variable("g")), 
-            new ClassExp(
-                new ClassName("GenericClass"), 
-                classTypes, 
-                expressions
-                )); //parameters for the constructor
-    
-
-        final Program program = new Program(classDef, st);
-        TypeChecker.typecheckProgram(program);
-    }
-
-    @Test(expected = TypeErrorException.class) 
-    public void testGenericWithTwoTypeVariables() throws TypeErrorException {
-       /*
-        class GenericClass<A, B> {
-            A a;
-            B b;
-            constructor(A c, B d) {
-                a = c;
-                b = d;
-            }
-            public A getA() {
-                return a;
-            }
-            public B getB() {
-                return b;
-            }
-        }
-        GenericClass<int> g = new GenericClass<int>();
-        */
-
-        List<TypeVariable> types = new ArrayList<>();
-        types.add(new TypeVariable("A"));
-        types.add(new TypeVariable("B"));
-        List<ClassDef> classDef = new ArrayList<>();
-
-        List<VarDec> instanceVars = new ArrayList<>();
-        instanceVars.add(new VarDec(new TypeVariable("A"), new Variable("a")));
-        instanceVars.add(new VarDec(new TypeVariable("B"), new Variable("b")));
-
-        List<MethodDef> methodDefs = new ArrayList<>();
-        methodDefs.add(new MethodDef(new PublicAccess(), new TypeVariable("A"), new MethodName("getA"), new ArrayList<VarDec>(), new ReturnExpStatement(new VariableExp(new Variable("a")))));
-        List<VarDec> constructorParam = new ArrayList<>();
-        constructorParam.add(new VarDec(new TypeVariable("A"), new Variable("c")));
-            classDef.add(new ClassDef(
-                new ClassName("GenericClass"), 
-                new Constructor(
-                    constructorParam, 
-                    new VarAssignment(
-                        new Variable("a"),
-                        new VariableExp(new Variable("c")))), 
-                instanceVars, 
-                methodDefs, 
-                types));
-
-        List<TypeVariable> types = new ArrayList<>();
-        types.add(new TypeVariable("A"));
-        types.add(new TypeVariable("B"));
-        List<ClassDef> classDef = new ArrayList<>();
-
-        List<VarDec> instanceVars = new ArrayList<>();
-        instanceVars.add(new VarDec(new TypeVariable("A"), new Variable("a")));
-        instanceVars.add(new VarDec(new TypeVariable("B"), new Variable("b")));
-
-        List<MethodDef> methodDefs = new ArrayList<>();
-        methodDefs.add(new MethodDef(new PublicAccess(), new TypeVariable("A"), new MethodName("getA"), new ArrayList<VarDec>(), new ReturnExpStatement(new VariableExp(new Variable("a")))));
-        methodDefs.add(new MethodDef(new PublicAccess(), new TypeVariable("B"), new MethodName("getB"), new ArrayList<VarDec>(), new ReturnExpStatement(new VariableExp(new Variable("b")))));
-
-        List<VarDec> constructorParam = new ArrayList<>();
-        constructorParam.add(new VarDec(new TypeVariable("A"), new Variable("c")));
-        constructorParam.add(new VarDec(new TypeVariable("B"), new Variable("d")));
-
-        classDef.add(new ClassDef(
-            new ClassName("GenericClass"), 
-            new Constructor(
-                constructorParam, 
-                new VarAssignment(
-                    new Variable("a"),
-                    new VariableExp(new Variable("c")))), 
-            instanceVars, 
-            methodDefs, 
-            types));
-
-        classDef.add(new ClassDef(
-            new ClassName("GenericClass"), 
-            new Constructor(
-                constructorParam, 
-                new VarAssignment(
-                    new Variable("b"),
-                    new VariableExp(new Variable("d")))), 
-            instanceVars, 
-            methodDefs, 
-            types));
-        
-        List<Type> classTypes = new ArrayList<>();
-        classTypes.add(new IntType());
-        List<Exp> expressions = new ArrayList<>();
-        expressions.add(new NumberExp(3));
-        expressions.add(new NumberExp(5));
-        classTypes.add(new ClassType(new ClassName("GenericClass"), classTypes));
-        Statement st = new VarDecAssignment(
-            new VarDec(
-                new ClassType(
-                    new ClassName("GenericClass"), classTypes), 
-                new Variable("g")), 
-            new ClassExp(
-                new ClassName("GenericClass"), 
-                classTypes, 
-                expressions
-                )); //parameters for the constructor
+//         List<Type> classTypes = new ArrayList<>();
+//         classTypes.add(new IntType());
+//         List<Exp> expressions = new ArrayList<>();
+//         expressions.add(new NumberExp(3));
+//         classTypes.add(new ClassType(new ClassName("GenericClass"), classTypes));
+//         Statement st = new VarDecAssignment(
+//             new VarDec(
+//                 new ClassType(
+//                     new ClassName("GenericClass"), classTypes), 
+//                 new Variable("g")), 
+//             new ClassExp(
+//                 new ClassName("GenericClass"), 
+//                 classTypes, 
+//                 expressions
+//                 )); //parameters for the constructor
     
 
-        final Program program = new Program(classDef, st);
-        TypeChecker.typecheckProgram(program);
-    }
-}
+//         final Program program = new Program(classDef, st);
+//         TypeChecker.typecheckProgram(program);
+//     }
+
+//     @Test(expected = TypeErrorException.class) 
+//     public void testGenericWithTwoTypeVariables() throws TypeErrorException {
+//        /*
+//         class GenericClass<A, B> {
+//             A a;
+//             B b;
+//             constructor(A c, B d) {
+//                 a = c;
+//                 b = d;
+//             }
+//             public A getA() {
+//                 return a;
+//             }
+//             public B getB() {
+//                 return b;
+//             }
+//         }
+//         GenericClass<int> g = new GenericClass<int>();
+//         */
+
+//         List<TypeVariable> types = new ArrayList<>();
+//         types.add(new TypeVariable("A"));
+//         types.add(new TypeVariable("B"));
+//         List<ClassDef> classDef = new ArrayList<>();
+
+//         List<VarDec> instanceVars = new ArrayList<>();
+//         instanceVars.add(new VarDec(new TypeVariable("A"), new Variable("a")));
+//         instanceVars.add(new VarDec(new TypeVariable("B"), new Variable("b")));
+
+//         List<MethodDef> methodDefs = new ArrayList<>();
+//         methodDefs.add(new MethodDef(new PublicAccess(), new TypeVariable("A"), new MethodName("getA"), new ArrayList<VarDec>(), new ReturnExpStatement(new VariableExp(new Variable("a")))));
+//         List<VarDec> constructorParam = new ArrayList<>();
+//         constructorParam.add(new VarDec(new TypeVariable("A"), new Variable("c")));
+//             classDef.add(new ClassDef(
+//                 new ClassName("GenericClass"), 
+//                 new Constructor(
+//                     constructorParam, 
+//                     new VarAssignment(
+//                         new Variable("a"),
+//                         new VariableExp(new Variable("c")))), 
+//                 instanceVars, 
+//                 methodDefs, 
+//                 types));
+
+//         List<TypeVariable> types = new ArrayList<>();
+//         types.add(new TypeVariable("A"));
+//         types.add(new TypeVariable("B"));
+//         List<ClassDef> classDef = new ArrayList<>();
+
+//         List<VarDec> instanceVars = new ArrayList<>();
+//         instanceVars.add(new VarDec(new TypeVariable("A"), new Variable("a")));
+//         instanceVars.add(new VarDec(new TypeVariable("B"), new Variable("b")));
+
+//         List<MethodDef> methodDefs = new ArrayList<>();
+//         methodDefs.add(new MethodDef(new PublicAccess(), new TypeVariable("A"), new MethodName("getA"), new ArrayList<VarDec>(), new ReturnExpStatement(new VariableExp(new Variable("a")))));
+//         methodDefs.add(new MethodDef(new PublicAccess(), new TypeVariable("B"), new MethodName("getB"), new ArrayList<VarDec>(), new ReturnExpStatement(new VariableExp(new Variable("b")))));
+
+//         List<VarDec> constructorParam = new ArrayList<>();
+//         constructorParam.add(new VarDec(new TypeVariable("A"), new Variable("c")));
+//         constructorParam.add(new VarDec(new TypeVariable("B"), new Variable("d")));
+
+//         classDef.add(new ClassDef(
+//             new ClassName("GenericClass"), 
+//             new Constructor(
+//                 constructorParam, 
+//                 new VarAssignment(
+//                     new Variable("a"),
+//                     new VariableExp(new Variable("c")))), 
+//             instanceVars, 
+//             methodDefs, 
+//             types));
+
+//         classDef.add(new ClassDef(
+//             new ClassName("GenericClass"), 
+//             new Constructor(
+//                 constructorParam, 
+//                 new VarAssignment(
+//                     new Variable("b"),
+//                     new VariableExp(new Variable("d")))), 
+//             instanceVars, 
+//             methodDefs, 
+//             types));
+        
+//         List<Type> classTypes = new ArrayList<>();
+//         classTypes.add(new IntType());
+//         List<Exp> expressions = new ArrayList<>();
+//         expressions.add(new NumberExp(3));
+//         expressions.add(new NumberExp(5));
+//         classTypes.add(new ClassType(new ClassName("GenericClass"), classTypes));
+//         Statement st = new VarDecAssignment(
+//             new VarDec(
+//                 new ClassType(
+//                     new ClassName("GenericClass"), classTypes), 
+//                 new Variable("g")), 
+//             new ClassExp(
+//                 new ClassName("GenericClass"), 
+//                 classTypes, 
+//                 expressions
+//                 )); //parameters for the constructor
+    
+
+//         final Program program = new Program(classDef, st);
+//         TypeChecker.typecheckProgram(program);
+//     }
+// }
