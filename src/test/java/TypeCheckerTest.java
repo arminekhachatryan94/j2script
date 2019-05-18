@@ -2182,7 +2182,8 @@ public class TypeCheckerTest {
         instanceVars.add(new VarDec(new TypeVariable("B"), new Variable("a")));
 
         List<MethodDef> methodDefs = new ArrayList<>();
-        methodDefs.add(new MethodDef(new PublicAccess(), new TypeVariable("A"), new MethodName("getA"), new TypeVariable("B"), new MethodName("getB"), new ArrayList<VarDec>(), new ReturnExpStatement(new VariableExp(new Variable("a")), new VariableExp(new Variable("b")))));
+        methodDefs.add(new MethodDef(new PublicAccess(), new TypeVariable("A"), new MethodName("getA"), new ArrayList<VarDec>(), new ReturnExpStatement(new VariableExp(new Variable("a")))));
+        methodDefs.add(new MethodDef(new PublicAccess(), new TypeVariable("B"), new MethodName("getB"), new ArrayList<VarDec>(), new ReturnExpStatement(new VariableExp(new Variable("b")))));
         
         classDef.add(new ClassDef(
             new ClassName("GenericClass"), 
@@ -2190,18 +2191,13 @@ public class TypeCheckerTest {
                 new ArrayList<VarDec>(), 
                 new VarAssignment(
                     new Variable("a"), 
-                    new NumberExp(3)),
-                 
-                new VarAssignment(
-                    new Variable("b"),
-                    new NumberExp(5))),
+                    new NumberExp(3))),
             instanceVars, 
             methodDefs, 
             types));
 
         
         List<Type> classTypes = new ArrayList<>();
-        classTypes.add(new IntType());
         classTypes.add(new IntType());
         classTypes.add(new ClassType(new ClassName("GenericClass"), classTypes));
         Statement st = new VarDecAssignment(
