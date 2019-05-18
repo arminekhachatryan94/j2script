@@ -635,12 +635,12 @@ public class TypeCheckerTest {
 	}
 
 	//scope tests
-    @Test
+    @Test(expected = TypeErrorException.class) 
         public void testScopeofInstanceVarAlreadyDeclared() throws TypeErrorException {
         /** class foo{
         int x;
         constructor() 
-           int x = 0 ; allowed
+           int x = 0 ; not allowed
         }
 
         Foo y = Foo();
@@ -665,6 +665,46 @@ public class TypeCheckerTest {
                     new VarDec(
                         new IntType(), 
                         new Variable("x")
+                        ), 
+                    new NumberExp(0)
+                    )
+                ), 
+            varDec, methodDefs, new ArrayList<TypeVariable>()));
+
+        final Program program = new Program(classDef, statement);
+        TypeChecker.typecheckProgram(program);
+    }
+
+    @Test
+        public void testScopeofInstanceVarAlreadyDeclaredWithSameVariable() throws TypeErrorException {
+        /** class foo{
+        int x;
+        constructor() 
+           int z = 0 ; 
+        }
+
+        Foo y = Foo();
+    **/
+        List<ClassDef> classDef = new ArrayList<>();
+        List<MethodDef> methodDefs = new ArrayList<>(); //empty
+        List<Exp> classExp = new ArrayList<>();
+
+        Statement statement = new VarDecAssignment(
+            new VarDec(new ClassType(new ClassName("Foo"), new ArrayList<Type>()), new Variable("y")), 
+            new ClassExp(new ClassName("Foo"), new ArrayList<Type>(), classExp)
+            );
+
+        List<VarDec> varDec = new ArrayList<>(); //empty
+        varDec.add(new VarDec(new IntType(), new Variable("x")));
+        List<VarDec> varDecEmpty = new ArrayList<>(); //empty
+        classDef.add(new ClassDef(
+            new ClassName("Foo"), 
+            new Constructor(
+                varDecEmpty, 
+                new VarDecAssignment(
+                    new VarDec(
+                        new IntType(), 
+                        new Variable("z")
                         ), 
                     new NumberExp(0)
                     )
@@ -920,7 +960,7 @@ public class TypeCheckerTest {
         
     }
 
-    @Test//(expected = TypeErrorException.class)
+    @Test(expected = TypeErrorException.class)
     public void testUniqueNamesOfVariables() throws TypeErrorException {
         /*
      class Foo{
@@ -2229,7 +2269,7 @@ public class TypeCheckerTest {
     }
 
 
- //@Test(expected = TypeErrorException.class) 
+    @Test(expected = TypeErrorException.class) 
     public void testGenericInitiziationInAMetho() throws TypeErrorException {
     /*test case 5: expect error
         class GenericClass<A> { 
@@ -2243,8 +2283,75 @@ public class TypeCheckerTest {
             }
         }
         GenericClass<int> g = new GenericClass<int>(3); 
-        g.setA(true);
+        g.setA(true); ...
 */
+
+        List<ClassDef> classDef = new ArrayList<>();
+
+        List<VarDec> instanceVars = new ArrayList<>();
+        instanceVars.add(new VarDec(new TypeVariable("A"), new Variable("a")));
+
+        
+        List<VarDec> constructorParam = new ArrayList<>();
+        constructorParam.add(new VarDec(new TypeVariable("A"), new Variable("b")));
+
+        List<VarDec> methodPram = new ArrayList<>();
+        methodPram.add(new VarDec(new TypeVariable("A"), new Variable("c")));
+
+
+        List<Statement> blocks = new ArrayList<>();
+        blocks.add(new VarAssignment(new Variable("a"), new VariableExp(new Variable("c"))));
+        blocks.add(new ReturnVoidStatement());
+
+        List<MethodDef> methodDefs = new ArrayList<>();
+        methodDefs.add(new MethodDef(new PublicAccess(), new VoidType(), new MethodName("setA"), 
+            methodPram, 
+            new Block(blocks)
+            )
+        );
+
+        List<TypeVariable> types = new ArrayList<>();
+        types.add(new TypeVariable("A"));
+        classDef.add(new ClassDef(
+            new ClassName("GenericClass"), 
+            new Constructor(
+                constructorParam, 
+                new VarAssignment(
+                    new Variable("a"),
+                    new VariableExp(new Variable("b")))), 
+            instanceVars, 
+            methodDefs, 
+            types));
+
+        // GenericClass<int> g = new GenericClass<int>(3);
+        List<Type> classTypes = new ArrayList<>();
+        classTypes.add(new IntType());
+
+        List<Exp> expressions = new ArrayList<>();
+        expressions.add(new NumberExp(3));
+
+        List<Statement> stmts = new ArrayList<>();
+        stmts.add(new VarDecAssignment(
+            new VarDec(
+                new ClassType(
+                    new ClassName("GenericClass"), classTypes), 
+                new Variable("g")), 
+            new ClassExp(
+                new ClassName("GenericClass"), 
+                classTypes, 
+                expressions
+                ))
+        );
+
+        List<Exp> p = new ArrayList<>();
+        p.add(new BoolExp(true));
+        
+
+        stmts.add(new ExpStatement( 
+            new VarMethodExp(new Variable("g"), new MethodName("setA"), p)));
+
+        final Program program = new Program(classDef, new Block(stmts));
+        TypeChecker.typecheckProgram(program);
 
     }
 
@@ -2257,7 +2364,7 @@ public class TypeCheckerTest {
                 a = b;
             }
         }
-        GenericClass<int> g = new GenericClass<boolean>(3);
+        GenericClass<int> g = new GenericClass<boolean>(3); <-- wrong
         */
 
         List<ClassDef> classDef = new ArrayList<>();
@@ -2465,9 +2572,6 @@ public class TypeCheckerTest {
         final Program program = new Program(classDef, new Block(stmts));
         TypeChecker.typecheckProgram(program);
 
-
-
-
     }
 
 
@@ -2582,20 +2686,6 @@ public class TypeCheckerTest {
         }
         GenericClass<int> g = new GenericClass<int>(3); 
         boolean b = g.getA(); <-- doesnt return boolean so err
-
-
-        test case 5: expect error
-        class GenericClass<A> { 
-            A a;
-            constructor(A b) {
-                a = b;
-            }
-            public void setA(A c) { 
-                a = c;<-- error cuz a is set to an integer
-            }
-        }
-        GenericClass<int> g = new GenericClass<int>(3); 
-        g.setA(true);
 
 
         
