@@ -2098,7 +2098,6 @@ public class TypeCheckerTest {
         
     }
 
-
     @Test//(expected = TypeErrorException.class) 
     public void testGenericWithOneTypeVariable() throws TypeErrorException {
        /*
@@ -2137,9 +2136,6 @@ public class TypeCheckerTest {
             instanceVars, 
             methodDefs, 
             types));
-
-
-
 
         //GenericClass<int> g = new GenericClass<int>(3);
         List<Type> classTypes = new ArrayList<>();
