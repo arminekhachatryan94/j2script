@@ -2219,12 +2219,10 @@ public class TypeCheckerTest {
                 expressions
                 ))
         );
-        stmts.add(new VarDecAssignment(
-            new VarDec(new IntType(), new Variable("k")),
-            new Methodcall(
-                new MethodName("getA"), new ArrayList<Exp>()
-            ))
-        );
+        
+
+        stmts.add(new VarDecAssignment(new VarDec(new IntType(), new Variable("k")), 
+            new VarMethodExp(new Variable("g"), new MethodName("getA"), new ArrayList<Exp>())));
 
         final Program program = new Program(classDef, new Block(stmts));
         TypeChecker.typecheckProgram(program);
