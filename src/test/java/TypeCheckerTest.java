@@ -2239,6 +2239,7 @@ public class TypeCheckerTest {
             }
             public void setA(A c) { 
                 a = c;<-- error cuz a is set to an integer
+                return;
             }
         }
         GenericClass<int> g = new GenericClass<int>(3); 
@@ -2390,6 +2391,7 @@ public class TypeCheckerTest {
             }
             public void setA(A c) { 
                 a = c;
+                return;
             }
         }
         Genericclass<int> c = GenericClass<boolean>(3);
@@ -2406,10 +2408,17 @@ public class TypeCheckerTest {
         List<VarDec> constructorParam = new ArrayList<>();
         constructorParam.add(new VarDec(new TypeVariable("A"), new Variable("b")));
 
+        List<VarDec> methodPram = new ArrayList<>();
+        methodPram.add(new VarDec(new TypeVariable("A"), new Variable("c")));
+
+
+        List<Statement> blocks = new ArrayList<>();
+        blocks.add(new VarAssignment(new Variable("a"), new VariableExp(new Variable("c"))));
+        blocks.add(new ReturnVoidStatement());
         List<MethodDef> methodDefs = new ArrayList<>();
         methodDefs.add(new MethodDef(new PublicAccess(), new VoidType(), new MethodName("setA"), 
-            constructorParam, 
-            new VarAssignment(new Variable("a"), new VariableExp(new Variable("c")))
+            methodPram, 
+            new Block(blocks)
             )
         );
 
