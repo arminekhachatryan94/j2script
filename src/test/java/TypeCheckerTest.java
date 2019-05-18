@@ -2152,4 +2152,69 @@ public class TypeCheckerTest {
         final Program program = new Program(classDef, st);
         TypeChecker.typecheckProgram(program);
     }
+
+    @Test(expected = TypeErrorException.class) 
+    public void testGeneric2() throws TypeErrorException {
+       /*
+        class GenericClass<A, B> {
+            A a;
+            B b;
+            constructor() {
+                a = 3;
+                b = 5;
+            }
+            public A getA() {
+                return a;
+            }
+            public B getB() {
+                return b;
+            }
+        }
+        GenericClass<int> g = new GenericaClass<int>();
+        */
+        List<TypeVariable> types = new ArrayList<>();
+        types.add(new TypeVariable("A"));
+        types.add(new TypeVariable("B"));
+        List<ClassDef> classDef = new ArrayList<>();
+
+        List<VarDec> instanceVars = new ArrayList<>();
+        instanceVars.add(new VarDec(new TypeVariable("A"), new Variable("a")));
+        instanceVars.add(new VarDec(new TypeVariable("B"), new Variable("a")));
+
+        List<MethodDef> methodDefs = new ArrayList<>();
+        methodDefs.add(new MethodDef(new PublicAccess(), new TypeVariable("A"), new MethodName("getA"), new TypeVariable("B"), new MethodName("getB"), new ArrayList<VarDec>(), new ReturnExpStatement(new VariableExp(new Variable("a")), new VariableExp(new Variable("b")))));
+        
+        classDef.add(new ClassDef(
+            new ClassName("GenericClass"), 
+            new Constructor(
+                new ArrayList<VarDec>(), 
+                new VarAssignment(
+                    new Variable("a"), 
+                    new NumberExp(3)),
+                 
+                new VarAssignment(
+                    new Variable("b"),
+                    new NumberExp(5))),
+            instanceVars, 
+            methodDefs, 
+            types));
+
+        
+        List<Type> classTypes = new ArrayList<>();
+        classTypes.add(new IntType());
+        classTypes.add(new IntType());
+        classTypes.add(new ClassType(new ClassName("GenericClass"), classTypes));
+        Statement st = new VarDecAssignment(
+            new VarDec(
+                new ClassType(
+                    new ClassName("GenericClass"), classTypes), 
+                new Variable("g")), 
+            new ClassExp(
+                new ClassName("GenericClass"), 
+                classTypes, 
+                new ArrayList<Exp>())); //parameters for the constructor
+
+        final Program program = new Program(classDef, st);
+        TypeChecker.typecheckProgram(program);
+    }
 }
