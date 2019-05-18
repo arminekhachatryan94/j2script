@@ -156,7 +156,6 @@ public class Parser {
         else {
             throw new ParserException("Expected primary at " + startPos);
         }
-
         return new ParseResult<Exp>(resultExp, resultPos);
     }
 
@@ -339,6 +338,7 @@ public class Parser {
             ensureTokenIs(++resultpos, new LeftParenToken());
             final ParseResult<Exp> guard = ParseExpNonBinop(++resultpos);
             resultpos = guard.tokenPos;
+            resultpos++;
             ensureTokenIs(resultpos++, new RightParenToken());
             final ParseResult<Statement> ifTrue = parseStatement(resultpos);
             resultpos = ifTrue.tokenPos;
@@ -474,14 +474,24 @@ public class Parser {
             resultpos++;
             return new ParseResult<Statement>(stmt,resultpos);
         }
-        //return
-        else if(ensureToken(resultpos, new ReturnToken())){
+        //return void
+        else if(ensureToken(resultpos, new ReturnToken()) && (getToken(resultpos) instanceof SemiToken)){
             System.out.println("its a return");
 
             final ReturnVoidStatement rvs = new ReturnVoidStatement();
             ensureTokenIs(++resultpos, new SemiToken());
             resultpos++;
-            return new ParseResult<Statement>(rvs,++resultpos);
+            return new ParseResult<Statement>(rvs,resultpos);
+        }
+        //return 
+        else if(getToken(resultpos) instanceof ReturnToken && getToken(resultpos+1) instanceof VariableToken){
+            System.out.println("its a returnexp");
+            resultpos++;
+            final ParseResult<Exp> exp = ParseExpNonBinop(resultpos);
+            resultpos = exp.tokenPos;
+            ensureTokenIs(++resultpos,new SemiToken());
+            final ReturnExpStatement res = new ReturnExpStatement(exp.result);
+            return new ParseResult<Statement>(res,++resultpos);
         }
         else if(ensureToken(resultpos, new BreakToken())){
             System.out.println("its a break");
@@ -489,7 +499,7 @@ public class Parser {
             final BreakStatement bs = new BreakStatement();
             ensureTokenIs(++resultpos, new SemiToken());
             resultpos++;
-            return new ParseResult<Statement>(bs,++resultpos);
+            return new ParseResult<Statement>(bs,resultpos);
         }
         else if(ensureToken(resultpos, new PrintToken())){
             ensureTokenIs(++resultpos, new LeftParenToken());
