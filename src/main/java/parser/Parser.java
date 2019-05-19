@@ -987,7 +987,6 @@ public class Parser {
     }
     public Program parseMe() throws ParserException {
         final ParseResult<Program> result = parseProgram(0);
-        System.out.println(result.result);
 
         if(result.tokenPos >= tokens.size()){
             return result.result;
