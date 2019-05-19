@@ -58,10 +58,8 @@ public class Tokenizer {
 
     private void skipWhitespace() {
         //Advances input position past whitespace
-        while (inputPos < input.length &&
-              (Character.isWhitespace(input[inputPos]))) {
+        while (inputPos < input.length && (Character.isWhitespace(input[inputPos]) || input[inputPos] == '.')) {
             inputPos++;
-            
         }
     }
 
