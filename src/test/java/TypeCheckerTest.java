@@ -2200,67 +2200,68 @@ public class TypeCheckerTest {
         
     }
 
-    // @Test//(expected = TypeErrorException.class) 
-    // public void testGenericWithOneTypeVariable() throws TypeErrorException {
-    //    /*
-    //    test case 2: expect failure
-    //     class GenericClass<A, B> {
-    //         A a;
-    //         constructor(A b) {
-    //             a = b;
-    //         }
-    //         public A getA() {
-    //             return a;
-    //         }
-    //     }
-    //     GenericClass<int> g = new GenericClass<int>(3); <--- expect error
-    //     */
+    @Test//(expected = TypeErrorException.class) 
+    public void testGenericWithTwoTypeVariablesNotUsingOne() throws TypeErrorException {
+       /*
+        test case 2: expect failure
+        class GenericClass<A, B> {
+            A a;
+            constructor(A b) {
+                a = b;
+            }
+            public A getA() {
+                return a;
+            }
+        }
+        GenericClass<int> g = new GenericClass<int>(3); <--- expect error
+        */
 
-    //     List<ClassDef> classDef = new ArrayList<>();
+        List<ClassDef> classDef = new ArrayList<>();
 
-    //     List<VarDec> instanceVars = new ArrayList<>();
-    //     instanceVars.add(new VarDec(new TypeVariable("A"), new Variable("a")));
+        List<VarDec> instanceVars = new ArrayList<>();
+        instanceVars.add(new VarDec(new TypeVariable("A"), new Variable("a")));
 
-    //     List<MethodDef> methodDefs = new ArrayList<>();
-    //     methodDefs.add(new MethodDef(new PublicAccess(), new TypeVariable("A"), new MethodName("getA"), new ArrayList<VarDec>(), new ReturnExpStatement(new VariableExp(new Variable("a")))));
+        List<MethodDef> methodDefs = new ArrayList<>();
+        methodDefs.add(new MethodDef(new PublicAccess(), new TypeVariable("A"), new MethodName("getA"), new ArrayList<VarDec>(), new ReturnExpStatement(new VariableExp(new Variable("a")))));
 
-    //     List<VarDec> constructorParam = new ArrayList<>();
-    //     constructorParam.add(new VarDec(new TypeVariable("A"), new Variable("b")));
+        List<VarDec> constructorParam = new ArrayList<>();
+        constructorParam.add(new VarDec(new TypeVariable("A"), new Variable("b")));
 
-    //     List<TypeVariable> types = new ArrayList<>();
-    //     types.add(new TypeVariable("A"));
-    //     classDef.add(new ClassDef(
-    //         new ClassName("GenericClass"), 
-    //         new Constructor(
-    //             constructorParam, 
-    //             new VarAssignment(
-    //                 new Variable("a"),
-    //                 new VariableExp(new Variable("b")))), 
-    //         instanceVars, 
-    //         methodDefs, 
-    //         types));
+        List<TypeVariable> types = new ArrayList<>();
+        types.add(new TypeVariable("A"));
+        types.add(new TypeVariable("B"));
+        classDef.add(new ClassDef(
+            new ClassName("GenericClass"), 
+            new Constructor(
+                constructorParam, 
+                new VarAssignment(
+                    new Variable("a"),
+                    new VariableExp(new Variable("b")))), 
+            instanceVars, 
+            methodDefs, 
+            types));
 
-    //     //GenericClass<int> g = new GenericClass<int>(3);
-    //     List<Type> classTypes = new ArrayList<>();
-    //     classTypes.add(new IntType());
+        //GenericClass<int> g = new GenericClass<int>(3);
+        List<Type> classTypes = new ArrayList<>();
+        classTypes.add(new IntType());
 
-    //     List<Exp> expressions = new ArrayList<>();
-    //     expressions.add(new NumberExp(3));
+        List<Exp> expressions = new ArrayList<>();
+        expressions.add(new NumberExp(3));
 
-    //     Statement stm = new VarDecAssignment(
-    //         new VarDec(
-    //             new ClassType(
-    //                 new ClassName("GenericClass"), classTypes), 
-    //             new Variable("g")), 
-    //         new ClassExp(
-    //             new ClassName("GenericClass"), 
-    //             classTypes, 
-    //             expressions
-    //             ));
+        Statement stm = new VarDecAssignment(
+            new VarDec(
+                new ClassType(
+                    new ClassName("GenericClass"), classTypes), 
+                new Variable("g")), 
+            new ClassExp(
+                new ClassName("GenericClass"), 
+                classTypes, 
+                expressions
+                ));
 
-    //     final Program program = new Program(classDef, stm);
-    //     TypeChecker.typecheckProgram(program);
-    // }
+        final Program program = new Program(classDef, stm);
+        TypeChecker.typecheckProgram(program);
+    }
 
     @Test//(expected = TypeErrorException.class) 
     public void testGenericGetAWithOneTypeVariable() throws TypeErrorException {
@@ -2360,7 +2361,7 @@ public class TypeCheckerTest {
     */
 
     @Test(expected = TypeErrorException.class) 
-    public void testGenericInitiziationInAMetho() throws TypeErrorException {
+    public void testGenericInitiziationInAMethod() throws TypeErrorException {
         /*
         test case 5: expect error
         class GenericClass<A> { 
