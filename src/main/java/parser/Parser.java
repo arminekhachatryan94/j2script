@@ -11,8 +11,6 @@ import j2script.types.*;
 import j2script.ParserException;
 import java.text.ParseException;
 import java.util.*;
-import java.util.concurrent.ArrayBlockingQueue;
-
 
 public class Parser {
     // begin static variables
@@ -633,7 +631,7 @@ public class Parser {
                 ensureTokenIs(++resultpos, new RightParenToken());
                 ensureTokenIs(++resultpos, new SemiToken());
                 resultpos++;
-                final PrintStatement ps = new PrintStatement(new VariableExp(new Variable(e.toString())));
+                final PrintStatement ps = new PrintStatement(new VariableExp(new Variable(e.result.toString())));
                 return new ParseResult<Statement>(ps, resultpos);
             }
         }
@@ -974,7 +972,7 @@ public class Parser {
         || ensureToken(resultpos, new IfToken()) || ensureToken(resultpos, new WhileToken())){
             // System.out.println("We are in statement part of program");
             // System.out.println("parsing stmt");
-            final ParseResult Statemnt = parseStatement(resultpos);
+            final ParseResult<Statement> Statemnt = parseStatement(resultpos);
             // System.out.println(Statemnt.result.toString());
 
             resultProgram = new Program(classdefs, (Statement)Statemnt.result);
@@ -988,8 +986,8 @@ public class Parser {
         return new ParseResult<Program>(resultProgram, resultpos);
     }
     public Program parseMe() throws ParserException {
-        // System.out.println("Hello");
         final ParseResult<Program> result = parseProgram(0);
+        System.out.println(result.result);
 
         if(result.tokenPos >= tokens.size()){
             return result.result;
