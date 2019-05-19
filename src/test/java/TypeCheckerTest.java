@@ -2200,7 +2200,7 @@ public class TypeCheckerTest {
         
     }
 
-    @Test//(expected = TypeErrorException.class) 
+    @Test(expected = TypeErrorException.class) 
     public void testGenericWithTwoTypeVariablesNotUsingOne() throws TypeErrorException {
        /*
         test case 2: expect failure
@@ -2331,7 +2331,7 @@ public class TypeCheckerTest {
         TypeChecker.typecheckProgram(program);
     }
 
-    @Test//(expected = TypeErrorException.class) 
+    @Test(expected = TypeErrorException.class) 
     public void testGenericExtraAssignmentType() throws TypeErrorException {
         /*
         test case 3: expect error
@@ -2414,7 +2414,7 @@ public class TypeCheckerTest {
         boolean b = g.getA(); <-- doesnt return boolean so error
     */
 
-    @Test//(expected = TypeErrorException.class) 
+    @Test(expected = TypeErrorException.class) 
     public void testGenericInitiziationInAMethod() throws TypeErrorException {
         /*
         test case 5: expect error
