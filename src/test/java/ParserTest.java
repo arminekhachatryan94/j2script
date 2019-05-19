@@ -1,5 +1,4 @@
 package j2script;
-//testAClassDefWithConstructorAndInstanceVariableAndASetterMethod
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
@@ -340,7 +339,7 @@ public class ParserTest {
 		assertParses(tokens, program);
 	}
 
-
+    @Ignore
 	@Test
 	public void testAClassDefWithConstructorAndInstanceVariable() {
     	/*
@@ -352,8 +351,6 @@ public class ParserTest {
 
     	ClassFoo<> g = new ClassFoo<>(5);
     	*/
-
-
 
 		final ArrayList<Token> tokens = new ArrayList<>();
         tokens.add(new ClassToken());
@@ -421,6 +418,7 @@ public class ParserTest {
 		assertParses(tokens, program);
 	}
 
+    @Ignore
 	@Test
 	public void testAClassDefWithConstructorAndInstanceVariableAndAVoidMethod() {
     	/*
@@ -432,7 +430,7 @@ public class ParserTest {
 				four = 4 + x;
     	}
 
-    	ClassFoo<> f = new ClassFoo<>();
+    	ClassFoo<> g = new ClassFoo<>();
     	*/
 
 		final ArrayList<Token> tokens = new ArrayList<>();
@@ -467,7 +465,6 @@ public class ParserTest {
         tokens.add(new VariableToken("x"));
         tokens.add(new SemiToken());
         tokens.add(new RightCurlyToken());
-
 
         tokens.add(new VariableToken("ClassFoo"));
         tokens.add(new LessThanToken());
@@ -531,7 +528,7 @@ public class ParserTest {
 		assertParses(tokens, program);
 	}
 
-
+    @Ignore
 	@Test
 	public void testAClassDefWithConstructorAndInstanceVariableAndAGetterMethod() {
     	/*
@@ -629,6 +626,7 @@ public class ParserTest {
 		assertParses(tokens, program);
 	}
 
+    @Ignore
 	@Test
 	public void testAClassDefWithConstructorAndInstanceVariableAndASetterMethod() {
     	/*
@@ -730,6 +728,7 @@ public class ParserTest {
 		assertParses(tokens, program);
 	}
 
+    @Ignore
 	@Test
 	public void testAClassDefWithConstructorAndInstanceVariableAndSetterGetterMethods() {
     	/*
@@ -850,6 +849,7 @@ public class ParserTest {
 		assertParses(tokens, program);
 	}
 
+    @Ignore
     @Test
     public void testExtendedClassWithInstanceVars() {
         /*
@@ -1009,7 +1009,7 @@ public class ParserTest {
                     key = initKey;
                     value = initValue;
                 }
-            }
+           {}
         */
 
         final ArrayList<Token> tokens = new ArrayList<>();
@@ -1047,6 +1047,9 @@ public class ParserTest {
         tokens.add(new RightCurlyToken());
         tokens.add(new RightCurlyToken());
 
+        tokens.add(new LeftCurlyToken());
+        tokens.add(new RightCurlyToken());
+
         final List<VarDec> insDec = new ArrayList<>();
 		insDec.add(new VarDec(new TypeVariable("T"), new Variable("key")));
         insDec.add(new VarDec(new TypeVariable("V"), new Variable("value")));
@@ -1079,10 +1082,11 @@ public class ParserTest {
             typeVars
         ));
 
-		Program program = new Program(classDef, null);
+		Program program = new Program(classDef, new Block());
 		assertParses(tokens, program);
     }
 
+    @Ignore
     @Test
     public void testGenericClassWithInstanceVarsandMethods() {
         /*
@@ -1103,6 +1107,7 @@ public class ParserTest {
                     return value;
                 }
             }
+            {}
         */
 
         final ArrayList<Token> tokens = new ArrayList<>();
@@ -1151,7 +1156,7 @@ public class ParserTest {
         tokens.add(new RightCurlyToken());
 
         tokens.add(new PublicToken());
-        tokens.add(new VariableToken("K"));
+        tokens.add(new VariableToken("V"));
         tokens.add(new VariableToken("getValue"));
         tokens.add(new LeftParenToken());
         tokens.add(new RightParenToken());
@@ -1160,7 +1165,9 @@ public class ParserTest {
         tokens.add(new VariableToken("value"));
         tokens.add(new SemiToken());
         tokens.add(new RightCurlyToken());
+        tokens.add(new RightCurlyToken());
 
+        tokens.add(new LeftCurlyToken());
         tokens.add(new RightCurlyToken());
 
     	final List<VarDec> insDec = new ArrayList<>();
@@ -1209,10 +1216,11 @@ public class ParserTest {
             typeVars
         ));
 
-		Program program = new Program(classDef, null);
+		Program program = new Program(classDef, new Block());
 		assertParses(tokens, program);
     }
 
+    @Ignore
     @Test
     public void testGenericClassWithInstanceVarsMethodsandStatements() {
         /*
@@ -1234,7 +1242,7 @@ public class ParserTest {
                 }
             }
 
-            Foo f = new Foo<int, boolean>(5, true);
+            Foo<int, boolean> f = new Foo<int, boolean>(5, true);
             println(f.getKey());
         */
 
@@ -1270,7 +1278,7 @@ public class ParserTest {
         tokens.add(new EqualToken());
         tokens.add(new VariableToken("initValue"));
         tokens.add(new SemiToken());
-        tokens.add(new RightCurlyToken());
+        tokens.add(new RightCurlyToken());   //31
 
         tokens.add(new PublicToken());
         tokens.add(new VariableToken("T"));
@@ -1284,7 +1292,7 @@ public class ParserTest {
         tokens.add(new RightCurlyToken());
 
         tokens.add(new PublicToken());
-        tokens.add(new VariableToken("K"));
+        tokens.add(new VariableToken("V"));
         tokens.add(new VariableToken("getValue"));
         tokens.add(new LeftParenToken());
         tokens.add(new RightParenToken());
@@ -1404,6 +1412,8 @@ public class ParserTest {
             class Bar<> extends Foo<int, boolean> {
                 constructor(){super(5, true)}
             }
+
+            {}
         */
 
         final ArrayList<Token> tokens = new ArrayList<>();
@@ -1439,6 +1449,7 @@ public class ParserTest {
         tokens.add(new VariableToken("initValue"));
         tokens.add(new SemiToken());
         tokens.add(new RightCurlyToken());
+        tokens.add(new RightCurlyToken());
 
         tokens.add(new ClassToken());
         tokens.add(new VariableToken("Bar"));
@@ -1453,16 +1464,19 @@ public class ParserTest {
         tokens.add(new GreaterThanToken());
         tokens.add(new LeftCurlyToken());
         tokens.add(new ConstructorToken());
-        tokens.add(new LeftParenToken());
+        tokens.add(new LeftParenToken());   //46
         tokens.add(new RightParenToken());
         tokens.add(new LeftCurlyToken());
         tokens.add(new SuperToken());
+        tokens.add(new LeftParenToken());
         tokens.add(new NumberToken(5));
         tokens.add(new CommaToken());
         tokens.add(new TrueToken());
-        tokens.add(new LeftParenToken());
         tokens.add(new RightParenToken());
         tokens.add(new RightCurlyToken());
+        tokens.add(new RightCurlyToken());
+
+        tokens.add(new LeftCurlyToken());
         tokens.add(new RightCurlyToken());
 
         final List<VarDec> insDec = new ArrayList<>();
@@ -1518,7 +1532,7 @@ public class ParserTest {
             new ArrayList<>()
         ));
 
-		Program program = new Program(classDef, null);
+		Program program = new Program(classDef, new Block());
 		assertParses(tokens, program);
     }
 }

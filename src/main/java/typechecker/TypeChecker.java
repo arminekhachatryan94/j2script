@@ -99,7 +99,7 @@ public class TypeChecker {
                                 final MethodName methodName) throws TypeErrorException {
         final ClassDef abstractedClass = getClass(onClass.name);
         final ClassDef specializedClass = TypeRewriter.rewriteClassDef(abstractedClass, onClass.types);
-        System.out.println("Looking for " + methodName + " in " + specializedClass.methodDefs);
+        // System.out.println("Looking for " + methodName + " in " + specializedClass.methodDefs);
         final MethodDef result = findMethodDirect(specializedClass, methodName);
 
         if (result == null) {
@@ -336,7 +336,7 @@ public class TypeChecker {
                                                 final Block stmt)  throws TypeErrorException {
         TypeEnvironment loopEnv = env;
         for (Statement s : stmt.statements) {
-            System.out.println("Typechecking " + s + " in typeCheckBlockStmt");
+            // System.out.println("Typechecking " + s + " in typeCheckBlockStmt");
             loopEnv = typecheckStatement(loopEnv, returnType, superParams, s);
         }
         return loopEnv;                                             
@@ -367,7 +367,7 @@ public class TypeChecker {
         final Type lhsType = stmt.varDec.type;
         final Type expType = typeofExp(env, stmt.exp);
         typesOK(lhsType, expType);
-        System.out.println(stmt.varDec.var + " has been assigned a value in " + stmt);
+        // System.out.println(stmt.varDec.var + " has been assigned a value in " + stmt);
         TypeEnvironment newEnv = env.addVariable(stmt.varDec);
         return newEnv.addDefinedVariable(stmt.varDec.var);
     } // typecheckAssignStmt
@@ -377,7 +377,7 @@ public class TypeChecker {
         final Type lhsType = env.lookup(stmt.variable);
         final Type expType = typeofExp(env, stmt.exp);
         typesOK(lhsType, expType);
-        System.out.println(stmt.variable + " has been assigned a value in " + stmt);
+        // System.out.println(stmt.variable + " has been assigned a value in " + stmt);
         return env.addDefinedVariable(stmt.variable);
     } // typecheckAssignStmt
 
@@ -503,7 +503,7 @@ public class TypeChecker {
                                 final Set<TypeVariable> inScope,
                                 final Set<Variable> defined,
                                 final MethodDef methodDef) throws TypeErrorException {
-        System.out.println("Type checking method " + methodDef.name + " in " + thisType.name);
+        // System.out.println("Type checking method " + methodDef.name + " in " + thisType.name);
         paramsOk(inScope, methodDef.varDecs);
         typeInScope(inScope, methodDef.returnType);
         superReturnOkInMethod(methodDef.body);
@@ -511,7 +511,7 @@ public class TypeChecker {
         variables.addAll(methodDef.varDecs);
         TypeEnvironment env = TypeEnvironment.initialEnv(inScope, variables, thisType);
         for(Variable v : defined) {
-            System.out.println(v + " was previously assigned a value");
+            // System.out.println(v + " was previously assigned a value");
             env = env.addDefinedVariable(v);
         }
         for(VarDec v : methodDef.varDecs) { 
@@ -530,7 +530,7 @@ public class TypeChecker {
     public Set<Variable> typecheckConstructor(final ClassType thisType,
                                               final Set<TypeVariable> inScopeFromClass,
                                               final Constructor constructor) throws TypeErrorException {
-        System.out.println("Type checking constructor of " + thisType.name);
+        // System.out.println("Type checking constructor of " + thisType.name);
         final ClassDef classDef = getClass(thisType.name);
         paramsOk(inScopeFromClass, constructor.parameters);
         superReturnOkInConstructor(classDef.extendedClass == null, constructor.body);
@@ -610,11 +610,11 @@ public class TypeChecker {
     public static void typecheckProgram(final Program program) throws TypeErrorException {
     final TypeChecker typeChecker =  new TypeChecker(classMapping(program.classDefs));
     typeChecker.typecheckClasses();
-    System.out.println("Finished typechecking clasess");
+    // System.out.println("Finished typechecking clasess");
     typeChecker.typecheckStatement(TypeEnvironment.initialEnv(new ArrayList<TypeVariable>(), new ArrayList<VarDec>(), null),
                                     null,
                                     null,
                                     program.statement);
-    System.out.println();
+    // System.out.println();
     }
 }

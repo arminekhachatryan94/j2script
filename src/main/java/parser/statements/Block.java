@@ -3,6 +3,11 @@ import java.util.*;
 
 public class Block implements Statement {
     public final List<Statement> statements;
+
+    public Block() {
+        this.statements = new ArrayList<>();
+    }
+
     public Block(final List<Statement> statements){
         this.statements = statements;
     }
