@@ -1,5 +1,5 @@
 package j2script;
-
+//testAClassDefWithConstructorAndInstanceVariableAndASetterMethod
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
@@ -349,7 +349,11 @@ public class ParserTest {
 			constructor(int parameterOne)
 				x = parameterOne;
     	}
+
+    	ClassFoo<> g = new ClassFoo<>(5);
     	*/
+
+
 
 		final ArrayList<Token> tokens = new ArrayList<>();
         tokens.add(new ClassToken());
@@ -370,6 +374,20 @@ public class ParserTest {
         tokens.add(new VariableToken("parameterOne"));
         tokens.add(new SemiToken());
         tokens.add(new RightCurlyToken());
+
+        tokens.add(new VariableToken("ClassFoo"));
+        tokens.add(new LessThanToken());
+        tokens.add(new GreaterThanToken());
+        tokens.add(new VariableToken("g"));
+        tokens.add(new EqualToken());
+        tokens.add(new NewToken());
+        tokens.add(new VariableToken("ClassFoo"));
+        tokens.add(new LessThanToken());
+        tokens.add(new GreaterThanToken());
+        tokens.add(new LeftParenToken());
+        tokens.add(new NumberToken(5));
+        tokens.add(new RightParenToken());
+        tokens.add(new SemiToken());
 		
 		final List<VarDec> insDec = new ArrayList<>();
 		insDec.add(new VarDec(new IntType(), new Variable("x")));
@@ -381,12 +399,25 @@ public class ParserTest {
 
 		final Statement st = new VarAssignment(new Variable("x"), new VariableExp(new Variable("parameterOne")));
         
-		final ClassDef cd = new ClassDef(new ClassName("ClassFoo"), new Constructor(varDec, st), null, insDec, methodDef, new ArrayList());
+		final ClassDef cd = new ClassDef(new ClassName("ClassFoo"), new Constructor(varDec, st), insDec, methodDef, new ArrayList());
 
 		final List<ClassDef> classDef = new ArrayList<>();
 		classDef.add(cd);
 
-		Program program = new Program(classDef, null);
+		List<Exp> expr = new ArrayList<>();
+        expr.add(new NumberExp(5));
+        Statement stm = new VarDecAssignment(
+            new VarDec(
+                new ClassType(
+                    new ClassName("Foo"), new ArrayList<Type>()), 
+                new Variable("g")), 
+            new ClassExp(
+                new ClassName("Foo"), 
+                new ArrayList<Type>(), 
+                expr
+                ));
+
+		Program program = new Program(classDef, stm);
 		assertParses(tokens, program);
 	}
 
@@ -400,6 +431,8 @@ public class ParserTest {
 			private void methodOne(int four)
 				four = 4 + x;
     	}
+
+    	ClassFoo<> f = new ClassFoo<>();
     	*/
 
 		final ArrayList<Token> tokens = new ArrayList<>();
@@ -435,6 +468,20 @@ public class ParserTest {
         tokens.add(new SemiToken());
         tokens.add(new RightCurlyToken());
 
+
+        tokens.add(new VariableToken("ClassFoo"));
+        tokens.add(new LessThanToken());
+        tokens.add(new GreaterThanToken());
+        tokens.add(new VariableToken("g"));
+        tokens.add(new EqualToken());
+        tokens.add(new NewToken());
+        tokens.add(new VariableToken("ClassFoo"));
+        tokens.add(new LessThanToken());
+        tokens.add(new GreaterThanToken());
+        tokens.add(new LeftParenToken());
+        tokens.add(new RightParenToken());
+        tokens.add(new SemiToken());
+
         final List<VarDec> varDec = new ArrayList<>();
         varDec.add(new VarDec(new IntType(), new Variable("parameterOne")));
 
@@ -460,7 +507,7 @@ public class ParserTest {
                 varDec,
                 st
             ),
-            null,
+            
             insDec,
             methodDef,
             new ArrayList<>()
@@ -469,7 +516,18 @@ public class ParserTest {
 		final List<ClassDef> classdef = new ArrayList<>();
 		classdef.add(cD);
 
-		Program program = new Program(classdef, null);
+		 Statement stm = new VarDecAssignment(
+            new VarDec(
+                new ClassType(
+                    new ClassName("ClassFoo"), new ArrayList<Type>()), 
+                new Variable("g")), 
+            new ClassExp(
+                new ClassName("ClassFoo"), 
+                new ArrayList<Type>(), 
+                new ArrayList<Exp>()
+                ));
+
+		Program program = new Program(classdef, stm);
 		assertParses(tokens, program);
 	}
 
@@ -484,6 +542,8 @@ public class ParserTest {
 			public int getX()
 				return x;
     	}
+
+    	ClassFoo<> g = new ClassFoo<>();
     	*/
 
 		final ArrayList<Token> tokens = new ArrayList<>();
@@ -512,6 +572,19 @@ public class ParserTest {
         tokens.add(new SemiToken());
         tokens.add(new RightCurlyToken());
 
+        tokens.add(new VariableToken("ClassFoo"));
+        tokens.add(new LessThanToken());
+        tokens.add(new GreaterThanToken());
+        tokens.add(new VariableToken("g"));
+        tokens.add(new EqualToken());
+        tokens.add(new NewToken());
+        tokens.add(new VariableToken("ClassFoo"));
+        tokens.add(new LessThanToken());
+        tokens.add(new GreaterThanToken());
+        tokens.add(new LeftParenToken());
+        tokens.add(new RightParenToken());
+        tokens.add(new SemiToken());
+
 		final List<MethodDef> methodDef = new ArrayList<>();
 		methodDef.add(new MethodDef(
             new PublicAccess(), 
@@ -532,7 +605,7 @@ public class ParserTest {
 		final ClassDef cD = new ClassDef(
             new ClassName("ClassFoo"),
             new Constructor(new ArrayList<>(), st),
-            null,
+            
             insDec,
             methodDef,
             new ArrayList<>()
@@ -541,7 +614,18 @@ public class ParserTest {
 		final List<ClassDef> classdef = new ArrayList<>();
 		classdef.add(cD);
 
-		Program program = new Program(classdef, null);
+		Statement stm = new VarDecAssignment(
+            new VarDec(
+                new ClassType(
+                    new ClassName("ClassFoo"), new ArrayList<Type>()), 
+                new Variable("g")), 
+            new ClassExp(
+                new ClassName("ClassFoo"), 
+                new ArrayList<Type>(), 
+                new ArrayList<Exp>()
+                ));
+
+		Program program = new Program(classdef, stm);
 		assertParses(tokens, program);
 	}
 
@@ -555,6 +639,8 @@ public class ParserTest {
 			public void setX(int setXToThi s)
 				 x = setXToThis;
     	}
+
+    	ClassFoo<> g = new ClassFoo<>();
     	*/
 		final ArrayList<Token> tokens = new ArrayList<>();
         tokens.add(new ClassToken());
@@ -585,6 +671,20 @@ public class ParserTest {
         tokens.add(new SemiToken());
         tokens.add(new RightCurlyToken());
 
+
+        tokens.add(new VariableToken("ClassFoo"));
+        tokens.add(new LessThanToken());
+        tokens.add(new GreaterThanToken());
+        tokens.add(new VariableToken("g"));
+        tokens.add(new EqualToken());
+        tokens.add(new NewToken());
+        tokens.add(new VariableToken("ClassFoo"));
+        tokens.add(new LessThanToken());
+        tokens.add(new GreaterThanToken());
+        tokens.add(new LeftParenToken());
+        tokens.add(new RightParenToken());
+        tokens.add(new SemiToken());
+
 		final List<MethodDef> methodDef = new ArrayList<>();
 		final List<VarDec> varDec = new ArrayList<>();
         varDec.add(new VarDec(new IntType(), new Variable("setXToThis")));
@@ -607,15 +707,26 @@ public class ParserTest {
             new ClassDef(
                 new ClassName("ClassFoo"),
                 new Constructor(varDec, st),
-                null,
+                
                 insDec,
                 methodDef,
                 new ArrayList<>()
             )
         );
 
+        Statement stm = new VarDecAssignment(
+            new VarDec(
+                new ClassType(
+                    new ClassName("ClassFoo"), new ArrayList<Type>()), 
+                new Variable("g")), 
+            new ClassExp(
+                new ClassName("ClassFoo"), 
+                new ArrayList<Type>(), 
+                new ArrayList<Exp>()
+                ));
 
-		Program program = new Program(classDef, null);
+
+		Program program = new Program(classDef, stm);
 		assertParses(tokens, program);
 	}
 
@@ -631,6 +742,8 @@ public class ParserTest {
 			public int getX()
 				return x;
     	}
+
+    	ClassFoo<> g = new ClassFoo<>();
     	*/
 
 		final ArrayList<Token> tokens = new ArrayList<>();
@@ -669,6 +782,19 @@ public class ParserTest {
         tokens.add(new VariableToken("x"));
         tokens.add(new SemiToken());
         tokens.add(new RightCurlyToken());
+
+        tokens.add(new VariableToken("ClassFoo"));
+        tokens.add(new LessThanToken());
+        tokens.add(new GreaterThanToken());
+        tokens.add(new VariableToken("g"));
+        tokens.add(new EqualToken());
+        tokens.add(new NewToken());
+        tokens.add(new VariableToken("ClassFoo"));
+        tokens.add(new LessThanToken());
+        tokens.add(new GreaterThanToken());
+        tokens.add(new LeftParenToken());
+        tokens.add(new RightParenToken());
+        tokens.add(new SemiToken());
 
 		final List<VarDec> insDec = new ArrayList<>();
 		insDec.add(new VarDec(new IntType(), new Variable("x")));
@@ -703,13 +829,24 @@ public class ParserTest {
                 varDec,
                 st
             ),
-            null,
+            
             insDec,
             methodDef,
             new ArrayList<>()
         ));
 
-		Program program = new Program(classDef, null);
+        Statement stm = new VarDecAssignment(
+            new VarDec(
+                new ClassType(
+                    new ClassName("ClassFoo"), new ArrayList<Type>()), 
+                new Variable("g")), 
+            new ClassExp(
+                new ClassName("ClassFoo"), 
+                new ArrayList<Type>(), 
+                new ArrayList<Exp>()
+                ));
+
+		Program program = new Program(classDef, stm);
 		assertParses(tokens, program);
 	}
 
@@ -729,6 +866,8 @@ public class ParserTest {
             class Bar<> extends Foo<> {
                 constructor(){super(5, true)}
             }
+
+            Foo<> g = new Foo<>(5, true);
         */
 
         final ArrayList<Token> tokens = new ArrayList<>();
@@ -761,6 +900,7 @@ public class ParserTest {
         tokens.add(new VariableToken("initValue"));
         tokens.add(new SemiToken());
         tokens.add(new RightCurlyToken());
+        tokens.add(new RightCurlyToken());
 
         tokens.add(new ClassToken());
         tokens.add(new VariableToken("Bar"));
@@ -776,12 +916,26 @@ public class ParserTest {
         tokens.add(new RightParenToken());
         tokens.add(new LeftCurlyToken());
         tokens.add(new SuperToken());
-        tokens.add(new NumberToken(5));
-        tokens.add(new CommaToken());
-        tokens.add(new TrueToken());
+        tokens.add(new LeftParenToken());
         tokens.add(new RightParenToken());
         tokens.add(new RightCurlyToken());
         tokens.add(new RightCurlyToken());
+
+
+        tokens.add(new VariableToken("Foo"));
+        tokens.add(new LessThanToken());
+        tokens.add(new GreaterThanToken());
+        tokens.add(new VariableToken("g"));
+        tokens.add(new EqualToken());
+        tokens.add(new NewToken());
+        tokens.add(new VariableToken("Foo"));
+        tokens.add(new LessThanToken());
+        tokens.add(new GreaterThanToken());
+        tokens.add(new LeftParenToken());
+        tokens.add(new NumberToken(5));
+        tokens.add(new TrueToken());
+        tokens.add(new RightParenToken());
+        tokens.add(new SemiToken());
 
         final List<VarDec> insDec = new ArrayList<>();
 		insDec.add(new VarDec(new IntType(), new Variable("key")));
@@ -807,15 +961,13 @@ public class ParserTest {
         classDef.add(new ClassDef(
             new ClassName("Foo"),
             constructor,
-            null,
+            
             insDec,
             methodDef,
             typeVars
         ));
 
         final List<Exp> superVars = new ArrayList<>();
-        superVars.add(new NumberExp(5));
-        superVars.add(new BoolExp(true));
 
         final List<Type> types = new ArrayList<>();
 
@@ -828,7 +980,21 @@ public class ParserTest {
             new ArrayList<>()
         ));
 
-		Program program = new Program(classDef, null);
+        List<Exp> expr = new ArrayList<>();
+        expr.add(new NumberExp(5));
+        expr.add(new BoolExp(true));
+        Statement stm = new VarDecAssignment(
+            new VarDec(
+                new ClassType(
+                    new ClassName("Foo"), new ArrayList<Type>()), 
+                new Variable("g")), 
+            new ClassExp(
+                new ClassName("Foo"), 
+                new ArrayList<Type>(), 
+                expr
+                ));
+
+		Program program = new Program(classDef, stm);
 		assertParses(tokens, program);
     }
 

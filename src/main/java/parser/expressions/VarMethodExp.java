@@ -34,7 +34,7 @@ public class VarMethodExp implements Exp {
     }
     
     public String toString() {
-        String exp = methodName + "(";
+        String exp = var + "." + methodName + "(";
         for(int i = 0; i < parameters.size(); i++) {
             exp += parameters.get(i).emit();
             if(i+1 < parameters.size()) {

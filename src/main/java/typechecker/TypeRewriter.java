@@ -57,6 +57,25 @@ public class TypeRewriter {
                                constructor.body);
     } // rewriteConstructor
 
+    public MethodDef rewriteMethodDef(final MethodDef methodDef) {
+        final Map<TypeVariable, Type> newReplacements = new HashMap<TypeVariable, Type>(replacements);
+
+        final TypeRewriter nestedRewriter = new TypeRewriter(newReplacements);
+        return new MethodDef(methodDef.access,
+                             nestedRewriter.rewriteType(methodDef.returnType),
+                             methodDef.name,
+                             nestedRewriter.rewriteVarDecs(methodDef.varDecs),
+                             methodDef.body);
+    } // rewriteMethodDef
+
+    public List<MethodDef> rewriteMethodDefs(final List<MethodDef> methodDefs) {
+        final List<MethodDef> result = new ArrayList<>(methodDefs.size());
+        for (MethodDef m : methodDefs) {
+            result.add(rewriteMethodDef(m));
+        }
+        return result;
+    } // rewriteMethodDefs
+
     public Extends rewriteExtends(final Extends doesExtend) {
         if (doesExtend != null) {
             return new Extends(doesExtend.extendsName,
@@ -74,8 +93,8 @@ public class TypeRewriter {
                             rewriter.rewriteConstructor(classDef.constructor),
                             rewriter.rewriteExtends(classDef.extendedClass),
                             rewriter.rewriteVarDecs(classDef.instanceVars),
-                            classDef.methodDefs,
-                            classDef.typeVariables);
+                            rewriter.rewriteMethodDefs(classDef.methodDefs),
+                            new ArrayList());
     } // rewriteClassDefinition
     
     public static Map<TypeVariable, Type> typeReplacementMapping(final List<TypeVariable> typeVariables,
