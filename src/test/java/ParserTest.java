@@ -832,7 +832,6 @@ public class ParserTest {
 		assertParses(tokens, program);
     }
 
-    @Ignore
     @Test
     public void testGenericClassWithInstanceVars() {
         /*
@@ -918,7 +917,6 @@ public class ParserTest {
 		assertParses(tokens, program);
     }
 
-    @Ignore
     @Test
     public void testGenericClassWithInstanceVarsandMethods() {
         /*
@@ -1049,7 +1047,6 @@ public class ParserTest {
 		assertParses(tokens, program);
     }
 
-    @Ignore
     @Test
     public void testGenericClassWithInstanceVarsMethodsandStatements() {
         /*
@@ -1225,7 +1222,6 @@ public class ParserTest {
 		assertParses(tokens, program);
     }
 
-    @Ignore
     @Test
     public void testExtendedGenericClassWithInstanceVars() {
         /*
