@@ -1,6 +1,6 @@
 package j2script.types;
 
-public class IntType implements Type, ReturnType {
+public class IntType implements Type {
     public int hashCode() {
         return 3;
     }

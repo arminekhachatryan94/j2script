@@ -474,7 +474,7 @@ public class ParserTest {
 
 		final List<MethodDef> methodDef = new ArrayList<>();
 		final VarDec [] varDec = {};
-		methodDef.add(new MethodDef(new PublicAccess(),new ReturnType(new IntType()), new MethodName("getX"), varDec, new ReturnExpStatement(new VariableExp("x"))));
+		methodDef.add(new MethodDef(new PublicAccess(),new Type(new IntType()), new MethodName("getX"), varDec, new ReturnExpStatement(new VariableExp("x"))));
 		final List<InstanceDec> insDec = new ArrayList<>();
 		insDec.add(new InstanceDec(new PrivateAccess(), new VarDec(new IntType(), new Variable("x"))));
 		final Statement st = new VarAssignment(new Variable("x"), new NumberExp(4));
@@ -617,13 +617,13 @@ public class ParserTest {
 
 		final Statement st = new VarAssignment(new Variable("x"), new NumberExp(0));
 		methodDef.add(new MethodDef(new PublicAccess(),
-				new ReturnType(new VoidType()),
+				new Type(new VoidType()),
 				new MethodName("setX"),
 				varDec2,
 				new VarAssignment(new Variable("x"), new VariableExp("setXToThis"))));
 
 		methodDef.add(new MethodDef(new PublicAccess(),
-				new ReturnType(new IntType()),
+				new Type(new IntType()),
 				new MethodName("getX"),
 				varDec,
 				new ReturnExpStatement(new VariableExp("x"))));
