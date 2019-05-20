@@ -9,5 +9,8 @@
         <module name="j2script" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="j2script" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>
