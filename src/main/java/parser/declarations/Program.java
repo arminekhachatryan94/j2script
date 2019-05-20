@@ -15,7 +15,7 @@ public class Program {
         this.statement = statement;
     }
     public Program(final Statement statement){
-        this.classDefs = new ArrayList<ClassDef>();
+        this.classDefs = new ArrayList<ClassDef>(0);
         this.statement = statement;
     }
     public int hashCode() {
@@ -32,6 +32,11 @@ public class Program {
     }
 
     public String toString() {
-        return (String.join("\n", classDefs.toString()) + "\n\n" + statement.toString());
+        if (classDefs.size() > 0){
+            return (String.join("\n", classDefs.toString()) + "\n\n" + statement.toString());
+        }
+        else{
+            return (statement.toString());
+        }
     }
 }

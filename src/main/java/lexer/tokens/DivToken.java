@@ -1,7 +1,7 @@
 package j2script.tokens;
 public class DivToken implements Token {
     public int hashCode() {
-        return 5;
+        return 8;
     }
 
     public boolean equals(Object obj) {

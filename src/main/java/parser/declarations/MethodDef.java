@@ -1,7 +1,6 @@
 package j2script.declarations;
 
 import j2script.types.Type;
-import j2script.types.ReturnType;
 import j2script.names.MethodName;
 import j2script.names.Variable;
 import j2script.statements.Statement;
@@ -12,12 +11,12 @@ import java.util.List;
 
 public class MethodDef {
     public final Access access;
-    public final ReturnType returnType;
+    public final Type returnType;
     public final MethodName name;
     public final List<VarDec> varDecs;
     public final Statement body;
 
-    public MethodDef(final Access access, final ReturnType returnType, final MethodName name, 
+    public MethodDef(final Access access, final Type returnType, final MethodName name, 
                      final List<VarDec> varDecs, final Statement body) {
       this.access = access;
       this.returnType = returnType;

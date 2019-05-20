@@ -1,7 +1,7 @@
 package j2script.tokens;
 public class RightParenToken implements Token {
     public int hashCode() {
-        return 19;
+        return 28;
     }
 
     public boolean equals(Object obj) {

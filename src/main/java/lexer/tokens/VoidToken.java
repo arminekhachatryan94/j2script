@@ -1,7 +1,7 @@
 package j2script.tokens;
 public class VoidToken implements Token {
     public int hashCode() {
-        return 25;
+        return 33;
     }
 
     public boolean equals(Object obj) {

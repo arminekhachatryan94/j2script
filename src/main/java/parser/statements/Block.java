@@ -10,9 +10,14 @@ public class Block implements Statement {
     //     //TODO
     // }
 
-    // public boolean equals(final Object other) {
-    //     //TODO
-    // }
+    public boolean equals(final Object other) {
+        if (other instanceof Block) {
+            final Block otherB = (Block) other;
+            return otherB.statements.equals(statements);
+        } else {
+            return false;
+        }
+    }
 
     public String toString() {
         String statement = new String();

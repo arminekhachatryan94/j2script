@@ -32,4 +32,16 @@ public class MethodExp implements Exp {
     public String toString() {
         return methodName.toString();
     }
+
+    public String emit() {
+        String exp = methodName + "(";
+        for(int i = 0; i < parameters.size(); i++) {
+            exp += parameters.get(i).emit();
+            if(i+1 < parameters.size()) {
+                exp += ", ";
+            }
+        }
+        exp += ")";
+        return exp;
+    }
 }

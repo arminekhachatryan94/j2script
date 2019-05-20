@@ -1,14 +1,15 @@
 package j2script.tokens;
-public class BreakToken implements Token {
+
+public class LessThanToken implements Token {
     public int hashCode() {
-        return 4;
+        return 18;
     }
 
     public boolean equals(Object obj) {
-        return obj instanceof BreakToken;
+        return obj instanceof LessThanToken;
     }
 
     public String toString() {
-        return "break";
+        return "<";
     }
 }

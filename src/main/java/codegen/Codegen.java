@@ -45,9 +45,6 @@ public class Codegen{
         else if (exp instanceof ClassExp){
             compileClassExp((ClassExp)exp);
         }
-        else if (exp instanceof StringExp){
-            compileStringExp((StringExp)exp);
-        }
         else if (exp instanceof VarMethodExp){
             compileVarMethodExp((VarMethodExp)exp);
         }
@@ -72,7 +69,7 @@ public class Codegen{
         List<String> vTable = new ArrayList<>(); 
         String vtable = "var " + cls.name.toString() + "_" + "vtable = [";
         for (MethodDef md : cls.methodDefs) {
-            String method = "var " + cls.name.toString() + "_" + md.name.toString() + " = function(self) {\n\t" + md.statement.toString() + "};" ;
+            String method = "var " + cls.name.toString() + "_" + md.name.toString() + " = function(self) {\n\t" + md.body.toString() + "};" ;
             Code.add(method);
             methodMap.put(md.name, md);
             offsets.put(md.name, count);
@@ -114,7 +111,7 @@ public class Codegen{
 
         String vtable = "var " + cls.name.toString() + "_" + "vtable = [";
         for (MethodDef md : cls.methodDefs) {
-            String method = "var " + cls.name.toString() + "_" + md.name.toString() + " = function(self) {\n\t" + md.statement.toString() + "};" ;
+            String method = "var " + cls.name.toString() + "_" + md.name.toString() + " = function(self) {\n\t" + md.body.toString() + "};" ;
             Code.add(method);
             //check if method is being overridden
             if (methodMap.get(md.name) != null){
@@ -122,7 +119,7 @@ public class Codegen{
                     int j=0;
                     System.out.println("I am here for this class" + cls.name.toString());
                     System.out.println("I am here for this method" + md.name.toString());
-                    System.out.println("BY the way the exclass is " + cls.extendedClass.name.toString());
+                    System.out.println("BY the way the exclass is " + cls.extendedClass.extendsName.toString());
                     // String exclass = cls.extendedClass.name.toString();                  
                     //replace in childs vtable
                     methodMap.replace(md.name, md);
@@ -220,7 +217,7 @@ public class Codegen{
             String actualCode = "var " + v.varDec.var.toString() + " = {\n\tvtable: " + cname.toString() + "_vtable";
             VTableClassTable vt = compmap.get(cname);
             //if class has no variables, thats about it.
-            if (vt.theClass.varDecs.isEmpty()){
+            if (vt.theClass.instanceVars.isEmpty()){
                 actualCode += "\n}";
             }
             //else check the class' constructor and instantiate the fields
@@ -229,7 +226,7 @@ public class Codegen{
                     ClassExp cexp = (ClassExp) v.exp;
                     actualCode +=",\n\t";
                     for(int i=0; i < vt.theClass.constructor.parameters.size(); i++){
-                        actualCode += vt.theClass.varDecs.get(i).var.toString() + ": " + cexp;
+                        actualCode += vt.theClass.instanceVars.get(i).var.toString() + ": " + cexp;
 
                     }
                 }
@@ -263,11 +260,6 @@ public class Codegen{
 
     public void compileNumberExp(Exp exp){
         NumberExp e = (NumberExp)exp;
-        Code.add(e.emit());
-    }
-    
-    public void compileStringExp(Exp exp){
-        StringExp e = (StringExp)exp;
         Code.add(e.emit());
     }
 

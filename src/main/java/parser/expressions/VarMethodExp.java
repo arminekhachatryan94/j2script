@@ -12,8 +12,8 @@ public class VarMethodExp implements Exp {
     public final List<Exp> parameters;
 
     public VarMethodExp(final Variable var,
-                    final MethodName methodName,
-                    final List<Exp> parameters){
+                        final MethodName methodName,
+                        final List<Exp> parameters){
         this.var=var;
         this.methodName=methodName;
         this.parameters = parameters;
@@ -34,10 +34,10 @@ public class VarMethodExp implements Exp {
     }
     
     public String toString() {
-        String exp = methodName + "(";
-        for(int i = 0; i < parameters.length; i++) {
-            exp += parameters[i].emit();
-            if(i+1 < parameters.length) {
+        String exp = var + "." + methodName + "(";
+        for(int i = 0; i < parameters.size(); i++) {
+            exp += parameters.get(i).emit();
+            if(i+1 < parameters.size()) {
                 exp += ", ";
             }
         }
@@ -47,9 +47,9 @@ public class VarMethodExp implements Exp {
 
     public String emit() {
         String exp = methodName + "(";
-        for(int i = 0; i < parameters.length; i++) {
-            exp += parameters[i].emit();
-            if(i+1 < parameters.length) {
+        for(int i = 0; i < parameters.size(); i++) {
+            exp += parameters.get(i).emit();
+            if(i+1 < parameters.size()) {
                 exp += ", ";
             }
         }

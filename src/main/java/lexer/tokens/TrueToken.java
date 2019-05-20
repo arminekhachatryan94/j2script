@@ -1,14 +1,15 @@
 package j2script.tokens;
-public class ThisToken implements Token {
+
+public class TrueToken implements Token {
     public int hashCode() {
-        return 23;
+        return 31;
     }
 
     public boolean equals(Object obj) {
-        return obj instanceof ThisToken;
+        return obj instanceof TrueToken;
     }
 
     public String toString() {
-        return "this";
+        return "true";
     }
 }

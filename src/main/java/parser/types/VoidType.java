@@ -1,6 +1,6 @@
 package j2script.types;
 
-public class VoidType implements ReturnType {
+public class VoidType implements Type {
     public int hashCode() {
         return 5;
     }
